@@ -14,7 +14,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "CameraMove",
+                    "name": "Look",
                     "type": "Value",
                     "id": "f6388734-dee3-4ead-9269-bd4b7b85daef",
                     "expectedControlType": "Vector2",
@@ -96,7 +96,7 @@
                     "interactions": "",
                     "processors": "NormalizeVector2",
                     "groups": "",
-                    "action": "CameraMove",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -107,7 +107,7 @@
                     "interactions": "",
                     "processors": "NormalizeVector2",
                     "groups": "",
-                    "action": "CameraMove",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

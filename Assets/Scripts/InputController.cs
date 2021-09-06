@@ -8,12 +8,13 @@ using UnityEngine.InputSystem;
 [Serializable]
 public class MoveInputEvent : UnityEvent<float, float> { }
 [Serializable]
-public class CameraInputEvent: UnityEvent<float, float> { }
+public class LookInputEvent: UnityEvent<float, float> { }
+
 public class InputController : MonoBehaviour
 {
     Controls controls;
     public MoveInputEvent moveInputEvent;
-    public CameraInputEvent cameraInputEvent;
+    public LookInputEvent lookInputEvent;
 
     private void Awake()
     {
@@ -25,21 +26,27 @@ public class InputController : MonoBehaviour
         // enable the Gameplay action map
         controls.Gameplay.Enable();
 
+
         controls.Gameplay.Move.performed += OnMovePerformed;
-        controls.Gameplay.CameraMove.performed += OnCameraMovePerformed;
+        // stop moving when key/stick released
+        controls.Gameplay.Move.canceled += OnMovePerformed;
+
+        controls.Gameplay.Look.performed += OnLookPerformed;
+        // stop moving camera when key/stick released
+        controls.Gameplay.Look.canceled += OnLookPerformed;
     }
 
-    private void OnCameraMovePerformed(InputAction.CallbackContext context)
+    private void OnLookPerformed(InputAction.CallbackContext context)
     {
-        Vector2 cameraInput = context.ReadValue<Vector2>();
-        cameraInputEvent.Invoke(cameraInput.x, cameraInput.y);
-        Debug.Log($"Camera Input: {cameraInput}");
+        Vector2 lookInput = context.ReadValue<Vector2>();
+        // invoke event associated with camera movement with input values
+        lookInputEvent.Invoke(lookInput.x, lookInput.y);
     }
 
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
         Vector2 moveInput = context.ReadValue<Vector2>();
+        // invoke event associated with movement with input values
         moveInputEvent.Invoke(moveInput.x, moveInput.y);
-        Debug.Log($"Move Input: {moveInput}");
     }
 }
