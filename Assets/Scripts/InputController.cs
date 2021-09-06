@@ -13,7 +13,9 @@ public class LookInputEvent: UnityEvent<float, float> { }
 public class InputController : MonoBehaviour
 {
     Controls controls;
+    [Header("Moving")]
     public MoveInputEvent moveInputEvent;
+    [Header("Looking")]
     public LookInputEvent lookInputEvent;
 
     private void Awake()
@@ -35,7 +37,10 @@ public class InputController : MonoBehaviour
         // stop moving camera when key/stick released
         controls.Gameplay.Look.canceled += OnLookPerformed;
     }
-
+    private void OnDisable()
+    {
+        controls.Gameplay.Disable();
+    }
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
         Vector2 lookInput = context.ReadValue<Vector2>();
