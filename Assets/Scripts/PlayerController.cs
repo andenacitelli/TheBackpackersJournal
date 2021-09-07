@@ -5,32 +5,44 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Speed")]
-    public float moveSpeed;
+    [Range (0.0f, 10.0f)]
+    public float moveSpeed = 5.0f;
     [Header("Look Sensitivity")]
     [Range (0.0f, 1.0f)]
-    public float xSensitivity;
+    public float horizontalSensitivity = 0.5f;
     [Range(0.0f, 1.0f)]
-    public float ySensitivity;
+    public float verticalSensitivity = 0.25f;
+    [Header("Vertical Look Restriction")]
+    [Range (0.0f, 90.0f)]
+    [SerializeField] float verticalClamp = 90.0f;
 
+    CharacterController controller;
     float moveHoriz, moveVert;
     float lookHoriz, lookVert;
+    float vertRotation;
     Transform playerCamera;
 
     private void Awake()
     {
+        controller = GetComponent<CharacterController>();
         playerCamera = transform.Find("PlayerCamera");
     }
     private void Update()
     {
-        // move player
+        // Move Player
         Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz;
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+        moveDirection = transform.TransformDirection(moveDirection);
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
-        // look around
-        float yaw = lookHoriz * xSensitivity;
-        float pitch = lookVert * ySensitivity ;
-        transform.Rotate(Vector3.up * yaw );
-        playerCamera.Rotate(Vector3.left * pitch);
+        // Look Around
+        // player
+        transform.Rotate(Vector3.up, lookHoriz * horizontalSensitivity);
+        // camera
+        vertRotation -= lookVert;
+        vertRotation = Mathf.Clamp(vertRotation, -verticalClamp, verticalClamp);
+        Vector3 newRotation = transform.eulerAngles;
+        newRotation.x = vertRotation;
+        playerCamera.eulerAngles = newRotation;
     }
     public void OnMoveInput(float horizontal, float vertical)
     {
@@ -39,7 +51,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Move Input: {moveHoriz}, {moveVert}");
     }
 
-    public void OnCameraInput(float horizontal, float vertical)
+    public void OnLookInput(float horizontal, float vertical)
     {
         lookHoriz = horizontal;
         lookVert = vertical;
