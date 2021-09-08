@@ -28,6 +28,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "UseCamera",
+                    "type": "Button",
+                    "id": "76b1e8d0-b283-4293-8872-deee0e9e8332",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -121,12 +129,23 @@
                 },
                 {
                     "name": "",
-                    "id": "7a58824e-5f7c-4d6d-995b-152d024b9470",
+                    "id": "04be932b-e790-4256-bef0-d3241bc37a42",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "RaiseCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c82aa6b-9da5-4de8-acd2-3c65dc272846",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -135,29 +154,8 @@
         {
             "name": "UI",
             "id": "97fdba74-6f48-42c5-adc9-c97e1b845d1b",
-            "actions": [
-                {
-                    "name": "New action",
-                    "type": "Button",
-                    "id": "89cc4af2-1c1b-4fa9-acf4-e2956329cab4",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "be139e29-3381-423b-8441-743d9e96a283",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "New action",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

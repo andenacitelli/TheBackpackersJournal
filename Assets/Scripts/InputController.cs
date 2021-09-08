@@ -11,6 +11,8 @@ public class MoveInputEvent : UnityEvent<float, float> { }
 public class LookInputEvent: UnityEvent<float, float> { }
 [Serializable]
 public class RaiseCameraInputEvent : UnityEvent<float> { }
+[Serializable]
+public class UseCameraInputEvent : UnityEvent<float> { }
 
 public class InputController : MonoBehaviour
 {
@@ -21,6 +23,8 @@ public class InputController : MonoBehaviour
     public LookInputEvent lookInputEvent;
     [Header("RaiseCamera")]
     public RaiseCameraInputEvent raiseCameraInputEvent;
+    [Header("UseCamera")]
+    public UseCameraInputEvent useCameraInputEvent;
 
     private void Awake()
     {
@@ -41,9 +45,11 @@ public class InputController : MonoBehaviour
         // stop moving camera when key/stick released
         controls.Gameplay.Look.canceled += OnLookPerformed;
 
-        controls.Gameplay.RaiseCamera.started += OnRaiseCameraStarted;
         controls.Gameplay.RaiseCamera.performed += OnRaiseCameraPerformed;
-        controls.Gameplay.RaiseCamera.canceled += OnRaiseCameraCanceled;
+        controls.Gameplay.RaiseCamera.canceled += OnRaiseCameraPerformed;
+
+        controls.Gameplay.UseCamera.performed += OnUseCameraPerformed;
+        //controls.Gameplay.UseCamera.canceled += OnUseCameraPerformed;
     }
     private void OnDisable()
     {
@@ -63,21 +69,16 @@ public class InputController : MonoBehaviour
         moveInputEvent.Invoke(moveInput.x, moveInput.y);
     }
 
-    private void OnRaiseCameraStarted(InputAction.CallbackContext context)
-    {
-        float raiseCamInput = context.ReadValue<float>();
-        raiseCameraInputEvent.Invoke(raiseCamInput);
-    }
-
     private void OnRaiseCameraPerformed(InputAction.CallbackContext context)
     {
         float raiseCamInput = context.ReadValue<float>();
         raiseCameraInputEvent.Invoke(raiseCamInput);
     }
 
-    private void OnRaiseCameraCanceled(InputAction.CallbackContext context)
+    private void OnUseCameraPerformed(InputAction.CallbackContext context)
     {
-        float raiseCamInput = context.ReadValue<float>();
-        raiseCameraInputEvent.Invoke(raiseCamInput);
+        float useCamInput = context.ReadValue<float>();
+        useCameraInputEvent.Invoke(useCamInput);
     }
+
 }

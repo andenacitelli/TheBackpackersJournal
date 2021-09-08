@@ -41,6 +41,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""UseCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""76b1e8d0-b283-4293-8872-deee0e9e8332"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -134,12 +142,23 @@ public class @Controls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""7a58824e-5f7c-4d6d-995b-152d024b9470"",
+                    ""id"": ""04be932b-e790-4256-bef0-d3241bc37a42"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RaiseCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c82aa6b-9da5-4de8-acd2-3c65dc272846"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -148,29 +167,8 @@ public class @Controls : IInputActionCollection, IDisposable
         {
             ""name"": ""UI"",
             ""id"": ""97fdba74-6f48-42c5-adc9-c97e1b845d1b"",
-            ""actions"": [
-                {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
-                    ""id"": ""89cc4af2-1c1b-4fa9-acf4-e2956329cab4"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""be139e29-3381-423b-8441-743d9e96a283"",
-                    ""path"": """",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""New action"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
+            ""actions"": [],
+            ""bindings"": []
         }
     ],
     ""controlSchemes"": []
@@ -180,9 +178,9 @@ public class @Controls : IInputActionCollection, IDisposable
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         m_Gameplay_Look = m_Gameplay.FindAction("Look", throwIfNotFound: true);
         m_Gameplay_RaiseCamera = m_Gameplay.FindAction("RaiseCamera", throwIfNotFound: true);
+        m_Gameplay_UseCamera = m_Gameplay.FindAction("UseCamera", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Newaction = m_UI.FindAction("New action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -235,6 +233,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_Move;
     private readonly InputAction m_Gameplay_Look;
     private readonly InputAction m_Gameplay_RaiseCamera;
+    private readonly InputAction m_Gameplay_UseCamera;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -242,6 +241,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputAction @Look => m_Wrapper.m_Gameplay_Look;
         public InputAction @RaiseCamera => m_Wrapper.m_Gameplay_RaiseCamera;
+        public InputAction @UseCamera => m_Wrapper.m_Gameplay_UseCamera;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -260,6 +260,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @RaiseCamera.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRaiseCamera;
                 @RaiseCamera.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRaiseCamera;
                 @RaiseCamera.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnRaiseCamera;
+                @UseCamera.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUseCamera;
+                @UseCamera.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUseCamera;
+                @UseCamera.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnUseCamera;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -273,6 +276,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @RaiseCamera.started += instance.OnRaiseCamera;
                 @RaiseCamera.performed += instance.OnRaiseCamera;
                 @RaiseCamera.canceled += instance.OnRaiseCamera;
+                @UseCamera.started += instance.OnUseCamera;
+                @UseCamera.performed += instance.OnUseCamera;
+                @UseCamera.canceled += instance.OnUseCamera;
             }
         }
     }
@@ -281,12 +287,10 @@ public class @Controls : IInputActionCollection, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private IUIActions m_UIActionsCallbackInterface;
-    private readonly InputAction m_UI_Newaction;
     public struct UIActions
     {
         private @Controls m_Wrapper;
         public UIActions(@Controls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_UI_Newaction;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -296,16 +300,10 @@ public class @Controls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_UIActionsCallbackInterface != null)
             {
-                @Newaction.started -= m_Wrapper.m_UIActionsCallbackInterface.OnNewaction;
-                @Newaction.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnNewaction;
-                @Newaction.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnNewaction;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Newaction.started += instance.OnNewaction;
-                @Newaction.performed += instance.OnNewaction;
-                @Newaction.canceled += instance.OnNewaction;
             }
         }
     }
@@ -315,9 +313,9 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnRaiseCamera(InputAction.CallbackContext context);
+        void OnUseCamera(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
     }
 }
