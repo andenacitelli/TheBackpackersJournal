@@ -9,6 +9,8 @@ using UnityEngine.InputSystem;
 public class MoveInputEvent : UnityEvent<float, float> { }
 [Serializable]
 public class LookInputEvent: UnityEvent<float, float> { }
+[Serializable]
+public class RaiseCameraInputEvent : UnityEvent<float> { }
 
 public class InputController : MonoBehaviour
 {
@@ -17,6 +19,8 @@ public class InputController : MonoBehaviour
     public MoveInputEvent moveInputEvent;
     [Header("Looking")]
     public LookInputEvent lookInputEvent;
+    [Header("RaiseCamera")]
+    public RaiseCameraInputEvent raiseCameraInputEvent;
 
     private void Awake()
     {
@@ -36,6 +40,10 @@ public class InputController : MonoBehaviour
         controls.Gameplay.Look.performed += OnLookPerformed;
         // stop moving camera when key/stick released
         controls.Gameplay.Look.canceled += OnLookPerformed;
+
+        controls.Gameplay.RaiseCamera.started += OnRaiseCameraStarted;
+        controls.Gameplay.RaiseCamera.performed += OnRaiseCameraPerformed;
+        controls.Gameplay.RaiseCamera.canceled += OnRaiseCameraCanceled;
     }
     private void OnDisable()
     {
@@ -53,5 +61,23 @@ public class InputController : MonoBehaviour
         Vector2 moveInput = context.ReadValue<Vector2>();
         // invoke event associated with movement with input values
         moveInputEvent.Invoke(moveInput.x, moveInput.y);
+    }
+
+    private void OnRaiseCameraStarted(InputAction.CallbackContext context)
+    {
+        float raiseCamInput = context.ReadValue<float>();
+        raiseCameraInputEvent.Invoke(raiseCamInput);
+    }
+
+    private void OnRaiseCameraPerformed(InputAction.CallbackContext context)
+    {
+        float raiseCamInput = context.ReadValue<float>();
+        raiseCameraInputEvent.Invoke(raiseCamInput);
+    }
+
+    private void OnRaiseCameraCanceled(InputAction.CallbackContext context)
+    {
+        float raiseCamInput = context.ReadValue<float>();
+        raiseCameraInputEvent.Invoke(raiseCamInput);
     }
 }

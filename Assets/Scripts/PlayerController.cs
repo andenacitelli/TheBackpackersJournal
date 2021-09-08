@@ -48,13 +48,14 @@ public class PlayerController : MonoBehaviour
     {
         moveHoriz = horizontal;
         moveVert = vertical;
-        Debug.Log($"Move Input: {moveHoriz}, {moveVert}");
+        //Debug.Log($"Move Input: {moveHoriz}, {moveVert}");
     }
 
     public void OnLookInput(float horizontal, float vertical)
     {
         lookHoriz = horizontal;
         lookVert = vertical;
-        Debug.Log($"Camera Input: {lookHoriz}, {lookVert}");
+        //Debug.Log($"Camera Input: {lookHoriz}, {lookVert}");
     }
+
 }
