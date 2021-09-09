@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PolaroidController : MonoBehaviour
@@ -7,9 +8,12 @@ public class PolaroidController : MonoBehaviour
     [Header("GUI Components")]
     public RectTransform shutter;
     public GameObject overlay;
+    public GameObject flash;
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
     
+    public bool FlashOn { get; set; }
+    private int picNum = 0;
     private const int WORLD_CURRENT = 0;
     private const int WORLD_END = 1;
     private const int WORLD_START = 2;
@@ -17,13 +21,14 @@ public class PolaroidController : MonoBehaviour
     private Vector3 LOCAL_END = new Vector3(0f, 0f, .55f);
     private bool aimEngaged, aimDisengaged, aimRunning;
     private bool shutterOn, shutterHalved, shutterStopped;
-    private bool photoActive;
+    private bool photoActive, captureStart;
     private float shutterStop, shutterWidth;
     private float raiseHalfDist, shutterT;
     
 
     private void Start()
     {
+        FlashOn = true;
         aimRunning = false;
         photoActive = false;
         shutterStop = (float)Screen.height;
@@ -36,7 +41,7 @@ public class PolaroidController : MonoBehaviour
 
     public void OnRaiseInput(float secondary)
     {
-        Debug.Log($"On Raise Start: {secondary}");
+        //Debug.Log($"On Raise Start: {secondary}");
         if (!aimRunning && secondary == 1)
         {  
             StartCoroutine("EngagedAim");
@@ -51,9 +56,14 @@ public class PolaroidController : MonoBehaviour
     public void OnPrimaryInput(float primary)
     {
         
-        if (photoActive )
+        if (photoActive && !captureStart )
         {
-            Debug.Log($"Took a picture with: {primary}");
+            if (FlashOn)
+            {
+                StartCoroutine("CapturePhoto");
+            }
+            
+
         } else
         {
             Debug.Log("No Aim. No picture.");
@@ -63,7 +73,7 @@ public class PolaroidController : MonoBehaviour
     private IEnumerator EngagedAim()
     {
         aimRunning = true;
-        //Debug.Log("EngagedAim started");
+        Debug.Log("EngagedAim started");
         aimEngaged = true;
         aimDisengaged = false;
         shutterOn = false;
@@ -110,11 +120,15 @@ public class PolaroidController : MonoBehaviour
             yield return new WaitForSeconds(.01f);   
         }
 
+
+        //HOLDING AIM
         while (!aimDisengaged)
         {
-            if (!photoActive)
+            //Left Click Action - while holding is applied to leftclick action
+            if (!photoActive )
             {
                 photoActive = true;
+
             }
             yield return new WaitForSeconds(.01f);
         }
@@ -175,7 +189,58 @@ public class PolaroidController : MonoBehaviour
         }
     }
 
-    private Vector3[] ConvertToWorldPoints()
+    private IEnumerator CapturePhoto()
+    {
+        //string fileName = Application.persistentDataPath + "/photo_ID" + picNum + ".png";
+        overlay.SetActive(false);
+        yield return new WaitForEndOfFrame();
+        
+        // disable overlay
+
+        // Commented out code is experimental to reduce lag on picture capture
+        //
+
+        //Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
+
+        //Get Picture
+        //screenImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+
+        //screenImage.Apply();
+        ScreenCapture.CaptureScreenshot("photo_ID" + picNum + ".png");
+        yield return new WaitForSeconds(.1f);
+        if (FlashOn)
+        {
+            flash.SetActive(true);
+            yield return new WaitForSeconds(.1f);
+            flash.SetActive(false);
+        }
+        overlay.SetActive(true);
+
+        /*byte[] rawData = screenImage.GetRawTextureData();
+
+        new System.Threading.Thread(() =>
+        {
+            System.Threading.Thread.Sleep(100);
+            File.WriteAllBytes(fileName, rawData);
+        }).Start();
+        */
+        yield return new WaitForSeconds(.25f);
+        picNum++;
+        Debug.Log("capture!");
+
+        yield break;
+    }
+
+    private IEnumerator OffLoadCapture()
+    {
+        Debug.Log("capture!");
+        ScreenCapture.CaptureScreenshot("test.png");
+        yield return new WaitForSeconds(1f);
+
+        yield break;
+    }
+
+        private Vector3[] ConvertToWorldPoints()
     {
         Vector3[] retArr = new Vector3[3];
         retArr[WORLD_CURRENT] = transform.position;
