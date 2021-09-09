@@ -35,7 +35,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        Play("Test");
+        Play("TestBackgroundMusic");
     }
 
     // Update is called once per frame
