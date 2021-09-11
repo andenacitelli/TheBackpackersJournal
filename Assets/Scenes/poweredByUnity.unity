@@ -153,10 +153,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: TestBackgroundMusic
+  - name: MainMenuBackground
     clip: {fileID: 8300000, guid: 9cc11d218fda2ba4e894ba8b4e765a0d, type: 3}
     volume: 0.5
     pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: GameStart
+    clip: {fileID: 8300000, guid: a8a5106eb2c7e2b429144609d8f169b0, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
     source: {fileID: 0}
 --- !u!4 &403391605
 Transform:
