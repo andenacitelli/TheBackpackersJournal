@@ -37,12 +37,31 @@ public class TerrainManager : MonoBehaviour
         int xStart, xEnd, zStart, zEnd;
         xStart =  playerPosChunks.x - generateRadius; 
         xEnd = playerPosChunks.x + generateRadius;
+
+        // Generate a fixed amount of frames per UPDATE call
+        // If this were FixedUpdate, we'd run into an issue where we could only hit a certain render distance
+        // However, because this is Update, update should get called more frequently on a more powerful computer and thus
+        // world generation can scale to higher chunk distances
+        const byte CHUNKS_TO_GENERATE_PER_FRAME = 3;
+        int chunksGeneratedThisFrame = 0; 
+
         for (int xIndex = xStart; xIndex < xEnd; xIndex++)
         {
             zStart = playerPosChunks.y - generateRadius; 
             zEnd = playerPosChunks.y + generateRadius;
+
+            if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
+            {
+                return;
+            }
+
             for (int zIndex = zStart; zIndex < zEnd; zIndex++)
             {
+                if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
+                {
+                    return;
+                }
+
                 // Chunk pos (in chunks)
                 Vector2 pos = new Vector2(xIndex, zIndex);
 
@@ -65,7 +84,8 @@ public class TerrainManager : MonoBehaviour
                     // Syntax: Instantiate(<prefab>, <parent transform>, <rotation>)
                     GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity) as GameObject;
                     chunks[pos] = tile;
-                }                
+                    chunksGeneratedThisFrame++;
+                }
             }
         }
     }
