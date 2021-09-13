@@ -8,20 +8,35 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool isPaused = false;
     public GameObject pauseMenuUI;
-    // Update is called once per frame
-    void Update()
+
+    PauseAction action;
+
+    private void Awake()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
-        }
+        action = new PauseAction();
+    }
+
+    private void OnEnable()
+    {
+        action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        action.Disable();
+    }
+
+    private void Start()
+    {
+        action.Pause.PauseGame.performed += _ => DeterminePause();
+    }
+
+    private void DeterminePause()
+    {
+        if (isPaused)
+            Resume();
+        else
+            Pause();
     }
 
     public void Resume()
@@ -78,7 +93,7 @@ public class PauseMenu : MonoBehaviour
         return save;
 
     }
-    
+
     void Pause()
     {
         pauseMenuUI.SetActive(true);
@@ -89,6 +104,7 @@ public class PauseMenu : MonoBehaviour
     public void Quit()
     {
         Debug.Log("Quit button pressed");
-        Application.Quit();     
+        Application.Quit();
     }
+
 }
