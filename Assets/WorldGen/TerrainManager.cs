@@ -33,58 +33,66 @@ public class TerrainManager : MonoBehaviour
             (int) player.transform.position.x / tileWidth, 
             (int) player.transform.position.z / tileDepth);
 
-        // Iterate through chunks around player to see if they need generated 
-        int xStart, xEnd, zStart, zEnd;
-        xStart =  playerPosChunks.x - generateRadius; 
-        xEnd = playerPosChunks.x + generateRadius;
-
         // Generate a fixed amount of frames per UPDATE call
         // If this were FixedUpdate, we'd run into an issue where we could only hit a certain render distance
         // However, because this is Update, update should get called more frequently on a more powerful computer and thus
         // world generation can scale to higher chunk distances
         const byte CHUNKS_TO_GENERATE_PER_FRAME = 3;
-        int chunksGeneratedThisFrame = 0; 
+        int chunksGeneratedThisFrame = 0;
 
-        for (int xIndex = xStart; xIndex < xEnd; xIndex++)
+        // While the easiest implementation iterates through things minimum x/z to maximum x/z, 
+        // we want to generate the closest frames (measured by simple euclidian distance) first.
+        // Option 1: Slap every close chunk coord in a list, then take the minimum out each time. This is incredibly unperformant and we can do better.
+        // Option 2: Throw them in a heap or some data structure that lets us take the minimum one out each time.
+        // Option 3: Keep a variable generating a "current radius" that tracks how far out we are.
+        //      We basically generate the chunk right under the player, then all chunks radius 1 away, then all chunks radius 2 away... 
+        // Option 3: Find a way to preserve some of the work across frames.
+        //      Theoretically, the most we should ever recalculate and reorder is
+        //      the frame that a player switches chunks, if not even less frequently.
+        List<Vector2Int> iterationOrder = new List<Vector2Int>();
+        Vector2Int currentChunk = new Vector2Int(playerPosChunks.x, playerPosChunks.y);
+        for (int currentRadius = 0; currentRadius < generateRadius; currentRadius++)
         {
-            zStart = playerPosChunks.y - generateRadius; 
-            zEnd = playerPosChunks.y + generateRadius;
-
-            if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
+            for (int xIndex = currentChunk.x - currentRadius; xIndex < currentChunk.x + currentRadius; xIndex++)
             {
-                return;
-            }
-
-            for (int zIndex = zStart; zIndex < zEnd; zIndex++)
-            {
-                if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
+                for (int zIndex = currentChunk.y - currentRadius; zIndex < currentChunk.y + currentRadius; zIndex++)
                 {
-                    return;
-                }
+                    // TODO: Probably possible and more performant to "save" where we were in this loop and only fully reset
+                    // iteration when we switch chunks (maximum theoretical we need) or even less frequently (i.e. 3 chunks)
+                    if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
+                    {
+                        return;
+                    }
 
-                // Chunk pos (in chunks)
-                Vector2 pos = new Vector2(xIndex, zIndex);
+                    // Skip any chunk that's within the square-wise radius but not within the circle-wise radius
+                    // TODO: Probably a better spiraling algorithm possible that doesn't require a `continue`, but better things to work on rn
+                    if (Vector2Int.Distance(playerPosChunks, new Vector2Int(xIndex, zIndex)) > generateRadius)
+                    {
+                        continue;
+                    }
 
-                // Generate in circular radius; 
-                // Simpler (and barely less optimal) than trying to generate iteration order through a sphere in the first place 
-                if (Vector2.Distance(pos, playerPosChunks) > generateRadius)
-                {
-                    continue;
-                }
+                    // Only generate if it's on the outside border x-wise or z-wise
+                    if (xIndex != currentChunk.x - currentRadius && xIndex != currentChunk.x + currentRadius && 
+                        zIndex != currentChunk.y - currentRadius && zIndex != currentChunk.y + currentRadius)
+                    {
+                        // Chunk pos (in chunks)
+                        Vector2 pos = new Vector2(xIndex, zIndex);
 
-                // Only generate chunk if it doesn't already exist 
-                if (!chunks.ContainsKey(pos))
-                {
-                    // Chunk pos (in absolute world coordinates) 
-                    Vector3 chunkPos = new Vector3(this.gameObject.transform.position.x + xIndex * tileWidth, 
-                        this.gameObject.transform.position.y, 
-                        this.gameObject.transform.position.z + zIndex * tileDepth);
+                        // Only generate chunk if it doesn't already exist 
+                        if (!chunks.ContainsKey(pos))
+                        {
+                            // Chunk pos (in absolute world coordinates) 
+                            Vector3 chunkPos = new Vector3(this.gameObject.transform.position.x + xIndex * tileWidth,
+                            this.gameObject.transform.position.y,
+                            this.gameObject.transform.position.z + zIndex * tileDepth);
 
-                    // Instantiate new tile GameObject 
-                    // Syntax: Instantiate(<prefab>, <parent transform>, <rotation>)
-                    GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity) as GameObject;
-                    chunks[pos] = tile;
-                    chunksGeneratedThisFrame++;
+                            // Instantiate new tile GameObject 
+                            // Syntax: Instantiate(<prefab>, <parent transform>, <rotation>)
+                            GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity) as GameObject;
+                            chunks[pos] = tile;
+                            chunksGeneratedThisFrame++;
+                        }
+                    }
                 }
             }
         }
