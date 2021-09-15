@@ -23,27 +23,27 @@ public class Sight : Sense
         if(elapsedTime >= detectRate)
         {
             DetectAspect();
+            elapsedTime = 0;
         }
     }
 
     void DetectAspect()
     {
         RaycastHit hit;
+        // get angle between target and npc
         rayDirection = targetTransform.position - transform.position;
 
+        // check if angle is in the fov
         if ((Vector3.Angle(rayDirection, transform.forward)) < fov)
         {
-            // detect if something can be seen
+            // check for unobstructed line of sight in range
             if(Physics.Raycast(transform.position, rayDirection, out hit, range))
             {
                 Aspect aspect = hit.collider.GetComponent<Aspect>();
-                if (aspect != null)
+                if (aspect != null && aspect.aspectType != aspectName)
                 {
                     // report what was seen
-                    if(aspect.aspectType != aspectName)
-                    {
-                        Debug.Log($"{aspect.aspectType} sighted");
-                    }
+                    Debug.Log($"I CAN SEE YOU, YOU {aspect.aspectType} BASTARD!");
                 }
             }
         }

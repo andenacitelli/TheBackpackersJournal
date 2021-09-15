@@ -9,7 +9,6 @@ public class Aspect : MonoBehaviour
         PLAYER,
         PREY,
         PREDATOR,
-        TARGET,
     }
     public AspectTypes aspectType;
 }
