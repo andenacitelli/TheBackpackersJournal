@@ -112,11 +112,20 @@ public class TerrainManager : MonoBehaviour
 
         // Get a list of chunks to remove; we can't actually remove them yet, as you can't modify a dictionary during iterations 
         List<Vector2> keysToRemove = new List<Vector2>();
+        const int CHUNKS_TO_CULL_PER_FRAME = 5;
+        int chunksCulled = 0;
         foreach (KeyValuePair<Vector2, GameObject> chunkPair in chunks)
         {
             if (Vector2.Distance(chunkPair.Key, playerPosChunks) > generateRadius)
             {
                 keysToRemove.Add(chunkPair.Key);
+
+                // If we've hit our limit, stop searching for more chunks to cull
+                chunksCulled++;
+                if (chunksCulled >= CHUNKS_TO_CULL_PER_FRAME)
+                {
+                    break;
+                }
             }
         }
 
