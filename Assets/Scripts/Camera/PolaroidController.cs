@@ -9,6 +9,7 @@ public class PolaroidController : MonoBehaviour
     public RectTransform shutter;
     public GameObject overlay;
     public GameObject flash;
+    public GameObject pauseObj;
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
 
@@ -47,30 +48,35 @@ public class PolaroidController : MonoBehaviour
 
     public void OnRaiseInput(float secondary)
     {
-        if (!aimRunning && secondary == 1)
-        {  
-            StartCoroutine("EngagedAim");
-        } else if(secondary == 0)
+        if (!pauseObj.activeInHierarchy)
         {
-            aimDisengaged = true;
+            if (!aimRunning && secondary == 1)
+            {
+                StartCoroutine("EngagedAim");
+            }
+            else if (secondary == 0)
+            {
+                aimDisengaged = true;
+            }
         }
-        
+            
     }
 
     public void OnPrimaryInput(float primary)
     {
-        
-        if (photoActive && !captureStart )
+        if (!pauseObj.activeInHierarchy)
         {
-            if (FlashOn)
+            if (photoActive && !captureStart)
             {
-                StartCoroutine("CapturePhoto");
+                if (FlashOn)
+                {
+                    StartCoroutine("CapturePhoto");
+                }
             }
-            
-
-        } else
-        {
-            Debug.Log("No Aim. No picture.");
+            else
+            {
+                Debug.Log("No Aim. No picture.");
+            }
         }
     }
 
