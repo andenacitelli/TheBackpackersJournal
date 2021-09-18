@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
+using System.Xml.Serialization;
 using System.IO;
 
 public class PauseMenu : MonoBehaviour
 {
     public static bool isPaused = false;
     public GameObject pauseMenuUI;
-
     PauseAction action;
 
     private void Awake()
@@ -53,8 +53,11 @@ public class PauseMenu : MonoBehaviour
     {
         Save save = createSaveGameObject();
         XmlDocument xmlDoc = new XmlDocument();
-
-        #region CreateXML elements
+        XmlSerializer serializer = new XmlSerializer(typeof(Save));
+        FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml", FileMode.Create);
+        serializer.Serialize(stream, save);
+        stream.Close();
+/*        #region CreateXML elements
 
         XmlElement root = xmlDoc.CreateElement("Save");
         root.SetAttribute("PlayerName", save.playerName);
@@ -74,22 +77,22 @@ public class PauseMenu : MonoBehaviour
         #endregion
 
         xmlDoc.AppendChild(root);
-
-        xmlDoc.Save(Application.dataPath + "DataXML.text");
-        if (File.Exists(Application.dataPath + "/DataXML.text") )
+        
+        xmlDoc.Save(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml");
+        if (File.Exists(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml") )
         {
             Debug.Log("XML FILE SAVED");
-        }
+        }*/
     }
 
     private Save createSaveGameObject()
     {
         Save save = new Save();
-/*      save.playerName = ;
-        save.playerPositionX = ;
-        save.playerPositionY = ;
-        save.playerPositionZ = ;
-        save.GamePercentage = ;*/
+        save.playerName = "Roger";
+        save.playerPositionX = GameObject.FindWithTag("Player").transform.position.x;
+        save.playerPositionY = GameObject.FindWithTag("Player").transform.position.y;
+        save.playerPositionZ = GameObject.FindWithTag("Player").transform.position.z;
+        save.GamePercentage = 0;
         return save;
 
     }

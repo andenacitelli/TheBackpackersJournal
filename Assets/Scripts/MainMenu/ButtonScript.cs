@@ -4,26 +4,39 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
+
 public class ButtonScript : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        FindObjectOfType<AudioManager>().Stop("MainMenuBackground");
-        FindObjectOfType<AudioManager>().Play("GameStart");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            FindObjectOfType<AudioManager>().Stop("MainMenuBackground");
+            FindObjectOfType<AudioManager>().Play("GameStart");
     }
 
     public void Load()
     {
-        LoadByXML();
+        Save save = LoadByXML();
+        PlayerPrefs.SetFloat("PlayerPosX", save.playerPositionX);
+        PlayerPrefs.SetFloat("PlayerPosY", save.playerPositionY);
+        PlayerPrefs.SetFloat("PlayerPosZ", save.playerPositionZ);
+        PlayGame();
     }
 
-    public void LoadByXML()
+    public Save LoadByXML()
     {
-        if (File.Exists(Application.dataPath + "/DataXML.text"))
+        if (File.Exists(Application.dataPath + "/XMLSaves/" + "Roger" + ".xml"))
         {
+            
             Save save = new Save();
-            XmlDocument xmlDoc = new XmlDocument();
+            XmlSerializer serializer = new XmlSerializer(typeof(Save));
+            FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + "Roger" + ".xml", FileMode.Open);
+            save = serializer.Deserialize(stream) as Save;
+            stream.Close();
+            Debug.Log(save.playerPositionX);
+            return save;
+/*            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(Application.dataPath + "/DataXML.text");
 
             XmlNodeList playerPosX = xmlDoc.GetElementsByTagName("PlayerPositionX");
@@ -36,13 +49,15 @@ public class ButtonScript : MonoBehaviour
 
             XmlNodeList playerPosZ = xmlDoc.GetElementsByTagName("PlayerPositionZ");
             float playerPositionZ = float.Parse(playerPosZ[0].InnerText);
-            save.playerPositionZ = playerPositionZ;
+            save.playerPositionZ = playerPositionZ;*/
 
             /*Load the game*/
         }
         else
         {
-            Debug.Log("XML FILE NOT FOUND");
+            Save save = new Save();
+            Debug.Log("XML SAVE FILE NOT FOUND");
+            return save;
         }
     }
 
