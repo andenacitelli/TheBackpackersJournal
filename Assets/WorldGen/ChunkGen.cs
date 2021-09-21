@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TriangleNet.Geometry;
 
 // Selectively shade chunks 
 [System.Serializable]
@@ -34,6 +35,8 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private MeshCollider meshCollider;
 
+    TriangleNet.Mesh mesh;
+
     // Represents how much to spread the Perlin noise out; for a flatter, smoother map, make this value high
     [SerializeField]
     private float mapScale;
@@ -46,27 +49,53 @@ public class ChunkGen : MonoBehaviour
     // Holds the Vector2 local coordinate of every vertex in the mesh.vertices array 
     void GenerateChunk()
     {
-        // Get a list of the square vertices 
-        Vector3[] meshVertices = this.meshFilter.mesh.vertices;
-        int chunkDepth = (int)Mathf.Sqrt(meshVertices.Length);
-        int chunkWidth = chunkDepth;
+        // Generate random list of vertices to use as our Delaunay vertices
+        const int NUM_POINTS = 50;
+        Polygon polygon = new Polygon();
+        Bounds bounds = this.meshFilter.mesh.bounds;
+        float minX = this.gameObject.transform.position.x, minZ = this.gameObject.transform.position.z;
+        for (int i = 0; i < NUM_POINTS; i++)
+        {
+            // Generate random vertices within chunk boundaries
+            polygon.Add(new Vertex(
+                Random.Range(minX, minX + meshRenderer.bounds.size.x),
+                Random.Range(minZ, minZ + meshRenderer.bounds.size.z)));
+        }
 
-        // Slightly randomize the position of each triangle so it looks less uniform
-        // IMPORTANT: New random number generator is created for this and seeded with the chunk position, 
-        // meaning this operation will give the same "randomization" each time you generate this chunk.
-        RandomizeVertices();
+        // Let Triangle.NET do the hard work of actually generating the triangles to connect them
+        TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
+        mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
 
         // Convert from shared vertices to non-shared vertices; 
         // If we use shared vertices, there's just no way to get the low-poly shader style
-        UpdateTriangles();
+        // UpdateTriangles();
 
         // Offset from overall world position based on coordinates
-        float offsetX = -this.gameObject.transform.position.x;
-        float offsetZ = -this.gameObject.transform.position.z;
-        Dictionary<Vector2, float> heightMap = this.noise.GenerateNoiseMap(chunkDepth, chunkWidth, this.mapScale, offsetX, offsetZ, waves);
+        // float offsetX = -this.gameObject.transform.position.x;
+        // float offsetZ = -this.gameObject.transform.position.z;
+        // Dictionary<Vector2, float> heightMap = this.noise.GenerateNoiseMap(chunkDepth, chunkWidth, this.mapScale, offsetX, offsetZ, waves);
 
         // Update vertex heights and colors 
-        UpdateMeshVertices(heightMap);
+        // UpdateMeshVertices(heightMap);
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (mesh == null)
+        {
+            // We're probably in the editor
+            return;
+        }
+
+        Gizmos.color = Color.red;
+        foreach (Edge edge in mesh.Edges)
+        {
+            Vertex v0 = mesh.vertices[edge.P0];
+            Vertex v1 = mesh.vertices[edge.P1];
+            Vector3 p0 = new Vector3((float)v0.x, 0.0f, (float)v0.y);
+            Vector3 p1 = new Vector3((float)v1.x, 0.0f, (float)v1.y);
+            Gizmos.DrawLine(p0, p1);
+        }
     }
 
     // TODO: This method is going to introduce straight lines along chunk boundaries, even if I keep those vertices the same
