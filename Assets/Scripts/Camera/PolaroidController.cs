@@ -9,9 +9,11 @@ public class PolaroidController : MonoBehaviour
     public RectTransform shutter;
     public GameObject overlay;
     public GameObject flash;
+    public GameObject pauseObj;
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
-    
+
+
     public bool FlashOn { get; set; }
     private int picNum = 0;
     private const int WORLD_CURRENT = 0;
@@ -24,7 +26,12 @@ public class PolaroidController : MonoBehaviour
     private bool photoActive, captureStart;
     private float shutterStop, shutterWidth;
     private float raiseHalfDist, shutterT;
-    
+    private CameraRoll cRoll;
+
+    private void Awake()
+    {
+        cRoll = GetComponent<CameraRoll>();
+    }
 
     private void Start()
     {
@@ -41,32 +48,35 @@ public class PolaroidController : MonoBehaviour
 
     public void OnRaiseInput(float secondary)
     {
-        //Debug.Log($"On Raise Start: {secondary}");
-        if (!aimRunning && secondary == 1)
-        {  
-            StartCoroutine("EngagedAim");
-        } else if(secondary == 0)
+        if (!pauseObj.activeInHierarchy)
         {
-            //aimEngaged = false;
-            aimDisengaged = true;
+            if (!aimRunning && secondary == 1)
+            {
+                StartCoroutine("EngagedAim");
+            }
+            else if (secondary == 0)
+            {
+                aimDisengaged = true;
+            }
         }
-        
+            
     }
 
     public void OnPrimaryInput(float primary)
     {
-        
-        if (photoActive && !captureStart )
+        if (!pauseObj.activeInHierarchy)
         {
-            if (FlashOn)
+            if (photoActive && !captureStart)
             {
-                StartCoroutine("CapturePhoto");
+                if (FlashOn)
+                {
+                    StartCoroutine("CapturePhoto");
+                }
             }
-            
-
-        } else
-        {
-            Debug.Log("No Aim. No picture.");
+            else
+            {
+                Debug.Log("No Aim. No picture.");
+            }
         }
     }
 
@@ -87,7 +97,8 @@ public class PolaroidController : MonoBehaviour
         {
             worldPos = ConvertToWorldPoints();
             transform.position = Vector3.Lerp(worldPos[WORLD_CURRENT], worldPos[WORLD_END], .1f);
-            if(!shutterOn && Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_END]) > raiseHalfDist )
+            #region shutter1
+            if (!shutterOn && Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_END]) > raiseHalfDist )
             {
                 shutterOn = true;
             } else if (shutterOn && !shutterHalved)
@@ -117,10 +128,9 @@ public class PolaroidController : MonoBehaviour
                 }
                 
             }
+            #endregion
             yield return new WaitForSeconds(.01f);   
         }
-
-
         //HOLDING AIM
         while (!aimDisengaged)
         {
@@ -140,6 +150,7 @@ public class PolaroidController : MonoBehaviour
         
         while (Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_START]) >= .005)
         {
+            #region shutter2
             if (!shutterOn && !shutterStopped)
             {
                 shutterOn = true;
@@ -174,7 +185,7 @@ public class PolaroidController : MonoBehaviour
                 }
 
             }
-
+            #endregion
             worldPos = ConvertToWorldPoints();
             transform.position = Vector3.Lerp(worldPos[WORLD_CURRENT], worldPos[WORLD_START], .08f);
             
@@ -191,22 +202,19 @@ public class PolaroidController : MonoBehaviour
 
     private IEnumerator CapturePhoto()
     {
+        //Prep for Photo:
         //string fileName = Application.persistentDataPath + "/photo_ID" + picNum + ".png";
+        Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
         overlay.SetActive(false);
         yield return new WaitForEndOfFrame();
-        
-        // disable overlay
 
-        // Commented out code is experimental to reduce lag on picture capture
-        //
+        //Get Picture:
+        screenImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
 
-        //Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
+        screenImage.Apply();
+        //ref- EZ Capture:
+        //     ScreenCapture.CaptureScreenshot("photo_ID" + picNum + ".png");
 
-        //Get Picture
-        //screenImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-
-        //screenImage.Apply();
-        ScreenCapture.CaptureScreenshot("photo_ID" + picNum + ".png");
         yield return new WaitForSeconds(.1f);
         if (FlashOn)
         {
@@ -215,32 +223,17 @@ public class PolaroidController : MonoBehaviour
             flash.SetActive(false);
         }
         overlay.SetActive(true);
-
-        /*byte[] rawData = screenImage.GetRawTextureData();
-
-        new System.Threading.Thread(() =>
-        {
-            System.Threading.Thread.Sleep(100);
-            File.WriteAllBytes(fileName, rawData);
-        }).Start();
-        */
-        yield return new WaitForSeconds(.25f);
+        
+        cRoll.RecievePhoto(screenImage);
+        yield return new WaitForSeconds(.5f);
+        
         picNum++;
         Debug.Log("capture!");
 
         yield break;
     }
 
-    private IEnumerator OffLoadCapture()
-    {
-        Debug.Log("capture!");
-        ScreenCapture.CaptureScreenshot("test.png");
-        yield return new WaitForSeconds(1f);
-
-        yield break;
-    }
-
-        private Vector3[] ConvertToWorldPoints()
+    private Vector3[] ConvertToWorldPoints()
     {
         Vector3[] retArr = new Vector3[3];
         retArr[WORLD_CURRENT] = transform.position;

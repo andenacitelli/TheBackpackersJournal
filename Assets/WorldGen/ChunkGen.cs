@@ -51,8 +51,13 @@ public class ChunkGen : MonoBehaviour
         int chunkDepth = (int)Mathf.Sqrt(meshVertices.Length);
         int chunkWidth = chunkDepth;
 
+        // Slightly randomize the position of each triangle so it looks less uniform
+        // IMPORTANT: New random number generator is created for this and seeded with the chunk position, 
+        // meaning this operation will give the same "randomization" each time you generate this chunk.
+        RandomizeVertices();
+
         // Convert from shared vertices to non-shared vertices; 
-        // If we use shared vertices, there's just no way to 
+        // If we use shared vertices, there's just no way to get the low-poly shader style
         UpdateTriangles();
 
         // Offset from overall world position based on coordinates
@@ -62,6 +67,39 @@ public class ChunkGen : MonoBehaviour
 
         // Update vertex heights and colors 
         UpdateMeshVertices(heightMap);
+    }
+
+    // TODO: This method is going to introduce straight lines along chunk boundaries, even if I keep those vertices the same
+    // Honestly not really sure what a good fix for that is without needing to pregenerate neighbor chunks so I can interpolate
+    // where the transition should be. It's a solution but seems complicated.
+    void RandomizeVertices()
+    { 
+        // Will technically give the same vertex-specific randomization for any chunks whose coordinates multiply
+        // to the same value, but collisions will be rare and those circumstances will be unrecognizeable
+        Random.InitState((int)this.gameObject.transform.position.x * (int)this.gameObject.transform.position.z);
+
+        int width = (int)Mathf.Sqrt(this.meshFilter.mesh.vertices.Length);
+        Vector3[] newVertices = new Vector3[this.meshFilter.mesh.vertices.Length];
+        int row, column;
+        for (int i = 0; i < this.meshFilter.mesh.vertices.Length; i++)
+        {
+            row = i / width;
+            column = i % width;
+            var vertex = this.meshFilter.mesh.vertices[i];
+
+            // If it's on the chunk boundary, we keep it the same so chunks are continuous across their borders
+            if (row == 0 || row == width - 1 || column == 0 || column == width - 1)
+            {
+                newVertices[i] = vertex;
+            } 
+            
+            // Otherwise, we can shake it up a little bit to give the game world some pizazz
+            else 
+            {
+                newVertices[i] = new Vector3(vertex.x + Random.Range(-.4f, .4f), vertex.y, vertex.z + Random.Range(-.4f, .4f));
+            }
+        }
+        this.meshFilter.mesh.vertices = newVertices;
     }
 
     // Converts the vertex representation of the mesh to non-shared vertices 
