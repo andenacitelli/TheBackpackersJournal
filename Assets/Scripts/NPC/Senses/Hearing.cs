@@ -5,43 +5,30 @@ using UnityEngine;
 public class Hearing : Sense
 {
     [Header("Sound Detect Distance")]
-    [SerializeField]
-    float hearingRadius = 10;
-
-    protected override void UpdateSense()
-    {
-        elapsedTime += Time.deltaTime;
-
-        if (elapsedTime >= detectRate)
-        {
-            DetectAspect();
-            elapsedTime = 0;
-        }
-    }
-
+    [Range(0.0f, 100.0f)]
+    public float hearingRadius = 10.0f;
     // check range for heard things
-    void DetectAspect()
+    protected override void DetectAspect()
     {
         // get colliders in the hearing range
-        Collider[] heardColliders = Physics.OverlapSphere(transform.position, hearingRadius);
+        Collider[] targetsInRadius = Physics.OverlapSphere(transform.position, hearingRadius);
        
         GameObject detectedObject;
         Aspect aspect;
 
-        foreach (var heardCollider in heardColliders)
+        foreach (var targetInRadius in targetsInRadius)
         {
-            detectedObject = heardCollider.gameObject;
+            detectedObject = targetInRadius.gameObject;
 
             // ignore self
-            if(detectedObject != transform.gameObject) 
-            {
+            //if(detectedObject != transform.gameObject) 
+            //{
                 // ignore same aspects
-                if (detectedObject.TryGetComponent<Aspect>(out aspect) && aspect.aspectType != aspectName)
+                if (detectedObject.TryGetComponent<Aspect>(out aspect))
                 {
-                    // report what was heard
-                    Debug.Log($"IS THAT A FILTHY {aspect.aspectType} I HEAR????");
+                    detectedTargets.Add(detectedObject);
                 }
-            }
+            //}
         }
     }
 }

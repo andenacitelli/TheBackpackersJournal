@@ -5,22 +5,33 @@ using UnityEngine;
 public class Sense : MonoBehaviour
 {
     public Aspect.AspectTypes aspectName = Aspect.AspectTypes.PREY;
-    public float detectRate = 1.0f;
+    [HideInInspector]
+    public List<GameObject> detectedTargets = new List<GameObject>();
 
-    protected float elapsedTime = 0.0f;
+    [SerializeField]
+    [Range(0.0f, 1.0f)]
+    float detectRate = 1.0f;
 
     protected virtual void Initialize() { }
-    protected virtual void UpdateSense() { }
+    protected virtual void DetectAspect() { }
 
     void Start()
     {
-        elapsedTime = 0.0f;
         Initialize();
+        StartCoroutine(FindTargetsWithDelay());
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator FindTargetsWithDelay()
     {
-        UpdateSense();
+        while (true)
+        {
+            UpdateSense();
+            yield return new WaitForSeconds(detectRate);
+        }
+    }
+    public void UpdateSense()
+    {
+            detectedTargets.Clear();
+            DetectAspect();
     }
 }

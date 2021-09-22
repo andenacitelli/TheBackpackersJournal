@@ -5,47 +5,71 @@ using UnityEngine;
 
 public class Sight : Sense
 {
-    public int fov = 45;
-    public int range = 100;
+    [Range(0.0f, 360.0f)]
+    public int fieldOfView = 90;
+    [Range(0.0f, 100.0f)]
+    public int viewRadius = 100;
 
-    private Transform targetTransform;
-    private Vector3 rayDirection;
+    public LayerMask targetMask;
+    public LayerMask obstacleMask;
+
+
+    //private Transform targetTransform;
+    //private Vector3 rayDirection;
 
     protected override void Initialize()
     {
-        targetTransform = GameObject.Find("Target").transform;
+        //targetTransform = GameObject.Find("Target").transform;
     }
-
-    protected override void UpdateSense()
+    public Vector3 AngleDirection(float angleDegrees, bool isGlobal)
     {
-        elapsedTime += Time.deltaTime;
-
-        if(elapsedTime >= detectRate)
+        if (!isGlobal)
         {
-            DetectAspect();
-            elapsedTime = 0;
+            angleDegrees += transform.eulerAngles.y;
         }
+
+        return new Vector3(Mathf.Sin(angleDegrees * Mathf.Deg2Rad), 0.0f, Mathf.Cos(angleDegrees * Mathf.Deg2Rad));
     }
 
-    void DetectAspect()
+    protected override void DetectAspect()
     {
-        RaycastHit hit;
-        // get angle between target and npc
-        rayDirection = targetTransform.position - transform.position;
+        Collider[] targetsInRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        // check if angle is in the fov
-        if ((Vector3.Angle(rayDirection, transform.forward)) < fov)
+        foreach (var targetInRadius in targetsInRadius)
         {
-            // check for unobstructed line of sight in range
-            if(Physics.Raycast(transform.position, rayDirection, out hit, range))
+            Transform target = targetInRadius.transform;
+            Vector3 dirToTarget = (target.position - transform.position).normalized;
+
+            // disregard objects outside of fov angle
+            if (Vector3.Angle(transform.forward, dirToTarget) < fieldOfView / 2)
             {
-                Aspect aspect = hit.collider.GetComponent<Aspect>();
-                if (aspect != null && aspect.aspectType != aspectName)
+                float targetDistance = Vector3.Distance(transform.position, target.position);
+
+                if (!Physics.Raycast(transform.position, dirToTarget, targetDistance, obstacleMask))
                 {
-                    // report what was seen
-                    Debug.Log($"I CAN SEE YOU, YOU {aspect.aspectType} BASTARD!");
+                    detectedTargets.Add(target.gameObject);
                 }
             }
+
         }
+
+
+        //RaycastHit hit;
+        //// get angle between target and npc
+        //rayDirection = targetTransform.position - transform.position;
+
+        //// check if angle is in the fov
+        //if ((Vector3.Angle(rayDirection, transform.forward)) < fieldOfView)
+        //{
+        //    // check for unobstructed line of sight in range
+        //    if (Physics.Raycast(transform.position, rayDirection, out hit, viewRadius))
+        //    {
+        //        Aspect aspect = hit.collider.GetComponent<Aspect>();
+        //        if (aspect != null && aspect.aspectType != aspectName)
+        //        {
+        //            detected.Add(aspect.gameObject);
+        //        }
+        //    }
+        //}
     }
 }

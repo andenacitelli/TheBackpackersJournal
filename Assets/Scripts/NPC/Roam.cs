@@ -4,30 +4,27 @@ using UnityEngine;
 
 public class Roam : MonoBehaviour
 {
-    public Vector3 target;
+    Vector3 destination;
     [Header("Movement and Turn Speeds")]
     [SerializeField]
+    [Range(0.0f, 10.0f)]
     float moveSpeed = 5.0f;
     [SerializeField]
+    [Range(0.0f, 10.0f)]
     float turnSpeed = 2.0f;
     [Header("Distance to consider target reached")]
     [SerializeField]
     float targetTolerance = 3.0f;
 
     // restrictions on where the npc can go
-    float minX, maxX;
-    float minZ, maxZ;
+    public float maxX;
+    public float maxZ;
 
     CharacterController controller;
 
     void Start()
     {
-        // initialize movement restrictions
-        minX = -15.0f;
-        maxX = 15.0f;
-        minZ = -15.0f;
-        maxZ = 15.0f;
-
+        
         controller = GetComponent<CharacterController>();
 
         // Get intial move position
@@ -36,26 +33,23 @@ public class Roam : MonoBehaviour
 
     void Update()
     {
-        if(Vector3.Distance(target, transform.position) <= targetTolerance)
+        if(Vector3.Distance(destination, transform.position) <= targetTolerance)
         {
             GetNextPosition();
         }
 
         // turn toward target
-        Quaternion targetRotation = Quaternion.LookRotation(target - transform.position);
+        Quaternion targetRotation = Quaternion.LookRotation(destination - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
 
         // move toward target
-        Vector3 moveDirection = target - transform.position;
-        moveDirection.Normalize();
-        moveDirection = transform.TransformDirection(moveDirection);
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
     }
 
     // generate a new position to navigate to
     void GetNextPosition()
     {
-        target = new Vector3(Random.Range(minX, maxX), .5f, Random.Range(minZ, maxZ));
+        destination = new Vector3(Random.Range(-maxX, maxX), transform.position.y, Random.Range(-maxZ, maxZ));
     }
 
 }
