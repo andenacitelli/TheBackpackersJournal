@@ -82,13 +82,19 @@ public class TerrainManager : MonoBehaviour
                         if (!chunks.ContainsKey(pos))
                         {
                             // Chunk pos (in absolute world coordinates) 
-                            Vector3 chunkPos = new Vector3(this.gameObject.transform.position.x + xIndex * tileWidth,
+                            print("Chunk Coords: " + pos);
+                            print("gameobject.position: " + this.gameObject.transform.position.x);
+                            print("xIndex: " + xIndex);
+                            print("tileWidth: " + tileWidth);
+                            Vector3 chunkPos = new Vector3(this.gameObject.transform.position.x + (xIndex * tileWidth) / 2,
                             this.gameObject.transform.position.y,
-                            this.gameObject.transform.position.z + zIndex * tileDepth);
+                            this.gameObject.transform.position.z + (zIndex * tileDepth) / 2);
+                            print("chunkPos: " + chunkPos);
 
                             // Instantiate new tile GameObject 
                             // Syntax: Instantiate(<prefab>, <parent transform>, <rotation>)
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity) as GameObject;
+                            tile.transform.parent = this.gameObject.transform;
                             chunks[pos] = tile;
                             chunksGeneratedThisFrame++;
                         }

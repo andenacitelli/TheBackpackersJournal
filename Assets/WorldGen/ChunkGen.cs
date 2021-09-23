@@ -48,7 +48,7 @@ public class ChunkGen : MonoBehaviour
     void Start()
     {
         // Calculate things we'll use all throughout the class 
-        Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
+        Vector3 tileSize = this.GetComponent<MeshRenderer>().bounds.size;
         tileWidth = Mathf.RoundToInt(tileSize.x); // Should theoretically already be 10, but can't hurt to round to be sure
         tileDepth = Mathf.RoundToInt(tileSize.z);
 
@@ -134,19 +134,21 @@ public class ChunkGen : MonoBehaviour
             vertices.Add(v1);
             vertices.Add(v2);
 
-            // var normal = Vector3.Cross(v1 - v0, v2 - v0);
-            
-            /* 
+            var normal = Vector3.Cross(v1 - v0, v2 - v0);            
             for (int x = 0; x < 3; x++)
             {
-                // normals.Add(normal);
+                normals.Add(normal);
                 uvs.Add(Vector3.zero);
-            }'
-            */  
+            }
         }
 
         this.meshFilter.mesh.vertices = vertices.ToArray();
+        this.meshFilter.mesh.uv = uvs.ToArray();
         this.meshFilter.mesh.triangles = triangles.ToArray();
+        this.meshFilter.mesh.normals = normals.ToArray();
+        this.meshFilter.mesh.RecalculateBounds();
+        this.meshFilter.mesh.RecalculateNormals();
+        this.meshCollider.sharedMesh = this.meshFilter.mesh;
     }
 
     // Low-collision function that gives us as unique an integer as possible, given chunk coordinates
