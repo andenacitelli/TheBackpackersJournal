@@ -62,6 +62,12 @@ public class ChunkGen : MonoBehaviour
                 Random.Range(minZ, minZ + meshRenderer.bounds.size.z)));
         }
 
+        // Add the corners of the chunk
+        polygon.Add(new Vertex(minX, minZ));
+        polygon.Add(new Vertex(minX + meshRenderer.bounds.size.x, minZ));
+        polygon.Add(new Vertex(minX, minZ + meshRenderer.bounds.size.z));
+        polygon.Add(new Vertex(minX + meshRenderer.bounds.size.x, minZ + meshRenderer.bounds.size.z));
+
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
         mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
