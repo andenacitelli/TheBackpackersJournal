@@ -150,8 +150,8 @@ MonoBehaviour:
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
-  mapScale: 40
-  heightMultiplier: 120
+  mapScale: 60
+  heightMultiplier: 150
   heightCurve:
     serializedVersion: 2
     m_Curve:

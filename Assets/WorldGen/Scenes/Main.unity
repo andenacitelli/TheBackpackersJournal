@@ -284,7 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105, guid: 2f020166ef04cae4bad76b88ada1ac75, type: 3}
   player: {fileID: 1782234108}
-  generateRadius: 2
+  generateRadius: 8
 --- !u!4 &1240365349
 Transform:
   m_ObjectHideFlags: 0
@@ -312,7 +312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560380, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: moveSpeed
-      value: 150
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_RootOrder
@@ -358,9 +358,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2731847667364621169, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731847667364621169, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: far clip plane
-      value: 1000
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_OcclusionCulling
