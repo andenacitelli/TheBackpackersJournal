@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d843550cc7c4bd544a11d852ba109f5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 6322903469593028105}
   terrainTypes:
   - randomizationFactor: 0.05
     name: water
@@ -145,7 +146,7 @@ MonoBehaviour:
     amplitude: 2
   - seed: 3
     frequency: 0.25
-    amplitude: 8
+    amplitude: 4
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
