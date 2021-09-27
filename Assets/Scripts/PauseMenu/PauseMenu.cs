@@ -8,8 +8,12 @@ using System.IO;
 public class PauseMenu : MonoBehaviour
 {
     public static bool isPaused = false;
+    private static bool isSaving = false;
     public GameObject pauseMenuUI;
     PauseAction action;
+    public GameObject savePrompt;
+
+    private string input;
 
     private void Awake()
     {
@@ -33,10 +37,12 @@ public class PauseMenu : MonoBehaviour
 
     private void DeterminePause()
     {
-        if (isPaused)
-            Resume();
-        else
-            Pause();
+        if(!isSaving){
+            if (isPaused)
+                Resume();
+            else
+                Pause();
+        }      
     }
 
     public void Resume()
@@ -47,48 +53,30 @@ public class PauseMenu : MonoBehaviour
     }
     public void Save()
     {
-        SaveByXML();
+        pauseMenuUI.SetActive(false);
+        savePrompt.SetActive(true);
+        isSaving = true;
     }
-    public void SaveByXML()
+    public void SaveByXML(string s)
     {
-        Save save = createSaveGameObject();
-        XmlDocument xmlDoc = new XmlDocument();
-        XmlSerializer serializer = new XmlSerializer(typeof(Save));
-        FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml", FileMode.Create);
-        serializer.Serialize(stream, save);
-        stream.Close();
-/*        #region CreateXML elements
-
-        XmlElement root = xmlDoc.CreateElement("Save");
-        root.SetAttribute("PlayerName", save.playerName);
-        root.SetAttribute("GamePercentage", save.GamePercentage.ToString());
-        XmlElement playerPosXElement = xmlDoc.CreateElement("PlayerPositionX");
-        playerPosXElement.InnerText = save.playerPositionX.ToString();
-        root.AppendChild(playerPosXElement);
-
-        XmlElement playerPosYElement = xmlDoc.CreateElement("PlayerPositionY");
-        playerPosYElement.InnerText = save.playerPositionY.ToString();
-        root.AppendChild(playerPosYElement);
-
-        XmlElement playerPosZElement = xmlDoc.CreateElement("PlayerPositionZ");
-        playerPosZElement.InnerText = save.playerPositionZ.ToString();
-        root.AppendChild(playerPosZElement);
-
-        #endregion
-
-        xmlDoc.AppendChild(root);
-        
-        xmlDoc.Save(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml");
-        if (File.Exists(Application.dataPath + "/XMLSaves/" + save.playerName + ".xml") )
+        if (s != "")
         {
-            Debug.Log("XML FILE SAVED");
-        }*/
+            Save save = createSaveGameObject(s);
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlSerializer serializer = new XmlSerializer(typeof(Save));
+            FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + s + ".xml", FileMode.Create);
+            serializer.Serialize(stream, save);
+            stream.Close();
+            savePrompt.SetActive(false);
+            pauseMenuUI.SetActive(true);
+            isSaving = false;
+        }
     }
 
-    private Save createSaveGameObject()
+    private Save createSaveGameObject(string s)
     {
         Save save = new Save();
-        save.playerName = "Roger";
+        save.playerName = s;
         save.playerPositionX = GameObject.FindWithTag("Player").transform.position.x;
         save.playerPositionY = GameObject.FindWithTag("Player").transform.position.y;
         save.playerPositionZ = GameObject.FindWithTag("Player").transform.position.z;

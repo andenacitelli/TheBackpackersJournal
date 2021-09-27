@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("GUIOverride")]
     public GameObject pauseObj;
+    public GameObject savePromptObj;
     [Header("Movement Speed")]
     [Range (0.0f, 10.0f)]
     public float moveSpeed = 5.0f;
@@ -32,7 +33,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (!pauseObj.activeInHierarchy)
+        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy)
         {
             // Move Player
             Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz;

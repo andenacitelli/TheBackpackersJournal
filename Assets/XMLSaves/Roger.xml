@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Save xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <playerName>Roger</playerName>
-  <GamePercentage>0</GamePercentage>
-  <playerPositionX>7.002799</playerPositionX>
-  <playerPositionY>0.580000043</playerPositionY>
-  <playerPositionZ>11.9344673</playerPositionZ>
-</Save>

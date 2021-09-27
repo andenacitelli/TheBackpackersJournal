@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Preload : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [HideInInspector]
+    public GameObject LoadMenu;
+
     void Start()
     {
         PlayerPrefs.SetFloat("PlayerPosX", 0f);
