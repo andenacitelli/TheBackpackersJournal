@@ -224,7 +224,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 179127648}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
         m_MethodName: SaveByXML
         m_Mode: 0
@@ -369,8 +369,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Photo Captured:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -394,7 +394,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32.1
+  m_fontSize: 96.4
   m_fontSizeBase: 105.2
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -777,6 +777,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 807139470}
+  savePrompt: {fileID: 1319744308}
 --- !u!1 &235886235
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,6 +788,7 @@ GameObject:
   m_Component:
   - component: {fileID: 235886237}
   - component: {fileID: 235886236}
+  - component: {fileID: 235886238}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -880,6 +882,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &235886238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235886235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad444c51d386e24085072e9ad39f2c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &272531519
 GameObject:
   m_ObjectHideFlags: 0
@@ -1327,7 +1341,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &437702946
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2014,7 +2028,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2301,7 +2315,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enter text...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2882,7 +2896,7 @@ GameObject:
   - component: {fileID: 879062992}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2934,6 +2948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseObj: {fileID: 807139470}
+  savePromptObj: {fileID: 1319744308}
   moveSpeed: 2.55
   horizontalSensitivity: 0.339
   verticalSensitivity: 0.25
@@ -3118,7 +3133,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Type a name to save and hit ENTER:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3384,8 +3399,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'On Display: '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3923,8 +3938,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Keep
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3948,7 +3963,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36.1
+  m_fontSize: 81.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4976,7 +4991,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Camera Roll Full
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5110,8 +5125,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Discard
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: cded5f53e8f14784ea870e3ea08fe3aa, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5135,7 +5150,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.6
+  m_fontSize: 81.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
