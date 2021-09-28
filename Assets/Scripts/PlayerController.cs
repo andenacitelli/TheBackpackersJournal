@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     [Header("GUIOverride")]
     public GameObject pauseObj;
     public GameObject savePromptObj;
+    public GameObject camerRollUI;
+    public GameObject camerRollPopUp;
     [Header("Movement Speed")]
     [Range (0.0f, 10.0f)]
     public float moveSpeed = 5.0f;
@@ -33,7 +35,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy)
+        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy && !camerRollUI.activeInHierarchy && !camerRollPopUp.activeInHierarchy)
         {
             // Move Player
             Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz;

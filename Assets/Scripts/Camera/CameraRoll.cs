@@ -7,15 +7,24 @@ using TMPro;
 //UI Code here is temporary & just for testing
 public class CameraRoll : MonoBehaviour
 {
-    private UnityEvent findInView;
+    //Make an option in the future
+    private static bool autoPlace = true;
+    public int capacity = 9;
     private List<GameObject> inView;
     private ImageScanner imageScan;
-    
-    struct photo {
-        public byte[] pngBytes;
-        public string name;
+    private CRUIGallery galleryUI;
+    private int internalIndex = 0;
+    [Header("UI")]
+    public CameraRollMenu crUI;
+
+    public struct photo {
+        public Texture2D captureData;
+        public string fileName;
         // will need more things here - for sure
     }
+
+    public List<photo> cRollStorage;
+    private static photo buffer;
 
     #region UItest
     [Header("TestConnections")]
@@ -31,12 +40,29 @@ public class CameraRoll : MonoBehaviour
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         
-
+        cRollStorage = new List<photo>();
+        
     }
     public void RecievePhoto(Texture2D screenTex)
     {
-
+        //screenTex.Apply();
+        Debug.Log("Recieved Photo");
+        internalIndex = cRollStorage.Count;
         //create struct
+        photo grab = new photo { 
+            captureData = screenTex
+        };
+        
+
+        if (!IsStorageFull() && autoPlace)
+        {
+            SaveBuffer(internalIndex, grab);
+        } else
+        {
+            crUI.UpdatePopUp(screenTex);
+            CapturePopUp();
+        }
+
         //save pngData with pngData.LoadRawTextureData(screenText.GetRawTextureData())
         // be sure to pngData.Apply() - this commits it to memory
 
@@ -49,6 +75,8 @@ public class CameraRoll : MonoBehaviour
 
         //Creates a new Sprite based on the Texture2D
         inView = imageScan.ScanFrame();
+
+        #region debugScreenCapture
         string objectsInImage = "On Display: ";
         if(inView.Count > 0)
         {
@@ -64,12 +92,42 @@ public class CameraRoll : MonoBehaviour
         Sprite fromTex = Sprite.Create(screenTex, new Rect(0.0f, 0.0f, screenTex.width, screenTex.height), new Vector2(0.5f, 0.5f), 100.0f);
         uiImage.sprite = fromTex;
         uiText.text = objectsInImage;
+        #endregion
     }
 
-
-    void FoundInView()
+    public void CapturePopUp()
     {
-        //inView.Add(found);
+        crUI.OpenPopUp();
+    }
+
+    public void KeepCapture()
+    {
+
+    }
+
+    public void DiscardCapture()
+    {
+
+    }
+
+    public bool IsStorageFull()
+    {
+        bool isFull = false;
+
+        if(cRollStorage.Count == capacity)
+        {
+            isFull = true;
+        }
+
+        return isFull;
+    }
+    private void SaveBuffer(int crIndex, photo buffPass)
+    {
+        string fileName = Application.dataPath + "/PhotoStorage/" + crIndex + ".png";
+
+
+        crUI.UpdateCR(crIndex, buffPass.captureData);
+        cRollStorage.Insert(crIndex, buffPass);
     }
 
     /* Efficient way to off-load picture saving:

@@ -370,7 +370,7 @@ MonoBehaviour:
   m_text: 'Photo Captured:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P0Click
         m_Mode: 1
@@ -669,6 +669,7 @@ GameObject:
   - component: {fileID: 179127645}
   - component: {fileID: 179127644}
   - component: {fileID: 179127648}
+  - component: {fileID: 179127649}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -778,6 +779,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenuUI: {fileID: 807139470}
   savePrompt: {fileID: 1319744308}
+--- !u!114 &179127649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179127643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ece082cb6feacf9459f3f61786da5d73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraRollUI: {fileID: 831072023}
+  capturePopUpUI: {fileID: 437702945}
 --- !u!1 &235886235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1092,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 299585570}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 179127649}
+        m_TargetAssemblyTypeName: CameraRollMenu, Assembly-CSharp
+        m_MethodName: ClosePopUpKeep
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &299585570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1335,6 +1362,7 @@ GameObject:
   - component: {fileID: 437702946}
   - component: {fileID: 437702948}
   - component: {fileID: 437702947}
+  - component: {fileID: 437702949}
   m_Layer: 5
   m_Name: PhotoCapturePopUp
   m_TagString: Untagged
@@ -1379,7 +1407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8117647, g: 0.7022415, b: 0.5411765, a: 0.392}
+  m_Color: {r: 0.8117647, g: 0.7022415, b: 0.5411765, a: 0.98039216}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1404,6 +1432,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437702945}
   m_CullTransparentMesh: 1
+--- !u!114 &437702949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437702945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5486945e009c70846805336ea9b0be1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fullAlert: {fileID: 1716637515}
+  uiPhoto: {fileID: 311261330}
 --- !u!1 &479377118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1526,6 +1568,9 @@ MonoBehaviour:
   overlay: {fileID: 502697010}
   flash: {fileID: 479377118}
   pauseObj: {fileID: 807139470}
+  savePromptObj: {fileID: 1319744308}
+  camerRollUI: {fileID: 831072023}
+  camerRollPopUp: {fileID: 437702945}
   polaroidPrefab: {fileID: 70859500}
 --- !u!114 &484376109
 MonoBehaviour:
@@ -1539,6 +1584,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61b5fa88d973d7e469c844076900dbe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  capacity: 9
+  crUI: {fileID: 179127649}
   uiTestImage: {fileID: 69775454}
   uiTestData: {fileID: 1046902486}
 --- !u!114 &484376110
@@ -2223,7 +2270,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P8Click
         m_Mode: 1
@@ -2588,7 +2635,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P1Click
         m_Mode: 1
@@ -2611,6 +2658,7 @@ GameObject:
   - component: {fileID: 831072024}
   - component: {fileID: 831072026}
   - component: {fileID: 831072025}
+  - component: {fileID: 831072027}
   m_Layer: 5
   m_Name: CameraRollUI
   m_TagString: Untagged
@@ -2677,6 +2725,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831072023}
   m_CullTransparentMesh: 1
+--- !u!114 &831072027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831072023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae1bcbcf7fcd4d0469895b6c59d9123b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  p0: {fileID: 83286307}
+  p1: {fileID: 807918911}
+  p2: {fileID: 1618969704}
+  p3: {fileID: 1610624339}
+  p4: {fileID: 1986204682}
+  p5: {fileID: 1036446556}
+  p6: {fileID: 1835791546}
+  p7: {fileID: 1832287285}
+  p8: {fileID: 752214500}
 --- !u!1 &838833692
 GameObject:
   m_ObjectHideFlags: 0
@@ -2949,6 +3018,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseObj: {fileID: 807139470}
   savePromptObj: {fileID: 1319744308}
+  camerRollUI: {fileID: 831072023}
+  camerRollPopUp: {fileID: 437702945}
   moveSpeed: 2.55
   horizontalSensitivity: 0.339
   verticalSensitivity: 0.25
@@ -3035,7 +3106,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 908172885}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 179127649}
+        m_TargetAssemblyTypeName: CameraRollMenu, Assembly-CSharp
+        m_MethodName: ClosePopUpDiscard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &908172885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3328,7 +3411,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P5Click
         m_Mode: 1
@@ -3939,7 +4022,7 @@ MonoBehaviour:
   m_text: Keep
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 9ad269c99dcf42b7aedefd83dd5a7b9d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4630,7 +4713,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P3Click
         m_Mode: 1
@@ -4814,7 +4897,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P2Click
         m_Mode: 1
@@ -4837,7 +4920,6 @@ GameObject:
   - component: {fileID: 1639416644}
   - component: {fileID: 1639416646}
   - component: {fileID: 1639416645}
-  - component: {fileID: 1639416647}
   m_Layer: 5
   m_Name: galleryView
   m_TagString: Untagged
@@ -4911,27 +4993,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639416643}
   m_CullTransparentMesh: 1
---- !u!114 &1639416647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639416643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae1bcbcf7fcd4d0469895b6c59d9123b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  p0: {fileID: 83286307}
-  p1: {fileID: 807918911}
-  p2: {fileID: 1618969704}
-  p3: {fileID: 1610624339}
-  p4: {fileID: 1986204682}
-  p5: {fileID: 1036446556}
-  p6: {fileID: 1835791546}
-  p7: {fileID: 1832287285}
-  p8: {fileID: 752214500}
 --- !u!1 &1716637515
 GameObject:
   m_ObjectHideFlags: 0
@@ -5126,7 +5187,7 @@ MonoBehaviour:
   m_text: Discard
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 9ad269c99dcf42b7aedefd83dd5a7b9d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5495,7 +5556,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P7Click
         m_Mode: 1
@@ -5627,7 +5688,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P6Click
         m_Mode: 1
@@ -5926,7 +5987,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1639416647}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CRUIGallery, Assembly-CSharp
         m_MethodName: P4Click
         m_Mode: 1

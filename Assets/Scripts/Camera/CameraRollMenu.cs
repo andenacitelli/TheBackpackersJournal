@@ -5,13 +5,20 @@ using UnityEngine;
 public class CameraRollMenu : MonoBehaviour
 {
     public static bool isCRMenu = false;
+    [Header("UI")]
     public GameObject cameraRollUI;
+    public GameObject capturePopUpUI;
 
     PauseAction action;
+
+    private CRUIGallery gallery;
+    private CRPopUp popUp;
 
     private void Awake()
     {
         action = new PauseAction();
+        gallery = cameraRollUI.GetComponent<CRUIGallery>();
+        popUp = capturePopUpUI.GetComponent<CRPopUp>();
     }
 
     private void OnEnable()
@@ -48,11 +55,41 @@ public class CameraRollMenu : MonoBehaviour
         Time.timeScale = 1f;
     }
    
-    void OpenCR()
+    public void OpenCR()
     {
         isCRMenu = true;
         cameraRollUI.SetActive(true);
         Time.timeScale = 0f;
+    }
+
+    public void OpenPopUp()
+    {
+        capturePopUpUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void ClosePopUpKeep()
+    {
+        Debug.Log("Kept");
+        capturePopUpUI.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void ClosePopUpDiscard()
+    {
+        Debug.Log("Discarded");
+        capturePopUpUI.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void UpdateCR(int guiIndex, Texture2D updateData)
+    {
+        gallery.AssignPicture(guiIndex, updateData);
+    }
+
+    public void UpdatePopUp(Texture2D updateData)
+    {
+        popUp.AssignPicture(updateData);
     }
 
 }

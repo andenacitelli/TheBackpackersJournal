@@ -10,6 +10,9 @@ public class PolaroidController : MonoBehaviour
     public GameObject overlay;
     public GameObject flash;
     public GameObject pauseObj;
+    public GameObject savePromptObj;
+    public GameObject camerRollUI;
+    public GameObject camerRollPopUp;
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
 
@@ -48,7 +51,7 @@ public class PolaroidController : MonoBehaviour
 
     public void OnRaiseInput(float secondary)
     {
-        if (!pauseObj.activeInHierarchy)
+        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy && !camerRollUI.activeInHierarchy && !camerRollPopUp.activeInHierarchy)
         {
             if (!aimRunning && secondary == 1)
             {
@@ -64,7 +67,7 @@ public class PolaroidController : MonoBehaviour
 
     public void OnPrimaryInput(float primary)
     {
-        if (!pauseObj.activeInHierarchy)
+        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy && !camerRollUI.activeInHierarchy && !camerRollPopUp.activeInHierarchy)
         {
             if (photoActive && !captureStart)
             {
