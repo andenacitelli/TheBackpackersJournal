@@ -52,49 +52,39 @@ public class ChunkGen : MonoBehaviour
         tileWidth = Mathf.RoundToInt(tileSize.x); // Should theoretically already be 10, but can't hurt to round to be sure
         tileDepth = Mathf.RoundToInt(tileSize.z);
 
-        // Actually generate the chunk
         GenerateChunk(); 
     }
 
     void GenerateChunk()
     {
-        // Generate random list of vertices to use as our Delaunay vertices
         // Seed this random generation off chunk coords so each chunk generates the same every time. May be off-by-one, but doesn't really matter.
-        Random.InitState(chunkSeedFromCoords(new Vector2Int((int) this.gameObject.transform.position.x / tileWidth, (int) this.gameObject.transform.position.x / tileDepth)));
-        const int NUM_POINTS = 50;
-        Polygon polygon = new Polygon();
-        float chunkX = this.gameObject.transform.position.x, chunkZ = this.gameObject.transform.position.z;
-        print("chunkX: " + chunkX);
-        print("chunkZ: " + chunkZ);
-        print("tileWidth: " + tileWidth);
-        print("tileDepth: " + tileDepth);
-        for (int i = 0; i < NUM_POINTS; i++)
-        {
-            // Generate random vertices within chunk boundaries
-            polygon.Add(new Vertex(
-                Random.Range(chunkX - tileWidth / 2, chunkX + tileWidth / 2),
-                Random.Range(chunkZ - tileDepth / 2, chunkZ + tileDepth / 2)));
-        }
+        Random.InitState(new Vector2Int((int)this.gameObject.transform.position.x * 256 / tileWidth, (int)this.gameObject.transform.position.x * 256 / tileDepth).GetHashCode());
 
-        // Add the corners of the chunk
-        // TODO: Will introduce visual straight lines along chunk edges; use a hole-filling algorithm like the one detailed in this paper: https://kth.diva-portal.org/smash/get/diva2:1106042/FULLTEXT01.pdf
-        // polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ + tileDepth / 2));
-        // polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ - tileDepth / 2));
-        // polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ + tileDepth / 2));
-        // polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ - tileDepth / 2));
+        // Generate set of vertices
+        int NUM_POINTS = Random.Range(120, 180);
+        Bounds chunkBounds = gameObject.GetComponent<MeshRenderer>().bounds;
+        float radius = (chunkBounds.max.x - chunkBounds.min.x) * .1f;
+        Polygon polygon = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, chunkBounds, radius);
+
+        // Add corners of the chunk, which gets us close to continuity
+        // TODO: Better, actually non-glitchy way of doing continuity is to do Triangulation with the border areas
+        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.y));
+        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.y));
+        // polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.y));
+        // polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.y));
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
-        mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
+        mesh = (TriangleNet.Mesh) polygon.Triangulate(options);
 
         // Actually convert Delaunay to a mesh and redo the triangles to give us flat shading
-        GenerateMesh();
+        // GenerateMesh();
 
         // ZERO clue why this is necessary, but THANK GOD it fixes the offset issue
         // This fixes the issue where there's weird space between them, but the chunks are still generating away from the player
         // print("parent's position: " + transform.parent.position);
         // transform.position = transform.parent.position;
-        transform.localPosition = Vector3.zero;
+        // transform.localPosition = Vector3.zero;
 
         // Update vertex heights and apply height-based coloration
         List<Vector2> Vector3ToVector2(Vector3[] vList)
@@ -112,6 +102,94 @@ public class ChunkGen : MonoBehaviour
         List<float> noiseValues = this.noise.GenerateNoiseMap(vertices, this.mapScale, offsetX, offsetZ, waves);
         UpdateVertexHeightsAndColors(noiseValues);
     }
+
+    /* 
+    public void MakeMesh()
+    {
+        // Instantiate an enumerator to go over the Triangle.Net triangles - they don't
+        // provide any array-like interface for indexing
+        IEnumerator<Triangle> triangleEnumerator = mesh.Triangles.GetEnumerator();
+
+        // Create more than one chunk, if necessary
+        for (int chunkStart = 0; chunkStart < mesh.Triangles.Count; chunkStart += trianglesInChunk)
+        {
+            // Vertices in the unity mesh
+            List<Vector3> vertices = new List<Vector3>();
+
+            // Per-vertex normals
+            List<Vector3> normals = new List<Vector3>();
+
+            // Per-vertex UVs - unused here, but Unity still wants them
+            List<Vector2> uvs = new List<Vector2>();
+
+            // Triangles - each triangle is made of three indices in the vertices array
+            List<int> triangles = new List<int>();
+
+            // Iterate over all the triangles until we hit the maximum chunk size
+            int chunkEnd = chunkStart + trianglesInChunk;
+            for (int i = chunkStart; i < chunkEnd; i++)
+            {
+                if (!triangleEnumerator.MoveNext())
+                {
+                    // If we hit the last triangle before we hit the end of the chunk, stop
+                    break;
+                }
+
+                // Get the current triangle
+                Triangle triangle = triangleEnumerator.Current;
+
+                // For the triangles to be right-side up, they need
+                // to be wound in the opposite direction
+                Vector3 v0 = GetPoint3D(triangle.vertices[2].id);
+                Vector3 v1 = GetPoint3D(triangle.vertices[1].id);
+                Vector3 v2 = GetPoint3D(triangle.vertices[0].id);
+
+                // This triangle is made of the next three vertices to be added
+                triangles.Add(vertices.Count);
+                triangles.Add(vertices.Count + 1);
+                triangles.Add(vertices.Count + 2);
+
+                // Add the vertices
+                vertices.Add(v0);
+                vertices.Add(v1);
+                vertices.Add(v2);
+
+                // Compute the normal - flat shaded, so the vertices all have the same normal
+                Vector3 normal = Vector3.Cross(v1 - v0, v2 - v0);
+                normals.Add(normal);
+                normals.Add(normal);
+                normals.Add(normal);
+
+                // If you want to texture your terrain, UVs are important,
+                // but I just use a flat color so put in dummy coords
+                uvs.Add(new Vector2(0.0f, 0.0f));
+                uvs.Add(new Vector2(0.0f, 0.0f));
+                uvs.Add(new Vector2(0.0f, 0.0f));
+            }
+
+            // Create the actual Unity mesh object
+            Mesh chunkMesh = new Mesh();
+            chunkMesh.vertices = vertices.ToArray();
+            chunkMesh.uv = uvs.ToArray();
+            chunkMesh.triangles = triangles.ToArray();
+            chunkMesh.normals = normals.ToArray();
+
+            // Instantiate the GameObject which will display this chunk
+            Transform chunk = Instantiate<Transform>(chunkPrefab, transform.position, transform.rotation);
+            chunk.GetComponent<MeshFilter>().mesh = chunkMesh;
+            chunk.GetComponent<MeshCollider>().sharedMesh = chunkMesh;
+            chunk.transform.parent = transform;
+        }
+    }
+
+    // This method returns the world-space vertex for a given vertex index
+    public Vector3 GetPoint3D(int index)
+    {
+        Vertex vertex = mesh.vertices[index];
+        float elevation = elevations[index];
+        return new Vector3((float)vertex.x, elevation, (float)vertex.y);
+    }
+    */
 
     public void GenerateMesh()
     {
@@ -159,18 +237,6 @@ public class ChunkGen : MonoBehaviour
         this.meshFilter.mesh.RecalculateBounds();
         this.meshFilter.mesh.RecalculateNormals();
         this.meshCollider.sharedMesh = this.meshFilter.mesh;
-    }
-
-    // Low-collision function that gives us as unique an integer as possible, given chunk coordinates
-    int chunkSeedFromCoords(Vector2Int coords)
-    {
-        // Parse will fail if the second number's ToString() puts a negative at the beginning, so we just 
-        // use the sign of the first one as the sign of whatever the overall method's output is
-        coords.y = coords.y < 0 ? coords.y * -1 : coords.y;
-
-        // This is ugly, but it's infrequently called and is about as unique as you can get
-        // TODO: This will fail when you go very far due to chunk coord string concatenation parsing giving you something above the integer limit. *Highly* doubt this will come up later, so not worth finding a workaround right now.
-        return int.Parse(coords.x.ToString() + coords.y.ToString());
     }
 
     // Converts the vertex representation of the mesh to non-shared vertices 
@@ -262,6 +328,7 @@ public class ChunkGen : MonoBehaviour
         Vector3[] meshVertices = this.meshFilter.mesh.vertices;
         Color[] colors = new Color[meshVertices.Length];
 
+        // TODO: Seed color randomization
         for (int i = 0; i < meshVertices.Length; i++)
         {
             // This gets a little confusing to keep track of, so here are the things happening here:
@@ -294,8 +361,8 @@ public class ChunkGen : MonoBehaviour
         // Update actual mesh properties; basically "apply" the heights to the mesh 
         this.meshFilter.mesh.colors = colors;
         this.meshFilter.mesh.vertices = meshVertices;
-        //this.meshFilter.mesh.RecalculateBounds();
-        //this.meshFilter.mesh.RecalculateNormals();
+        this.meshFilter.mesh.RecalculateBounds();
+        this.meshFilter.mesh.RecalculateNormals();
         this.meshCollider.sharedMesh = this.meshFilter.mesh;
     }
 
