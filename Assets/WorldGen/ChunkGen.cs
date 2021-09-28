@@ -45,6 +45,9 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private float mapScale;
 
+    // Set by the class Instanting the gameObject linked to this script
+    public Vector2Int coords;
+
     void Start()
     {
         // Calculate things we'll use all throughout the class 
@@ -58,7 +61,7 @@ public class ChunkGen : MonoBehaviour
     void GenerateChunk()
     {
         // Seed this random generation off chunk coords so each chunk generates the same every time. May be off-by-one, but doesn't really matter.
-        Random.InitState(new Vector2Int((int)this.gameObject.transform.position.x * 256 / tileWidth, (int)this.gameObject.transform.position.x * 256 / tileDepth).GetHashCode());
+        Random.InitState(coords.GetHashCode());
 
         // Generate set of vertices
         int NUM_POINTS = Random.Range(120, 180);
@@ -78,13 +81,11 @@ public class ChunkGen : MonoBehaviour
         mesh = (TriangleNet.Mesh) polygon.Triangulate(options);
 
         // Actually convert Delaunay to a mesh and redo the triangles to give us flat shading
-        // GenerateMesh();
+        GenerateMesh();
 
         // ZERO clue why this is necessary, but THANK GOD it fixes the offset issue
         // This fixes the issue where there's weird space between them, but the chunks are still generating away from the player
-        // print("parent's position: " + transform.parent.position);
-        // transform.position = transform.parent.position;
-        // transform.localPosition = Vector3.zero;
+        transform.position = Vector3.zero;
 
         // Update vertex heights and apply height-based coloration
         List<Vector2> Vector3ToVector2(Vector3[] vList)
@@ -102,94 +103,6 @@ public class ChunkGen : MonoBehaviour
         List<float> noiseValues = this.noise.GenerateNoiseMap(vertices, this.mapScale, offsetX, offsetZ, waves);
         UpdateVertexHeightsAndColors(noiseValues);
     }
-
-    /* 
-    public void MakeMesh()
-    {
-        // Instantiate an enumerator to go over the Triangle.Net triangles - they don't
-        // provide any array-like interface for indexing
-        IEnumerator<Triangle> triangleEnumerator = mesh.Triangles.GetEnumerator();
-
-        // Create more than one chunk, if necessary
-        for (int chunkStart = 0; chunkStart < mesh.Triangles.Count; chunkStart += trianglesInChunk)
-        {
-            // Vertices in the unity mesh
-            List<Vector3> vertices = new List<Vector3>();
-
-            // Per-vertex normals
-            List<Vector3> normals = new List<Vector3>();
-
-            // Per-vertex UVs - unused here, but Unity still wants them
-            List<Vector2> uvs = new List<Vector2>();
-
-            // Triangles - each triangle is made of three indices in the vertices array
-            List<int> triangles = new List<int>();
-
-            // Iterate over all the triangles until we hit the maximum chunk size
-            int chunkEnd = chunkStart + trianglesInChunk;
-            for (int i = chunkStart; i < chunkEnd; i++)
-            {
-                if (!triangleEnumerator.MoveNext())
-                {
-                    // If we hit the last triangle before we hit the end of the chunk, stop
-                    break;
-                }
-
-                // Get the current triangle
-                Triangle triangle = triangleEnumerator.Current;
-
-                // For the triangles to be right-side up, they need
-                // to be wound in the opposite direction
-                Vector3 v0 = GetPoint3D(triangle.vertices[2].id);
-                Vector3 v1 = GetPoint3D(triangle.vertices[1].id);
-                Vector3 v2 = GetPoint3D(triangle.vertices[0].id);
-
-                // This triangle is made of the next three vertices to be added
-                triangles.Add(vertices.Count);
-                triangles.Add(vertices.Count + 1);
-                triangles.Add(vertices.Count + 2);
-
-                // Add the vertices
-                vertices.Add(v0);
-                vertices.Add(v1);
-                vertices.Add(v2);
-
-                // Compute the normal - flat shaded, so the vertices all have the same normal
-                Vector3 normal = Vector3.Cross(v1 - v0, v2 - v0);
-                normals.Add(normal);
-                normals.Add(normal);
-                normals.Add(normal);
-
-                // If you want to texture your terrain, UVs are important,
-                // but I just use a flat color so put in dummy coords
-                uvs.Add(new Vector2(0.0f, 0.0f));
-                uvs.Add(new Vector2(0.0f, 0.0f));
-                uvs.Add(new Vector2(0.0f, 0.0f));
-            }
-
-            // Create the actual Unity mesh object
-            Mesh chunkMesh = new Mesh();
-            chunkMesh.vertices = vertices.ToArray();
-            chunkMesh.uv = uvs.ToArray();
-            chunkMesh.triangles = triangles.ToArray();
-            chunkMesh.normals = normals.ToArray();
-
-            // Instantiate the GameObject which will display this chunk
-            Transform chunk = Instantiate<Transform>(chunkPrefab, transform.position, transform.rotation);
-            chunk.GetComponent<MeshFilter>().mesh = chunkMesh;
-            chunk.GetComponent<MeshCollider>().sharedMesh = chunkMesh;
-            chunk.transform.parent = transform;
-        }
-    }
-
-    // This method returns the world-space vertex for a given vertex index
-    public Vector3 GetPoint3D(int index)
-    {
-        Vertex vertex = mesh.vertices[index];
-        float elevation = elevations[index];
-        return new Vector3((float)vertex.x, elevation, (float)vertex.y);
-    }
-    */
 
     public void GenerateMesh()
     {
@@ -230,86 +143,13 @@ public class ChunkGen : MonoBehaviour
             }
         }
 
-        this.meshFilter.mesh.vertices = vertices.ToArray();
-        this.meshFilter.mesh.uv = uvs.ToArray();
-        this.meshFilter.mesh.triangles = triangles.ToArray();
-        this.meshFilter.mesh.normals = normals.ToArray();
-        this.meshFilter.mesh.RecalculateBounds();
-        this.meshFilter.mesh.RecalculateNormals();
-        this.meshCollider.sharedMesh = this.meshFilter.mesh;
-    }
-
-    // Converts the vertex representation of the mesh to non-shared vertices 
-    private Vector2[] localVertexCoordinates; // Same length as mesh.vertices, but stores their chunk-specific subdivide ("local") coordinates 
-    void UpdateTriangles()
-    {
-        // Essentially a Vector3 deep copy 
-        Vector3 CopyVector3(Vector3 v)
-        {
-            return new Vector3(v.x, v.y, v.z);
-        }
-
-        Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
-        int width = (int)tileSize.x;
-        int newVerticesPos = 0;
-        Vector3[] newVertices = new Vector3[(int) Mathf.Pow(width, 2) * 6];
-
-        // List of same order and length as normal vertex array that allows us to map a vertex index to a local chunk grid coordinate
-        localVertexCoordinates = new Vector2[newVertices.Length];
-
-        // Iterate through each vertex
-        for (int row = 0; row < width - 1; row++)
-        {
-            for (int col = 0; col < width - 1; col++)
-            {
-                // Grab references to the vertices that will matter for us here 
-                // Note that for loop conditions will stop us from hitting a bounds check 
-                Vector3 currentVertex = this.meshFilter.mesh.vertices[row * width + col];
-                Vector3 rightVertex = this.meshFilter.mesh.vertices[row * width + (col + 1)];
-                Vector3 downVertex = this.meshFilter.mesh.vertices[(row + 1) * width + col];
-                Vector3 downRightVertex = this.meshFilter.mesh.vertices[(row + 1) * width + (col + 1)];
-
-                // We have to make the order a little weird on these; normals are calculated based on vertices being specified clockwise, 
-                //     or something like that, which was the cause of half of my triangles being hidden (technically, shown from under the landscape)
-                // First triangle: this vertex, vertex one to the right, vertex one to the right and one down
-                newVertices[newVerticesPos] = CopyVector3(downRightVertex);
-                localVertexCoordinates[newVerticesPos] = new Vector2(col + 1, row + 1);
-                newVertices[newVerticesPos + 1] = CopyVector3(rightVertex);
-                localVertexCoordinates[newVerticesPos + 1] = new Vector2(col + 1, row);
-                newVertices[newVerticesPos + 2] = CopyVector3(currentVertex);
-                localVertexCoordinates[newVerticesPos + 2] = new Vector2(col, row);
-
-                // Second triangle: this vertex, vertex one to the bottom, vertex one to the right and one down 
-                newVertices[newVerticesPos + 3] = CopyVector3(currentVertex); 
-                localVertexCoordinates[newVerticesPos + 3] = new Vector2(col, row);
-                newVertices[newVerticesPos + 4] = CopyVector3(downVertex);
-                localVertexCoordinates[newVerticesPos + 4] = new Vector2(col, row + 1);
-                newVertices[newVerticesPos + 5] = CopyVector3(downRightVertex);
-                localVertexCoordinates[newVerticesPos + 5] = new Vector2(col + 1, row + 1);
-
-                // Switch to calculating for next box subdivision inside the chunk 
-                newVerticesPos += 6;
-            }
-        }
-
-        // Triangle vertices are easy; we know each triplet of vertices represents a triangle now
-        int[] newTriangles = new int[newVertices.Length];
-        for (int i = 0; i < newTriangles.Length; i++)
-        {
-            newTriangles[i] = i;
-        }
-
-        this.meshFilter.mesh.vertices = newVertices;
-        this.meshFilter.mesh.triangles = newTriangles;
-
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-        Vector2[] uvs = new Vector2[vertices.Length];
-        for (int i = 0; i < uvs.Length; i++)
-        {
-            uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
-        }
-        this.meshFilter.mesh.uv = uvs;
+        Mesh chunkMesh = new Mesh();
+        chunkMesh.vertices = vertices.ToArray();
+        chunkMesh.uv = uvs.ToArray();
+        chunkMesh.triangles = triangles.ToArray();
+        chunkMesh.normals = normals.ToArray();
+        gameObject.GetComponent<MeshFilter>().mesh = chunkMesh;
+        gameObject.GetComponent<MeshCollider>().sharedMesh = chunkMesh;
     }
 
     // How "vertical" we want our map to be. Lower values will result in less extreme highs and lows and will generally make slopes smoother.

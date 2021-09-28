@@ -81,13 +81,14 @@ public class TerrainManager : MonoBehaviour
                         zIndex != currentChunk.y - currentRadius && zIndex != currentChunk.y + currentRadius)
                     {
                         // Chunk pos (in chunks)
-                        Vector2 pos = new Vector2(xIndex, zIndex);
+                        Vector2Int pos = new Vector2Int(xIndex, zIndex);
 
                         // Only generate chunk if it doesn't already exist 
                         if (!chunks.ContainsKey(pos))
                         {
                             Vector3 chunkPos = new Vector3(xIndex * tileWidth, this.gameObject.transform.position.y, zIndex * tileDepth);
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
+                            tile.GetComponent<ChunkGen>().coords = pos;
                             chunks[pos] = tile;
                             chunksGeneratedThisFrame++;
                         }
