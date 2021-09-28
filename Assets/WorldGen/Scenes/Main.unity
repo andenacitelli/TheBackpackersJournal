@@ -312,7 +312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560380, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: moveSpeed
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_RootOrder
@@ -367,12 +367,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: orthographic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: field of view
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: far clip plane
-      value: 20000
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_OcclusionCulling
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: m_projectionMatrixMode
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58d784a71e1628e42880c15717248e3e, type: 3}

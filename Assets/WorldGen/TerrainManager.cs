@@ -16,6 +16,11 @@ public class TerrainManager : MonoBehaviour
     // Holds references to chunks we've generated so that we don't regenerate them 
     private Dictionary<Vector2, GameObject> chunks = new Dictionary<Vector2, GameObject>();
 
+    private void Start()
+    {
+        Physics.autoSyncTransforms = true;    
+    }
+
     void Update() 
     {
         GenerateChunks(); // Generate ungenerated, in-range chunks
@@ -30,8 +35,8 @@ public class TerrainManager : MonoBehaviour
 
         // Instantiate a tile at the given position
         Vector2Int playerPosChunks = new Vector2Int(
-            (int) player.transform.position.x / tileWidth, 
-            (int) player.transform.position.z / tileDepth);
+            (int) player.transform.position.x / (tileWidth * (tileWidth / 10)), 
+            (int) player.transform.position.z / (tileWidth * (tileWidth / 10)));
 
         // Generate a fixed amount of frames per UPDATE call
         // If this were FixedUpdate, we'd run into an issue where we could only hit a certain render distance
@@ -81,20 +86,8 @@ public class TerrainManager : MonoBehaviour
                         // Only generate chunk if it doesn't already exist 
                         if (!chunks.ContainsKey(pos))
                         {
-                            // Chunk pos (in absolute world coordinates) 
-                            print("Chunk Coords: " + pos);
-                            print("gameobject.position: " + this.gameObject.transform.position.x);
-                            print("xIndex: " + xIndex);
-                            print("tileWidth: " + tileWidth);
-                            Vector3 chunkPos = new Vector3(this.gameObject.transform.position.x + (xIndex * tileWidth) / 2,
-                            this.gameObject.transform.position.y,
-                            this.gameObject.transform.position.z + (zIndex * tileDepth) / 2);
-                            print("chunkPos: " + chunkPos);
-
-                            // Instantiate new tile GameObject 
-                            // Syntax: Instantiate(<prefab>, <parent transform>, <rotation>)
-                            GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity) as GameObject;
-                            tile.transform.parent = this.gameObject.transform;
+                            Vector3 chunkPos = new Vector3(xIndex * tileWidth, this.gameObject.transform.position.y, zIndex * tileDepth);
+                            GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
                             chunks[pos] = tile;
                             chunksGeneratedThisFrame++;
                         }
@@ -113,8 +106,8 @@ public class TerrainManager : MonoBehaviour
         int tileDepth = (int) tileSize.z;
 
         Vector2Int playerPosChunks = new Vector2Int(
-            (int) player.transform.position.x / tileWidth, 
-            (int) player.transform.position.z / tileDepth);
+            (int) player.transform.position.x / (tileWidth * (tileWidth / 10)), 
+            (int) player.transform.position.z / (tileDepth * (tileDepth / 10)));
 
         // Get a list of chunks to remove; we can't actually remove them yet, as you can't modify a dictionary during iterations 
         List<Vector2> keysToRemove = new List<Vector2>();

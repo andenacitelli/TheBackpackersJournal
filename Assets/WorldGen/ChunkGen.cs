@@ -64,6 +64,10 @@ public class ChunkGen : MonoBehaviour
         const int NUM_POINTS = 50;
         Polygon polygon = new Polygon();
         float chunkX = this.gameObject.transform.position.x, chunkZ = this.gameObject.transform.position.z;
+        print("chunkX: " + chunkX);
+        print("chunkZ: " + chunkZ);
+        print("tileWidth: " + tileWidth);
+        print("tileDepth: " + tileDepth);
         for (int i = 0; i < NUM_POINTS; i++)
         {
             // Generate random vertices within chunk boundaries
@@ -74,10 +78,10 @@ public class ChunkGen : MonoBehaviour
 
         // Add the corners of the chunk
         // TODO: Will introduce visual straight lines along chunk edges; use a hole-filling algorithm like the one detailed in this paper: https://kth.diva-portal.org/smash/get/diva2:1106042/FULLTEXT01.pdf
-        polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ + tileDepth / 2));
-        polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ - tileDepth / 2));
-        polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ + tileDepth / 2));
-        polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ - tileDepth / 2));
+        // polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ + tileDepth / 2));
+        // polygon.Add(new Vertex(chunkX - tileWidth / 2, chunkZ - tileDepth / 2));
+        // polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ + tileDepth / 2));
+        // polygon.Add(new Vertex(chunkX + tileWidth / 2, chunkZ - tileDepth / 2));
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
@@ -85,6 +89,12 @@ public class ChunkGen : MonoBehaviour
 
         // Actually convert Delaunay to a mesh and redo the triangles to give us flat shading
         GenerateMesh();
+
+        // ZERO clue why this is necessary, but THANK GOD it fixes the offset issue
+        // This fixes the issue where there's weird space between them, but the chunks are still generating away from the player
+        // print("parent's position: " + transform.parent.position);
+        // transform.position = transform.parent.position;
+        transform.localPosition = Vector3.zero;
 
         // Update vertex heights and apply height-based coloration
         List<Vector2> Vector3ToVector2(Vector3[] vList)
@@ -276,14 +286,16 @@ public class ChunkGen : MonoBehaviour
 
             // Update mesh colors; I have a shader that draws from the vertex colors 
             TerrainType terrainType = ChooseTerrainType(height);
+            int colorForVertex = Random.Range(0, 1);
+            //colors[i] = new Color(colorForVertex, colorForVertex, colorForVertex);
             colors[i] = tweakColor(terrainType.randomizationFactor, terrainType.color);
         }
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 
         this.meshFilter.mesh.colors = colors;
         this.meshFilter.mesh.vertices = meshVertices;
-        this.meshFilter.mesh.RecalculateBounds();
-        this.meshFilter.mesh.RecalculateNormals();
+        //this.meshFilter.mesh.RecalculateBounds();
+        //this.meshFilter.mesh.RecalculateNormals();
         this.meshCollider.sharedMesh = this.meshFilter.mesh;
     }
 
