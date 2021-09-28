@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("GUIOverride")]
+    public GameObject pauseObj;
     [Header("Movement Speed")]
     [Range (0.0f, 10.0f)]
     public float moveSpeed = 5.0f;
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
     float lookHoriz, lookVert;
     float vertRotation;
     Transform playerCamera;
+    PauseMenu pMenu;
 
     private void Awake()
     {
@@ -29,20 +32,24 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        // Move Player
-        Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz;
-        moveDirection = transform.TransformDirection(moveDirection);
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        if (!pauseObj.activeInHierarchy)
+        {
+            // Move Player
+            Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz;
+            moveDirection = transform.TransformDirection(moveDirection);
+            controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
-        // Look Around
-        // player
-        transform.Rotate(Vector3.up, lookHoriz * horizontalSensitivity);
-        // camera
-        vertRotation -= lookVert;
-        vertRotation = Mathf.Clamp(vertRotation, -verticalClamp, verticalClamp);
-        Vector3 newRotation = transform.eulerAngles;
-        newRotation.x = vertRotation;
-        playerCamera.eulerAngles = newRotation;
+            // Look Around
+            // player
+            transform.Rotate(Vector3.up, lookHoriz * horizontalSensitivity);
+            // camera
+            vertRotation -= lookVert;
+            vertRotation = Mathf.Clamp(vertRotation, -verticalClamp, verticalClamp);
+            Vector3 newRotation = transform.eulerAngles;
+            newRotation.x = vertRotation;
+            playerCamera.eulerAngles = newRotation;
+        }
+        
     }
     public void OnMoveInput(float horizontal, float vertical)
     {
