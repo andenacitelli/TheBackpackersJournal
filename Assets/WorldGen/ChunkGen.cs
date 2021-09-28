@@ -64,17 +64,25 @@ public class ChunkGen : MonoBehaviour
         Random.InitState(coords.GetHashCode());
 
         // Generate set of vertices
-        int NUM_POINTS = Random.Range(120, 180);
+        int NUM_POINTS = Random.Range(40, 80);
         Bounds chunkBounds = gameObject.GetComponent<MeshRenderer>().bounds;
         float radius = (chunkBounds.max.x - chunkBounds.min.x) * .1f;
         Polygon polygon = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, chunkBounds, radius);
 
-        // Add corners of the chunk, which gets us close to continuity
         // TODO: Better, actually non-glitchy way of doing continuity is to do Triangulation with the border areas
-        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.y));
-        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.y));
-        // polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.y));
-        // polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.y));
+        // We essentially set up a bunch of vertices along the edges
+
+        // Add the corners 
+        polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.z));
+        polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.z));
+        polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.z));
+        polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.z));
+
+        // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
+        for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.min.z));
+        for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.max.z));
+        for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.min.x, i));
+        for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.max.x, i));
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
