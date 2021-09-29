@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TriangleNet.Geometry;
+using TriangleNet.Topology;
 
 // Selectively shade chunks 
 [System.Serializable]
@@ -81,7 +82,7 @@ public class ChunkGen : MonoBehaviour
         Random.InitState(coords.GetHashCode());
 
         // Generate set of vertices
-        int NUM_POINTS = Random.Range(40, 80);
+        int NUM_POINTS = Random.Range(70, 130);
         Bounds chunkBounds = gameObject.GetComponent<MeshRenderer>().bounds;
         float radius = (chunkBounds.max.x - chunkBounds.min.x) * .1f;
         Polygon polygon = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, chunkBounds, radius);
@@ -90,16 +91,16 @@ public class ChunkGen : MonoBehaviour
         // We essentially set up a bunch of vertices along the edges
 
         // Add the corners 
-        polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.z));
-        polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.z));
-        polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.z));
-        polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.z));
+        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.z));
+        //polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.z));
+        //polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.z));
+        //polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.z));
 
         // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
-        for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.min.z));
-        for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.max.z));
-        for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.min.x, i));
-        for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.max.x, i));
+        //for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.min.z));
+        //for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.max.z));
+        //for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.min.x, i));
+        //for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.max.x, i));
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
@@ -258,13 +259,81 @@ public class ChunkGen : MonoBehaviour
             return;
         }
 
-        Gizmos.color = Color.red;
+        DrawTriangulations();
+        DrawChunkBoundaryTriangles();
+        DrawChunkBoundaryEdges();
+    }
+
+    private void DrawTriangulations()
+    {
+        Gizmos.color = Color.white;
         foreach (Edge edge in mesh.Edges)
         {
             Vertex v0 = mesh.vertices[edge.P0];
             Vertex v1 = mesh.vertices[edge.P1];
             Vector3 p0 = new Vector3((float)v0.x, 0.0f, (float)v0.y);
             Vector3 p1 = new Vector3((float)v1.x, 0.0f, (float)v1.y);
+            Gizmos.DrawLine(p0, p1);
+        }
+    }
+
+    private void DrawChunkBoundaryTriangles()
+    {
+        Gizmos.color = Color.cyan;
+        foreach (Triangle triangle in mesh.Triangles)
+        {
+            if (triangle.neighbors[0].tri.hash == TriangleNet.Mesh.DUMMY ||
+                triangle.neighbors[1].tri.hash == TriangleNet.Mesh.DUMMY ||
+                triangle.neighbors[2].tri.hash == TriangleNet.Mesh.DUMMY)
+            {
+                Vector3 p0 = new Vector3((float)triangle.vertices[0].x, 0, (float)triangle.vertices[0].y);
+                Vector3 p1 = new Vector3((float)triangle.vertices[1].x, 0, (float)triangle.vertices[1].y);
+                Vector3 p2 = new Vector3((float)triangle.vertices[2].x, 0, (float)triangle.vertices[2].y);
+                Gizmos.DrawLine(p0, p1);
+                Gizmos.DrawLine(p1, p2);
+                Gizmos.DrawLine(p2, p0);
+            }
+        }
+    }
+
+    // Gets a list of boundary edges by iterating through the triangles array and finding the edges
+    // ("subsegments" as Triangle.NET calls them) that are only referenced once 
+    private void DrawChunkBoundaryEdges()
+    {
+        Gizmos.color = Color.yellow;
+        Dictionary<Osub, int> edges = new Dictionary<Osub, int>();
+
+        // Get a count of each subsegment 
+        foreach (Triangle triangle in mesh.Triangles)
+        {
+            foreach (Osub subseg in triangle.subsegs)
+            {
+                if (!edges.ContainsKey(subseg))
+                {
+                    edges.Add(subseg, 1);
+                }
+
+                else
+                {
+                    edges[subseg] += 1;
+                }
+            }
+        }
+
+        // Eliminate any subsegment that appears in more than one triangle 
+        List<Osub> uniqueSegments = new List<Osub>(); // Can't modify a dictionary during iteration
+        foreach (Osub subseg in edges.Keys)
+        {
+            if (edges[subseg] == 1)
+            {
+                uniqueSegments.Add(subseg);
+            }
+        }
+
+        foreach (Osub subseg in uniqueSegments)
+        {
+            Vector3 p0 = new Vector3((float) subseg.Segment.vertices[0].x, 0, (float) subseg.Segment.vertices[0].y);
+            Vector3 p1 = new Vector3((float)subseg.Segment.vertices[1].x, 0, (float)subseg.Segment.vertices[1].y);
             Gizmos.DrawLine(p0, p1);
         }
     }
