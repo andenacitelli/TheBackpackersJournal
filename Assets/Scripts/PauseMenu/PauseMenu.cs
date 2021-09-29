@@ -72,6 +72,11 @@ public class PauseMenu : MonoBehaviour
             pauseMenuUI.SetActive(true);
             isSaving = false;
         }
+
+        foreach(photo p in cr.cRollStorage)
+        {
+            cr.WriteFile(p.fileName, p.captureData);
+        }
     }
 
     private Save createSaveGameObject(string s)

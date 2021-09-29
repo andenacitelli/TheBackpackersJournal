@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using System.IO;
-using System.Xml.Serialization;
+using System.Threading;
 using System.Collections;
 using System;
 
@@ -12,7 +12,7 @@ public struct photo
 {
     public Texture2D captureData;
     public string fileName;
-    public byte[] rawDat;
+    public List<GameObject> inView;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -22,7 +22,7 @@ public class CameraRoll : MonoBehaviour
     private static bool autoPlace = true;
     private bool bufferFilled = false;
     public int capacity = 9;
-    private List<GameObject> inView;
+    private List<GameObject> currView;
     private ImageScanner imageScan;
     private CRUIGallery galleryUI;
     private int internalIndex = 0;
@@ -55,7 +55,6 @@ public class CameraRoll : MonoBehaviour
     {
         if(bufferFilled && counter > 120)
         {
-            Debug.Log("Hopped in here!");
             counter = 0;
             bufferFilled = false;
             ProcessRecievedPhoto(buffer.captureData);
@@ -82,10 +81,7 @@ public class CameraRoll : MonoBehaviour
                 byte[] data = File.ReadAllBytes(absolutePath);
                 ImageConversion.LoadImage(t2D, data);
                 t2D.Apply();
-                
-                //Texture2D newTex = new Texture2D(Screen.width, Screen.height);
-                //newTex.LoadRawTextureData(grab);
-                //newTex.Apply();
+
                 photo grabPhoto = new photo
                 {
                     captureData = t2D,
@@ -102,12 +98,14 @@ public class CameraRoll : MonoBehaviour
 
     public void RecievePhoto(byte[] rawData)
     {
+        Debug.Log("Recieved Photo");
+        currView = imageScan.ScanFrame();
         Texture2D newTex = new Texture2D(Screen.width, Screen.height);
         newTex.LoadRawTextureData(rawData);
         newTex.Apply();
         buffer = new photo
         {
-            rawDat = rawData,
+            inView = currView,
             captureData = newTex
         };
         bufferFilled = true;
@@ -116,7 +114,7 @@ public class CameraRoll : MonoBehaviour
     public void ProcessRecievedPhoto(Texture2D screenTex)
     {
         //screenTex.Apply();
-        Debug.Log("Recieved Photo");
+        Debug.Log("Processing Recieved Photo");
         internalIndex = cRollStorage.Count;
         //create struct
         
@@ -142,13 +140,13 @@ public class CameraRoll : MonoBehaviour
         //tex.LoadImage(pngData);
 
         //Creates a new Sprite based on the Texture2D
-        inView = imageScan.ScanFrame();
+        
 
         #region debugScreenCapture
         string objectsInImage = "On Display: ";
-        if(inView.Count > 0)
+        if(currView.Count > 0)
         {
-            foreach (GameObject scannedObj in inView)
+            foreach (GameObject scannedObj in currView)
             {
                 objectsInImage += scannedObj.name + " - ";
             }
@@ -201,24 +199,31 @@ public class CameraRoll : MonoBehaviour
 
         if (!isLoad)
         {
-            StartCoroutine(WriteFile(fileName));
+            //WriteFile(fileName);
         }
         
     }
 
-    private IEnumerator WriteFile(string fileName)
+    public async void WriteFile(string fileName, Texture2D data)
     {
-        byte[] rawData = buffer.captureData.EncodeToPNG();
-        yield return new WaitForSeconds(.1f);
-        new System.Threading.Thread(() =>
+        byte[] rawData = data.EncodeToPNG();
+        using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
         {
-            //System.Threading.Thread.Sleep(100);
+            fs.Seek(0, SeekOrigin.End);
+            await fs.WriteAsync(rawData, 0, rawData.Length);
+        }
+        
+        //yield return new WaitForSeconds(.1f);
+        /*new Thread(() =>
+        {
+            Thread.Sleep(0);
             File.WriteAllBytes(fileName, rawData);
-        }).Start();
 
-        yield return new WaitForSeconds(.5f);
+        }).Start();*/
+        print("File Written.");
+        //yield return new WaitForSeconds(.5f);
 
-        yield break;
+        //yield break;
     }
 
     /* Efficient way to off-load picture saving:

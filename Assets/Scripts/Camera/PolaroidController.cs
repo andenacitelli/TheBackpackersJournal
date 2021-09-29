@@ -231,8 +231,6 @@ public class PolaroidController : MonoBehaviour
         yield return new WaitForSeconds(.4f);
         
         picNum++;
-        Debug.Log("capture!");
-
         yield break;
     }
 
