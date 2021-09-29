@@ -8,6 +8,7 @@ public class ButtonScript : MonoBehaviour
 {
     public GameObject LoadMenu;
     public GameObject MainMenu;
+    public GameObject SettingsMenu;
     public void PlayGame()
     {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
@@ -19,7 +20,6 @@ public class ButtonScript : MonoBehaviour
     {
         MainMenu.SetActive(false);
         LoadMenu.SetActive(true);
-/*        Save save = LoadByXML();*/
 
     }
 
@@ -29,12 +29,18 @@ public class ButtonScript : MonoBehaviour
         LoadMenu.SetActive(false);
     }
 
-
-
-    public void LoadPlayerProfile()
+    public void Settings()
     {
-
+        MainMenu.SetActive(false);
+        SettingsMenu.SetActive(true);
     }
+
+    public void SettingsBackToMainMenu()
+    {
+        MainMenu.SetActive(true);
+        SettingsMenu.SetActive(false);
+    }
+
     public void Quit()
     {
         Debug.Log("Quit button pressed");
