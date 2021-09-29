@@ -89,6 +89,7 @@ public class TerrainManager : MonoBehaviour
                             Vector3 chunkPos = new Vector3(xIndex * tileWidth, this.gameObject.transform.position.y, zIndex * tileDepth);
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
                             tile.GetComponent<ChunkGen>().coords = pos;
+                            tile.layer = LayerMask.NameToLayer("Terrain"); 
                             chunks[pos] = tile;
                             chunksGeneratedThisFrame++;
                         }
