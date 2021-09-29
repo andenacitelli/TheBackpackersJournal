@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using System.IO;
 
 //UI Code here is temporary & just for testing
 public class CameraRoll : MonoBehaviour
@@ -49,17 +50,17 @@ public class CameraRoll : MonoBehaviour
         Debug.Log("Recieved Photo");
         internalIndex = cRollStorage.Count;
         //create struct
-        photo grab = new photo { 
+        buffer = new photo { 
             captureData = screenTex
         };
         
 
         if (!IsStorageFull() && autoPlace)
         {
-            SaveBuffer(internalIndex, grab);
+            SaveBuffer(internalIndex, buffer);
         } else
         {
-            crUI.UpdatePopUp(screenTex);
+            crUI.UpdatePopUp(buffer.captureData);
             CapturePopUp();
         }
 
@@ -100,9 +101,10 @@ public class CameraRoll : MonoBehaviour
         crUI.OpenPopUp();
     }
 
-    public void KeepCapture()
+    public void KeepCapture(int indexToReplace)
     {
-
+        cRollStorage.RemoveAt(indexToReplace);
+        SaveBuffer(indexToReplace, buffer);
     }
 
     public void DiscardCapture()
@@ -125,9 +127,10 @@ public class CameraRoll : MonoBehaviour
     {
         string fileName = Application.dataPath + "/PhotoStorage/" + crIndex + ".png";
 
-
+        buffPass.fileName = fileName;
         crUI.UpdateCR(crIndex, buffPass.captureData);
         cRollStorage.Insert(crIndex, buffPass);
+
     }
 
     /* Efficient way to off-load picture saving:

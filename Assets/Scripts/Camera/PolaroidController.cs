@@ -86,7 +86,6 @@ public class PolaroidController : MonoBehaviour
     private IEnumerator EngagedAim()
     {
         aimRunning = true;
-        Debug.Log("EngagedAim started");
         aimEngaged = true;
         aimDisengaged = false;
         shutterOn = false;
@@ -228,7 +227,7 @@ public class PolaroidController : MonoBehaviour
         overlay.SetActive(true);
         
         cRoll.RecievePhoto(screenImage);
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.4f);
         
         picNum++;
         Debug.Log("capture!");

@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+
+[System.Serializable]
+public delegate void SendGallerySelect(int val, bool replace);
 
 public class CRUIGallery : MonoBehaviour
 {
@@ -15,6 +19,16 @@ public class CRUIGallery : MonoBehaviour
     public GameObject p6;
     public GameObject p7;
     public GameObject p8;
+    public CameraRollMenu crUI;
+
+    //If isReplaceMode, gallery was opened with intention to replace photo.
+    public bool isReplaceMode { get; set; }
+
+
+    public void Awake()
+    {
+        isReplaceMode = false;
+    }
 
     public void AssignPicture(int index, Texture2D photo)
     {
@@ -67,7 +81,8 @@ public class CRUIGallery : MonoBehaviour
 
     private void ClickResponse(int index)
     {
-        Debug.Log("Pic" + index + " Clicked.");
+        SendGallerySelect send = crUI.RecieveGallerySelect;
+        send(index, isReplaceMode);
     }
 
     private GameObject DeterminePhoto(int index)
