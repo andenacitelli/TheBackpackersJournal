@@ -16,6 +16,6 @@ public class CRPopUp : MonoBehaviour
 
     public void AssignPicture(Texture2D photo)
     {
-        uiPhoto.sprite = Sprite.Create(photo, new Rect(0.0f, 0.0f, Screen.width, Screen.height), new Vector2(0.5f, 0.5f), 100.0f);
+        uiPhoto.sprite = Sprite.Create(photo, new Rect(0.0f, 0.0f, photo.width, photo.height), new Vector2(0.0f, 0.0f), uiPhoto.pixelsPerUnit);
     }
 }

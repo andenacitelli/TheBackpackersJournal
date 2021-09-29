@@ -6,11 +6,13 @@ using TMPro;
 using System.IO;
 using System.Xml.Serialization;
 using System.Collections;
+using System;
 
 public struct photo
 {
     public Texture2D captureData;
     public string fileName;
+    public byte[] rawDat;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -18,6 +20,7 @@ public class CameraRoll : MonoBehaviour
 {
     //Make an option in the future
     private static bool autoPlace = true;
+    private bool bufferFilled = false;
     public int capacity = 9;
     private List<GameObject> inView;
     private ImageScanner imageScan;
@@ -28,6 +31,7 @@ public class CameraRoll : MonoBehaviour
 
     public List<photo> cRollStorage;
     private static photo buffer;
+    private int counter = 0;
 
     #region UItest
     [Header("TestConnections")]
@@ -43,13 +47,25 @@ public class CameraRoll : MonoBehaviour
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         
-        cRollStorage = LoadCRoll();
+        LoadCRoll();
         
     }
 
-    private List<photo> LoadCRoll() 
+    private void Update()
     {
-        List<photo> retList = new List<photo>();
+        if(bufferFilled && counter > 120)
+        {
+            Debug.Log("Hopped in here!");
+            counter = 0;
+            bufferFilled = false;
+            ProcessRecievedPhoto(buffer.captureData);
+        }
+        counter++;
+    }
+
+    private void LoadCRoll() 
+    {
+        cRollStorage = new List<photo>();
         string pathNoFile = Application.dataPath + "/PhotoStorage/";
         DirectoryInfo info = new DirectoryInfo(pathNoFile);
         FileInfo[] fileInfo = info.GetFiles();
@@ -58,47 +74,57 @@ public class CameraRoll : MonoBehaviour
         {
             if (!f.Name.Contains("meta"))
             {
-                //FileStream fs = f.OpenRead();
                 
-                //byte[] grab = new byte[fs.Length];
-
+                string path = "/PhotoStorage/" + index;
                 string absolutePath = pathNoFile + f.Name;
-                byte[] grab = File.ReadAllBytes(absolutePath);
-            
+                Texture2D t2D = new Texture2D(Screen.width, Screen.height);
+
+                byte[] data = File.ReadAllBytes(absolutePath);
+                ImageConversion.LoadImage(t2D, data);
+                t2D.Apply();
                 
-                Texture2D newTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false);
-                newTex.LoadRawTextureData(grab);
-                newTex.Apply();
+                //Texture2D newTex = new Texture2D(Screen.width, Screen.height);
+                //newTex.LoadRawTextureData(grab);
+                //newTex.Apply();
                 photo grabPhoto = new photo
                 {
-                    captureData = newTex,
+                    captureData = t2D,
                     fileName = absolutePath
                 };
-                SaveBuffer(index, grabPhoto);
+                SaveBuffer(index, grabPhoto, true);
                 index++;
             }
             
 
         }
 
-        return retList;
-
     }
 
-    public void RecievePhoto(Texture2D screenTex)
+    public void RecievePhoto(byte[] rawData)
+    {
+        Texture2D newTex = new Texture2D(Screen.width, Screen.height);
+        newTex.LoadRawTextureData(rawData);
+        newTex.Apply();
+        buffer = new photo
+        {
+            rawDat = rawData,
+            captureData = newTex
+        };
+        bufferFilled = true;
+    }
+
+    public void ProcessRecievedPhoto(Texture2D screenTex)
     {
         //screenTex.Apply();
         Debug.Log("Recieved Photo");
         internalIndex = cRollStorage.Count;
         //create struct
-        buffer = new photo { 
-            captureData = screenTex
-        };
+        
         
 
         if (!IsStorageFull() && autoPlace)
         {
-            SaveBuffer(internalIndex, buffer);
+            SaveBuffer(internalIndex, buffer, false);
         } else
         {
             crUI.UpdatePopUp(buffer.captureData);
@@ -145,7 +171,7 @@ public class CameraRoll : MonoBehaviour
     public void KeepCapture(int indexToReplace)
     {
         cRollStorage.RemoveAt(indexToReplace);
-        SaveBuffer(indexToReplace, buffer);
+        SaveBuffer(indexToReplace, buffer, false);
     }
 
     public void DiscardCapture()
@@ -164,7 +190,7 @@ public class CameraRoll : MonoBehaviour
 
         return isFull;
     }
-    private void SaveBuffer(int crIndex, photo buffPass)
+    private void SaveBuffer(int crIndex, photo buffPass, bool isLoad)
     {
         string fileName = Application.dataPath + "/PhotoStorage/" + crIndex + ".png";
 
@@ -172,20 +198,26 @@ public class CameraRoll : MonoBehaviour
         crUI.UpdateCR(crIndex, buffPass.captureData);
         cRollStorage.Insert(crIndex, buffPass);
 
-        StartCoroutine(WriteFile(fileName));
 
+        if (!isLoad)
+        {
+            StartCoroutine(WriteFile(fileName));
+        }
+        
     }
 
     private IEnumerator WriteFile(string fileName)
     {
         byte[] rawData = buffer.captureData.EncodeToPNG();
+        yield return new WaitForSeconds(.1f);
         new System.Threading.Thread(() =>
         {
-            System.Threading.Thread.Sleep(100);
+            //System.Threading.Thread.Sleep(100);
             File.WriteAllBytes(fileName, rawData);
         }).Start();
 
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(.5f);
+
         yield break;
     }
 

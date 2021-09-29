@@ -206,7 +206,7 @@ public class PolaroidController : MonoBehaviour
     {
         //Prep for Photo:
         //string fileName = Application.persistentDataPath + "/photo_ID" + picNum + ".png";
-        Texture2D screenImage = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false);
+        Texture2D screenImage = new Texture2D(Screen.width, Screen.height);
         overlay.SetActive(false);
         yield return new WaitForEndOfFrame();
 
@@ -226,7 +226,8 @@ public class PolaroidController : MonoBehaviour
         }
         overlay.SetActive(true);
         
-        cRoll.RecievePhoto(screenImage);
+        //Changed texture2d to byte[] as a test
+        cRoll.RecievePhoto(screenImage.GetRawTextureData());
         yield return new WaitForSeconds(.4f);
         
         picNum++;
