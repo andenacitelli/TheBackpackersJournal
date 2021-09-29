@@ -12,6 +12,7 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseMenuUI;
     PauseAction action;
     public GameObject savePrompt;
+    public CameraRoll cr;
 
     private string input;
 

@@ -4,7 +4,15 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
 using System.IO;
+using System.Xml.Serialization;
+using System.Collections;
 
+public struct photo
+{
+    public Texture2D captureData;
+    public string fileName;
+    // will need more things here - for sure
+}
 //UI Code here is temporary & just for testing
 public class CameraRoll : MonoBehaviour
 {
@@ -17,12 +25,6 @@ public class CameraRoll : MonoBehaviour
     private int internalIndex = 0;
     [Header("UI")]
     public CameraRollMenu crUI;
-
-    public struct photo {
-        public Texture2D captureData;
-        public string fileName;
-        // will need more things here - for sure
-    }
 
     public List<photo> cRollStorage;
     private static photo buffer;
@@ -41,9 +43,48 @@ public class CameraRoll : MonoBehaviour
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         
-        cRollStorage = new List<photo>();
+        cRollStorage = LoadCRoll();
         
     }
+
+    private List<photo> LoadCRoll() 
+    {
+        List<photo> retList = new List<photo>();
+        string pathNoFile = Application.dataPath + "/PhotoStorage/";
+        DirectoryInfo info = new DirectoryInfo(pathNoFile);
+        FileInfo[] fileInfo = info.GetFiles();
+        int index = 0;
+        foreach (FileInfo f in fileInfo)
+        {
+            if (!f.Name.Contains("meta"))
+            {
+                //FileStream fs = f.OpenRead();
+                
+                //byte[] grab = new byte[fs.Length];
+
+                string absolutePath = pathNoFile + f.Name;
+                byte[] grab = File.ReadAllBytes(absolutePath);
+            
+                
+                Texture2D newTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false);
+                newTex.LoadRawTextureData(grab);
+                newTex.Apply();
+                photo grabPhoto = new photo
+                {
+                    captureData = newTex,
+                    fileName = absolutePath
+                };
+                SaveBuffer(index, grabPhoto);
+                index++;
+            }
+            
+
+        }
+
+        return retList;
+
+    }
+
     public void RecievePhoto(Texture2D screenTex)
     {
         //screenTex.Apply();
@@ -131,16 +172,27 @@ public class CameraRoll : MonoBehaviour
         crUI.UpdateCR(crIndex, buffPass.captureData);
         cRollStorage.Insert(crIndex, buffPass);
 
+        StartCoroutine(WriteFile(fileName));
+
     }
 
-    /* Efficient way to off-load picture saving:
-     * 
-     * 
+    private IEnumerator WriteFile(string fileName)
+    {
+        byte[] rawData = buffer.captureData.EncodeToPNG();
         new System.Threading.Thread(() =>
         {
             System.Threading.Thread.Sleep(100);
             File.WriteAllBytes(fileName, rawData);
         }).Start();
+
+        yield return new WaitForSeconds(.1f);
+        yield break;
+    }
+
+    /* Efficient way to off-load picture saving:
+     * 
+     * 
+        
         
      * where: rawData - byte[] & fileName - str
      */

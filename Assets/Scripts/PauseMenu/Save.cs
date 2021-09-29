@@ -11,6 +11,5 @@ public class Save
     public float playerPositionX;
     public float playerPositionY;
     public float playerPositionZ;
-
     /*ToDo: Add features of the player profile*/
 }
