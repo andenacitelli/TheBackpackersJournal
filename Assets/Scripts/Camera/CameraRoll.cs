@@ -65,8 +65,12 @@ public class CameraRoll : MonoBehaviour
     private void LoadCRoll() 
     {
         cRollStorage = new List<photo>();
-        string pathNoFile = Application.dataPath + "/PhotoStorage/";
+        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/";
         DirectoryInfo info = new DirectoryInfo(pathNoFile);
+        if (!info.Exists)
+        {
+            info.Create();
+        }
         FileInfo[] fileInfo = info.GetFiles();
         int index = 0;
         foreach (FileInfo f in fileInfo)
@@ -190,7 +194,7 @@ public class CameraRoll : MonoBehaviour
     }
     private void SaveBuffer(int crIndex, photo buffPass, bool isLoad)
     {
-        string fileName = Application.dataPath + "/PhotoStorage/" + crIndex + ".png";
+        string fileName = Application.persistentDataPath + "/PhotoStorage/" + crIndex + ".png";
 
         buffPass.fileName = fileName;
         crUI.UpdateCR(crIndex, buffPass.captureData);

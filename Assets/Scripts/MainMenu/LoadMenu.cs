@@ -17,7 +17,7 @@ public class LoadMenu : MonoBehaviour
     {
         
         int i = 0;
-        string[] XMLfiles = Directory.GetFiles(Application.dataPath + "/XMLSaves", "*.XML");
+        string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");
         foreach(string file in XMLfiles)
         {
             buttons[i].SetActive(true);
@@ -30,10 +30,10 @@ public class LoadMenu : MonoBehaviour
     {
         Save save = new Save();
         string file = filenames[i];
-        if (File.Exists(Application.dataPath + "/XMLSaves/" + file + ".xml"))
+        if (File.Exists(Application.persistentDataPath + "/XMLSaves/" + file + ".xml"))
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
-            FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + file + ".xml", FileMode.Open);
+            FileStream stream = new FileStream(Application.persistentDataPath + "/XMLSaves/" + file + ".xml", FileMode.Open);
             save = serializer.Deserialize(stream) as Save;
             stream.Close();
             Debug.Log(save.playerPositionX);

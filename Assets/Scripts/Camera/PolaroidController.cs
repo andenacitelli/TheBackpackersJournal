@@ -73,6 +73,7 @@ public class PolaroidController : MonoBehaviour
             {
                 if (FlashOn)
                 {
+                    FindObjectOfType<AudioManager>().Play("ShutterCamera");
                     StartCoroutine("CapturePhoto");
                 }
             }
@@ -94,7 +95,7 @@ public class PolaroidController : MonoBehaviour
 
         Vector3[] worldPos = ConvertToWorldPoints();
         float currentShutter= 0;
-        
+        FindObjectOfType<AudioManager>().Play("OpenCamera");
         while (aimEngaged && (!shutterStopped && Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_END]) >= .005))
         {
             worldPos = ConvertToWorldPoints();
@@ -149,7 +150,7 @@ public class PolaroidController : MonoBehaviour
         photoActive = false;
         aimEngaged = false;
         shutterStopped = false;
-        
+        FindObjectOfType<AudioManager>().Play("CloseCamera");
         while (Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_START]) >= .005)
         {
             #region shutter2

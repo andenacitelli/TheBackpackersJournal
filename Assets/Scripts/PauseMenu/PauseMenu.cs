@@ -65,7 +65,13 @@ public class PauseMenu : MonoBehaviour
             Save save = createSaveGameObject(s);
             XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
-            FileStream stream = new FileStream(Application.dataPath + "/XMLSaves/" + s + ".xml", FileMode.Create);
+            string dataPath = Application.persistentDataPath + "/XMLSaves/";
+            DirectoryInfo xmlSaveInfo = new DirectoryInfo(dataPath);
+            if (!xmlSaveInfo.Exists)
+            {
+                xmlSaveInfo.Create();
+            }
+            FileStream stream = new FileStream(dataPath+ s + ".xml", FileMode.Create);
             serializer.Serialize(stream, save);
             stream.Close();
             savePrompt.SetActive(false);
