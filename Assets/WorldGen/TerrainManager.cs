@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* Manages, spawns, and deletes chunks. */
 public class TerrainManager : MonoBehaviour
 {
     [SerializeField]
@@ -14,11 +15,18 @@ public class TerrainManager : MonoBehaviour
     private int generateRadius;
 
     // Holds references to chunks we've generated so that we don't regenerate them 
-    private Dictionary<Vector2, GameObject> chunks = new Dictionary<Vector2, GameObject>();
+    static private Dictionary<Vector2, GameObject> chunks = new Dictionary<Vector2, GameObject>();
 
     private void Start()
     {
         Physics.autoSyncTransforms = true;    
+    }
+
+    // Essentially just a getter
+    // Used by chunks to get info about topography of other neighboring chunks when interpolating Delaunay stuff between them 
+    public static GameObject GetChunkAtCoords(Vector2 coords)
+    {
+        return chunks.ContainsKey(coords) ? chunks[coords] : null; 
     }
 
     void Update() 
@@ -86,6 +94,7 @@ public class TerrainManager : MonoBehaviour
                         // Only generate chunk if it doesn't already exist 
                         if (!chunks.ContainsKey(pos))
                         {
+                            print("pos: " + pos);
                             Vector3 chunkPos = new Vector3(xIndex * tileWidth, this.gameObject.transform.position.y, zIndex * tileDepth);
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
                             tile.GetComponent<ChunkGen>().coords = pos;
@@ -100,7 +109,6 @@ public class TerrainManager : MonoBehaviour
     }
 
     // Removes elements 
-    // TODO: Probably more efficient to change camera render distance and Unity will automatally "unload" GameObjects without having to regenerate them when we get back in range 
     void CullChunks()
     {
         Vector3 tileSize = tilePrefab.GetComponent<MeshRenderer>().bounds.size;
