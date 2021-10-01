@@ -81,11 +81,16 @@ public class ChunkGen : MonoBehaviour
         // Seed this random generation off chunk coords so each chunk generates the same every time. May be off-by-one, but doesn't really matter.
         Random.InitState(coords.GetHashCode());
 
-        // Generate set of vertices
-        int NUM_POINTS = Random.Range(70, 130);
+        // Generate set of vertices to feed into triangulation
         Bounds chunkBounds = gameObject.GetComponent<MeshRenderer>().bounds;
+        const int NUM_ROWS = 10, NUM_COLS = 10, HORIZ_PADDING = 1, VERT_PADDING = 1;
+        Polygon polygon = PointGeneration.generatePointsGrid(chunkBounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+
+        /* Poisson Distribution Code
+        int NUM_POINTS = Random.Range(70, 130);
         float radius = (chunkBounds.max.x - chunkBounds.min.x) * .1f;
         Polygon polygon = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, chunkBounds, radius);
+        */
 
         // TODO: Better, actually non-glitchy way of doing continuity is to do Triangulation with the border areas
         // We essentially set up a bunch of vertices along the edges
