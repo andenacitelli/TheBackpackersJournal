@@ -30,8 +30,8 @@ public class FlyCamController : MonoBehaviour
         cc = GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+/*        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;*/
     }
 
     void Update()
