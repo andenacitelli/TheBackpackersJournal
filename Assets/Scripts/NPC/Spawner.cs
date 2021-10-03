@@ -24,6 +24,9 @@ public class Spawner : MonoBehaviour
     {
         for (var i = 0; i < quantity; i++)
         {
+            AnimalController animal = prefab.GetComponent<PredatorController>();
+            if(animal == null) animal = prefab.GetComponent<PreyController>();
+            if (animal != null) animal.territory = new Bounds(spawnArea.center, spawnArea.size);
             float x = Random.Range(spawnArea.min.x, spawnArea.max.x), z = Random.Range(spawnArea.min.z, spawnArea.max.z);
             float y = spawnArea.center.y;
             Instantiate(prefab, new Vector3(x, y, z), Quaternion.identity);

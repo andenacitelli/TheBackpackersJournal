@@ -214,7 +214,7 @@ Transform:
   m_GameObject: {fileID: 493094308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 25, y: 1, z: 25}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -440,13 +440,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnArea:
     m_Center: {x: 0, y: 1.08, z: 0}
-    m_Extent: {x: 125, y: 1.08, z: 125}
+    m_Extent: {x: 25, y: 1.08, z: 25}
   predator: {fileID: 1054992708087064808, guid: dfa53fac313f1cb429c2a6bd4cf63135, type: 3}
-  numPredators: 3
+  numPredators: 1
   prey: {fileID: 514559866695895452, guid: e9495834b3271eb46bea1c6ead98c3fe, type: 3}
-  numPrey: 5
+  numPrey: 0
   target: {fileID: 3914045066834312031, guid: 7b9134bc0799c0740b105b14d5a97793, type: 3}
-  numTargets: 10
+  numTargets: 0
 --- !u!4 &1131504593
 Transform:
   m_ObjectHideFlags: 0
@@ -488,7 +488,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1611955574}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 225, z: 0}
+  m_LocalPosition: {x: 0, y: 45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -759,7 +759,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1811251574}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

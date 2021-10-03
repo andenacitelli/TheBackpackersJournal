@@ -14,7 +14,7 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
-    [SerializeField] Bounds territory;
+    [SerializeField] public Bounds territory;
 
 
     // Sight and Hearing
@@ -111,6 +111,7 @@ public class AnimalController : MonoBehaviour
 
         // generate a point within the bounds/territory
         targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
+        while(Vector3.Distance(targetDestination, transform.position) < newLocationMinDistance) targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
         if (!canFly) targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
 
         // return to default moving speed

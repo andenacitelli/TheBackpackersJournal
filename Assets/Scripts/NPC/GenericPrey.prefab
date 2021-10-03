@@ -160,17 +160,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canFly: 0
-  movementSpeed: 4
+  movementSpeed: 2
   dashSpeed: 15
   turnSpeed: 2
   targetTolerance: 2
   newTargetDelay: 0.5
   newLocationMinDistance: 5
   territory:
-    m_Center: {x: 0, y: 2, z: 0}
-    m_Extent: {x: 150, y: 2, z: 150}
+    m_Center: {x: 0, y: 1.08, z: 0}
+    m_Extent: {x: 25, y: 1.08, z: 25}
   fleeing: 0
-  threatFleeTimeout: 6
+  threatFleeTimeout: 2
   threatRefreshDelay: 0.5
 --- !u!114 &514559866695895455
 MonoBehaviour:
@@ -185,12 +185,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectRate: 0.2
-  viewingAngle: 299
-  visionRadius: 25
+  viewingAngle: 300
+  visionRadius: 12.5
   creatureMask:
     serializedVersion: 2
     m_Bits: 128
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  hearingRadius: 10
+  hearingRadius: 5
