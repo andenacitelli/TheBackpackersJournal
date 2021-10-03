@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using TriangleNet.Geometry;
 using TriangleNet.Topology;
+using Assets.WorldGen;
 
 // Selectively shade chunks 
 [System.Serializable]
@@ -17,6 +18,11 @@ public class TerrainType {
 // Generate chunks 
 public class ChunkGen : MonoBehaviour
 {
+    [SerializeField]
+    static public float size = 80; // Length, in meters, of each chunk's edge
+    private Bounds bounds = new Bounds(Vector3.zero, new Vector3(size, 0, size));
+    Color gizmoColor;
+
     [SerializeField]
     private GameObject tilePrefab;
     private int tileWidth, tileDepth;
@@ -40,12 +46,12 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private MeshCollider meshCollider;
 
-    // Booleans used to track whenever we generate the connecting triangulations
-    // We set these IMMEDIATELY after we start generating one on both connected chunks, then check these every time we are about to start again
-    public bool leftStarted = false, rightStarted = false, upStarted = false, downStarted = false;
-
     // Holds the inner triangulation of this chunk in Triangle.NET's format
-    TriangleNet.Mesh mesh;
+    private TriangleNet.Mesh mesh;
+
+    // The mesh above ends up holding vertices in other chunks as well; this is a simple list of just the inner vertices
+    int cellWidth, cellHeight; 
+    private HashSet<Vertex> vertices = new HashSet<Vertex>(); 
 
     // Represents how much to spread the Perlin noise out; for a flatter, smoother map, make this value high
     [SerializeField]
@@ -54,19 +60,67 @@ public class ChunkGen : MonoBehaviour
     // Set by the class Instanting the gameObject linked to this script
     public Vector2Int coords;
 
-    // NOTE: As we set `coords` AFTER initialization, we can't do chunk seeding in Awake. It HAS to be in Start() for it to work correctly.
-    private void Start()
-    {
-        // Calculate things we'll use all throughout the class 
-        Vector3 tileSize = this.GetComponent<MeshRenderer>().bounds.size;
-        tileWidth = Mathf.RoundToInt(tileSize.x); // Should theoretically already be 10, but can't hurt to round to be sure
-        tileDepth = Mathf.RoundToInt(tileSize.z);
+    /* So: 
+     * On generating a given chunk, I need surrounding chunks to be already generated.
+     * The current issue is chunks are getting added to TerrainManager's `chunks` after their Awake, but before any mesh
+     * gets generated in Start().
+     * 
+     * Solutions:
+     * - Either find a way to pass stuff into Awake, or reverse engineer chunk coords, then generate the mesh in Awake(), which happens when the object gets initialized
+     * - Do something likely more complicated with async/awake where I wait for a chunk to finish generation before doing another
+     * */
 
-        GenerateChunk(); 
+    // Need to generate the chunk immediately on initialization, otherwise the parallelism-type stuff with connective tissue gets really complicated
+    private void Awake()
+    {
+        // Rounding necessary otherwise, for example, chunk (1, 0) at real coords (40, 0) would get set as (0, 0) if floating precision 
+        // reported it as very slightly below 40, if we were doing integer division/truncation
+        coords = new Vector2Int(Mathf.RoundToInt(transform.position.x / size), Mathf.RoundToInt(transform.position.z / size));
+        print("Initializing chunk at " + coords);
+        GenerateChunk();
+
+        // For debug; needs to be a light enough color to show up against Unity's dark skybox 
+        gizmoColor = new Color(Random.Range(.3f, 1), Random.Range(.3f, 1), Random.Range(.3f, 1));
+    }
+
+    // Makes chunk direction-related code much more readable
+    public enum Direction { UP, LEFT, RIGHT, DOWN }
+
+    // Returns the border vertices of the current chunk
+    public List<Vertex> GetBorderVertices(Direction direction)
+    {
+        List<Vertex> output = new List<Vertex>();
+        foreach (Vertex v in vertices)
+        {
+            switch (direction)
+            {
+                case Direction.UP:
+                    {
+                        if (v.y <= bounds.max.z && Mathf.Abs(bounds.max.z - (float)v.y) <= cellHeight) output.Add(v);
+                        break; 
+                    }
+                case Direction.LEFT:
+                    {
+                        if (v.x >= bounds.min.x && Mathf.Abs(bounds.min.x - (float)v.x) <= cellWidth) output.Add(v);
+                        break;
+                    }
+                case Direction.RIGHT:
+                    {
+                        if (v.x <= bounds.max.x && Mathf.Abs(bounds.max.x - (float)v.x) <= cellWidth) output.Add(v);
+                        break;
+                    }
+                case Direction.DOWN:
+                    {
+                        if (v.y >= bounds.min.z && Mathf.Abs(bounds.min.z - (float)v.y) <= cellHeight) output.Add(v);
+                        break;
+                    }
+            }
+        }
+        return output; 
     }
 
     // Update vertex heights and apply height-based coloration
-    List<Vector2> Vector3ToVector2(Vector3[] vList)
+    private List<Vector2> Vector3ToVector2(Vector3[] vList)
     {
         List<Vector2> output = new List<Vector2>();
         foreach (Vector3 v in vList)
@@ -76,309 +130,116 @@ public class ChunkGen : MonoBehaviour
         return output;
     }
 
-    void GenerateChunk()
+    private void GenerateChunk()
     {
-        // Seed this random generation off chunk coords so each chunk generates the same every time. May be off-by-one, but doesn't really matter.
+        // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
-        print("Coords Hashcode: " + coords.GetHashCode());
 
         // Generate set of vertices to feed into triangulation
-        Bounds chunkBounds = gameObject.GetComponent<MeshRenderer>().bounds;
-        const int NUM_ROWS = 10, NUM_COLS = 10, HORIZ_PADDING = 1, VERT_PADDING = 1;
-        Polygon polygon = PointGeneration.generatePointsGrid(chunkBounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+        const int NUM_ROWS = 20, NUM_COLS = 20;
+        float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
+        cellWidth = Mathf.RoundToInt((bounds.max.x - bounds.min.x) / NUM_COLS);
+        cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
+        vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
 
-        /* Poisson Distribution Code
-        int NUM_POINTS = Random.Range(70, 130);
-        float radius = (chunkBounds.max.x - chunkBounds.min.x) * .1f;
-        Polygon polygon = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, chunkBounds, radius);
+        /* 
+        int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
+        int NUM_POINTS = Mathf.RoundToInt(Random.Range(.9f * NUM_POINTS_BASELINE, 1.1f * NUM_POINTS_BASELINE));
+        const float RADIUS = 6; 
+        vertices = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, bounds, RADIUS);
         */
 
-        // TODO: Better, actually non-glitchy way of doing continuity is to do Triangulation with the border areas
-        // We essentially set up a bunch of vertices along the edges
+        // Turn points into a Triangle.NET polygon which we can use for triangulation
+        Polygon polygon = new Polygon();
 
-        // Add the corners 
-        // polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.z));
-        //polygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.z));
-        //polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.z));
-        //polygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.z));
+        /* 
+        // TODO: Probably cleaner to turn this into a function\
+        GameObject above = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
+        if (above != null)
+        {
+            print("New chunk is generating connective tissue above itself!");
+            List<Vertex> borderVertices = above.GetComponent<ChunkGen>().GetBorderVertices(Direction.DOWN);
+            //foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x, v.y + size)); // Need to adjust coords because the above chunk's vertices will still be local; we have to convert from local of the above chunk to local of current chunk
+            vertices.Add(new Vertex(bounds.min.x, bounds.max.y));
+            vertices.Add(new Vertex(bounds.max.x, bounds.max.y));
+        }
 
-        // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
-        //for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.min.z));
-        //for (float i = chunkBounds.min.x; i < chunkBounds.max.x; i += 10) polygon.Add(new Vertex(i, chunkBounds.max.z));
-        //for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.min.x, i));
-        //for (float i = chunkBounds.min.z; i < chunkBounds.max.z; i += 10) polygon.Add(new Vertex(chunkBounds.max.x, i));
+        GameObject left = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x - 1, coords.y));
+        if (left != null)
+        {
+            print("New chunk is generating connective tissue to its left!");
+            List<Vertex> borderVertices = left.GetComponent<ChunkGen>().GetBorderVertices(Direction.RIGHT);
+            //foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x - size, v.y));
+            vertices.Add(new Vertex(bounds.min.x, bounds.max.y));
+            vertices.Add(new Vertex(bounds.min.x, bounds.min.y));
+        }
+
+        GameObject right = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x + 1, coords.y));
+        if (right != null)
+        {
+            print("New chunk is generating connective tissue to its right!");
+            List<Vertex> borderVertices = right.GetComponent<ChunkGen>().GetBorderVertices(Direction.LEFT);
+            // foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x + size, v.y));
+            vertices.Add(new Vertex(bounds.max.x, bounds.max.y));
+            vertices.Add(new Vertex(bounds.max.x, bounds.min.y));  
+        }
+
+        GameObject down = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y - 1));
+        if (down != null)
+        {
+            print("New chunk is generating connective tissue below itself!");
+            List<Vertex> borderVertices = down.GetComponent<ChunkGen>().GetBorderVertices(Direction.UP);
+            // foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x, v.y - size));
+            vertices.Add(new Vertex(bounds.min.x, bounds.min.y));
+            vertices.Add(new Vertex(bounds.max.x, bounds.min.y));
+        }
+        */
+
+        // Generate vertices along each side
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
-        TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true } ;
+        foreach (Vertex v in vertices) polygon.Add(v);
 
-        // Actually convert Delaunay to a mesh and redo the triangles to give us flat shading
-        mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
-        // print("# of Vertices: " + polygon.Count);
+        // Add the corners 
+        polygon.Add(new Vertex(bounds.min.x, bounds.min.z));
+        polygon.Add(new Vertex(bounds.min.x, bounds.max.z));
+        polygon.Add(new Vertex(bounds.max.x, bounds.min.z));
+        polygon.Add(new Vertex(bounds.max.x, bounds.max.z));
+
+        // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
+        for (float i = bounds.min.x; i < bounds.max.x; i += cellWidth) polygon.Add(new Vertex(i, bounds.min.z));
+        for (float i = bounds.min.x; i < bounds.max.x; i += cellWidth) polygon.Add(new Vertex(i, bounds.max.z));
+        for (float i = bounds.min.z; i < bounds.max.z; i += cellHeight) polygon.Add(new Vertex(bounds.min.x, i));
+        for (float i = bounds.min.z; i < bounds.max.z; i += cellHeight) polygon.Add(new Vertex(bounds.max.x, i));
+
+        TriangleNet.Meshing.ConstraintOptions constraintOptions = new TriangleNet.Meshing.ConstraintOptions()
+        {
+            ConformingDelaunay = false, 
+            // Convex = true 
+            // SegmentSplitting = 1
+        };
+
+        TriangleNet.Meshing.QualityOptions qualityOptions = new TriangleNet.Meshing.QualityOptions()
+        { 
+            // MinimumAngle = 30,
+        };
+
+        mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
+
         Mesh actualMesh = GenerateMesh(mesh);
         gameObject.GetComponent<MeshFilter>().mesh = actualMesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = actualMesh;
-
-        // ZERO clue why this is necessary, but THANK GOD it fixes the offset issue
-        // This fixes the issue where there's weird space between them, but the chunks are still generating away from the player
-        transform.position = Vector3.zero;
-
-        List<Vector2> vertices = Vector3ToVector2(this.meshFilter.mesh.vertices);
-        float offsetX = this.gameObject.transform.position.x;
-        float offsetZ = this.gameObject.transform.position.z;
-        List<float> noiseValues = this.noise.GenerateNoiseMap(vertices, this.mapScale, offsetX, offsetZ, waves);
+        
+        List<Vector2> tempVertices = Vector3ToVector2(this.meshFilter.mesh.vertices);
+        float offsetX = transform.position.x, offsetZ = transform.position.z; 
+        List<float> noiseValues = this.noise.GenerateNoiseMap(tempVertices, this.mapScale, offsetX, offsetZ, waves);
         UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues);
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
-
-        // 2. Check each of the four directly neighboring chunks. If they've been generated, use triangulation to generate a mesh to connect them.
-        // TODO: Be able to access the other chunk's vertices and get which ones are neighbors.
-        // TODO: 
-        const int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3; 
-
-        // ABOVE
-        GameObject above = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
-        if (above != null && !above.GetComponent<ChunkGen>().downStarted) // If the chunk is loaded in, meaning we should do triangulation on the shared region 
-        {
-            // Flag that we're getting this one so the chunk above this doesn't concurrently start loading it as well 
-            upStarted = true;
-            above.GetComponent<ChunkGen>().downStarted = true;
-
-            // End polygon we will use to triangulate then produce a mesh from 
-            Polygon interpPolygon = new Polygon();
-
-            // Add vertices we want to use from our section 
-            // TODO: Can optimize this by only getting border vertices once, THEN filtering up/down/left/right
-            HashSet<Vertex> myNearVertices = GetBorderVerticesInQuadrant(UP);
-            foreach (Vertex v in myNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add vertices we want to use from the other chunk 
-            HashSet<Vertex> otherNearVertices = above.GetComponent<ChunkGen>().GetBorderVerticesInQuadrant(DOWN);
-            foreach (Vertex v in otherNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add the two common corners
-            interpPolygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.y));
-            interpPolygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.y));
-
-            
-
-            // Do the actual triangulation 
-            TriangleNet.Mesh interpMesh = (TriangleNet.Mesh) interpPolygon.Triangulate(options);
-
-            // Convert into a mesh and render
-            Mesh interpMesh2 = GenerateMesh(interpMesh);
-            GameObject chunkBorder = new GameObject();
-            chunkBorder.GetComponent<MeshFilter>().mesh = interpMesh2;
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = interpMesh2;
-
-            List<Vector2> vertices2 = Vector3ToVector2(chunkBorder.GetComponent<MeshFilter>().mesh.vertices);
-            List<float> noiseValues2 = this.noise.GenerateNoiseMap(vertices2, this.mapScale, offsetX, offsetZ, waves);
-            UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues2);
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = chunkBorder.GetComponent<MeshFilter>().mesh;
-        }
-
-        // BELOW
-        GameObject below = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
-        if (below != null && !below.GetComponent<ChunkGen>().upStarted)
-        {
-            downStarted = true;
-            below.GetComponent<ChunkGen>().upStarted = true;
-
-            // End polygon we will use to triangulate then produce a mesh from 
-            Polygon interpPolygon = new Polygon();
-
-            // Add vertices we want to use from our section 
-            // TODO: Can optimize this by only getting border vertices once, THEN filtering up/down/left/right
-            HashSet<Vertex> myNearVertices = GetBorderVerticesInQuadrant(DOWN);
-            foreach (Vertex v in myNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add vertices we want to use from the other chunk 
-            HashSet<Vertex> otherNearVertices = above.GetComponent<ChunkGen>().GetBorderVerticesInQuadrant(UP);
-            foreach (Vertex v in otherNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add the two common corners
-            interpPolygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.y));
-            interpPolygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.y));
-
-            // Do the actual triangulation 
-            TriangleNet.Mesh interpMesh = (TriangleNet.Mesh)interpPolygon.Triangulate(options);
-
-            // Convert into a mesh and render
-            Mesh interpMesh2 = GenerateMesh(interpMesh);
-            GameObject chunkBorder = new GameObject();
-            chunkBorder.GetComponent<MeshFilter>().mesh = interpMesh2;
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = interpMesh2;
-
-            List<Vector2> vertices2 = Vector3ToVector2(chunkBorder.GetComponent<MeshFilter>().mesh.vertices);
-            List<float> noiseValues2 = this.noise.GenerateNoiseMap(vertices2, this.mapScale, offsetX, offsetZ, waves);
-            UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues2);
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = chunkBorder.GetComponent<MeshFilter>().mesh;
-        }
-
-        // LEFT 
-        GameObject left = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
-        if (left != null && !left.GetComponent<ChunkGen>().rightStarted)
-        {
-            leftStarted = true;
-            left.GetComponent<ChunkGen>().rightStarted = true;
-
-            // End polygon we will use to triangulate then produce a mesh from 
-            Polygon interpPolygon = new Polygon();
-
-            // Add vertices we want to use from our section 
-            // TODO: Can optimize this by only getting border vertices once, THEN filtering up/down/left/right
-            HashSet<Vertex> myNearVertices = GetBorderVerticesInQuadrant(LEFT);
-            foreach (Vertex v in myNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add vertices we want to use from the other chunk 
-            HashSet<Vertex> otherNearVertices = above.GetComponent<ChunkGen>().GetBorderVerticesInQuadrant(RIGHT);
-            foreach (Vertex v in otherNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add the two common corners
-            interpPolygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.min.y));
-            interpPolygon.Add(new Vertex(chunkBounds.min.x, chunkBounds.max.y));
-
-            // Do the actual triangulation 
-            TriangleNet.Mesh interpMesh = (TriangleNet.Mesh)interpPolygon.Triangulate(options);
-
-            // Convert into a mesh and render
-            Mesh interpMesh2 = GenerateMesh(interpMesh);
-            GameObject chunkBorder = new GameObject();
-            chunkBorder.GetComponent<MeshFilter>().mesh = interpMesh2;
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = interpMesh2;
-
-            List<Vector2> vertices2 = Vector3ToVector2(chunkBorder.GetComponent<MeshFilter>().mesh.vertices);
-            List<float> noiseValues2 = this.noise.GenerateNoiseMap(vertices2, this.mapScale, offsetX, offsetZ, waves);
-            UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues2);
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = chunkBorder.GetComponent<MeshFilter>().mesh;
-        }
-
-        // RIGHT 
-        GameObject right = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
-        if (right != null && !right.GetComponent<ChunkGen>().leftStarted)
-        {
-            rightStarted = true;
-            right.GetComponent<ChunkGen>().leftStarted = true;
-
-            // End polygon we will use to triangulate then produce a mesh from 
-            Polygon interpPolygon = new Polygon();
-
-            // Add vertices we want to use from our section 
-            // TODO: Can optimize this by only getting border vertices once, THEN filtering up/down/left/right
-            HashSet<Vertex> myNearVertices = GetBorderVerticesInQuadrant(RIGHT);
-            foreach (Vertex v in myNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add vertices we want to use from the other chunk 
-            HashSet<Vertex> otherNearVertices = above.GetComponent<ChunkGen>().GetBorderVerticesInQuadrant(LEFT);
-            foreach (Vertex v in otherNearVertices)
-            {
-                interpPolygon.Add(v);
-            }
-
-            // Add the two common corners
-            interpPolygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.min.y));
-            interpPolygon.Add(new Vertex(chunkBounds.max.x, chunkBounds.max.y));    
-
-            // Do the actual triangulation 
-            TriangleNet.Mesh interpMesh = (TriangleNet.Mesh)interpPolygon.Triangulate(options);
-
-            // Convert into a mesh and render
-            Mesh interpMesh2 = GenerateMesh(interpMesh);
-            GameObject chunkBorder = new GameObject();
-            chunkBorder.GetComponent<MeshFilter>().mesh = interpMesh2;
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = interpMesh2;
-
-            List<Vector2> vertices2 = Vector3ToVector2(chunkBorder.GetComponent<MeshFilter>().mesh.vertices);
-            List<float> noiseValues2 = this.noise.GenerateNoiseMap(vertices2, this.mapScale, offsetX, offsetZ, waves);
-            UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues2);
-            chunkBorder.GetComponent<MeshCollider>().sharedMesh = chunkBorder.GetComponent<MeshFilter>().mesh;
-        }
-    }
-
-    // 0 = Up, 1 = Right, 2 = Down, 3 = Right
-    // TODO: Probably cleaner to make this an enum, just looking for something quick and dirty right now 
-    public HashSet<Vertex> GetBorderVerticesInQuadrant(int quadrant)
-    {
-        HashSet<Vertex> boundaryVertices = GetBoundaryVertices();
-        HashSet<Vertex> verticesInQuadrant = new HashSet<Vertex>();
-
-        // TODO: Lots of nesting and shared code; probably possible to improve that
-        Vector3 chunkCenter = gameObject.GetComponent<MeshRenderer>().bounds.center; 
-        foreach (Vertex v in boundaryVertices)
-        {
-            float dx = (float) v.x - chunkCenter.x, dy = (float) v.y - chunkCenter.z;
-            switch (quadrant)
-            {
-                // Top = dy positive and abs(dy) > abs(dx)
-                case 0:
-                    {
-                        if (dy > 0 && Mathf.Abs(dy) > Mathf.Abs(dx))
-                        {
-                            verticesInQuadrant.Add(v);
-                        }
-                        break;
-                    }
-
-                // Right = dx positive and abs(dx) > abs(dy)
-                case 1:
-                    {
-                        if (dx > 0 && Mathf.Abs(dx) > Mathf.Abs(dy))
-                        {
-                            verticesInQuadrant.Add(v);
-                        }
-                        break;
-                    }
-
-                // Down = dy negative and abs(dy) > abs(dx) 
-                case 2:
-                    {
-                        if (dy < 0 && Mathf.Abs(dy) > Mathf.Abs(dx))
-                        {
-                            verticesInQuadrant.Add(v);
-                        }
-                        break;
-                    }
-
-                // Left = dx negative and abs(dx) > abs(dy) 
-                case 3:
-                    {
-                        if (dx < 0 && Mathf.Abs(dx) > Mathf.Abs(dy))
-                        {
-                            verticesInQuadrant.Add(v);
-                        }
-                        break;
-                    }
-
-                default:
-                    {
-                        print("ERROR: GetBorderVerticesInQuadrant called in segment not in [0, 4]!");
-                        return null;
-                    }
-            }
-        }
-        return verticesInQuadrant;
     }
 
     // Generates a Mesh object from the provided TriangleNet.Mesh object
+    // Somewhere in here, the mesh is getting way bigger than its intended to be
+    // Lets do some nitty gritty troubleshooting!
     public Mesh GenerateMesh(TriangleNet.Mesh srcMesh)
     {
         List<Vector3> vertices = new List<Vector3>();
@@ -397,6 +258,11 @@ public class ChunkGen : MonoBehaviour
             }
 
             TriangleNet.Topology.Triangle currentTriangle = triangleEnum.Current;
+
+            //print("Current Triangle: " + currentTriangle);
+            //print("v1: " + currentTriangle.vertices[0]);
+            //print("v2: " + currentTriangle.vertices[1]);
+            //print("v3: " + currentTriangle.vertices[2]);
 
             Vector3 v0 = new Vector3((float)currentTriangle.vertices[2].x, 0, (float)currentTriangle.vertices[2].y);
             Vector3 v1 = new Vector3((float)currentTriangle.vertices[1].x, 0, (float)currentTriangle.vertices[1].y);
@@ -516,7 +382,7 @@ public class ChunkGen : MonoBehaviour
         return boundaryVertices;
     }
 
-    private List<Osub> GetBoundaryEdges()
+    public List<Osub> GetBoundaryEdges()
     {
         Dictionary<Osub, int> edges = new Dictionary<Osub, int>();
 
@@ -558,9 +424,29 @@ public class ChunkGen : MonoBehaviour
             // We're probably in the editor
             return;
         }
+        
+        float offsetX = coords.x * size, offsetZ = coords.y * size;
 
-        DrawTriangulations();
-        DrawChunkBoundaryTriangles();
-        DrawChunkBoundaryEdges();
+        /* 
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + size), new Vector3(offsetX + size, 0, offsetZ + size)); // Top 
+        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + -1 * size), new Vector3(offsetX + -1 * size, 0, offsetZ + size)); // Left
+        Gizmos.DrawLine(new Vector3(offsetX + size, 0, offsetZ + -1 * size), new Vector3(offsetX + size, 0, offsetZ + size)); // Right
+        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + -1 * size), new Vector3(offsetX + size, 0, offsetZ + -1 * size)); // Down
+        */
+
+        Gizmos.color = gizmoColor;
+        Visualization.DrawTriangulations(mesh, offsetX, offsetZ);
+        
+        float x, z;
+        foreach (Vertex v in vertices)
+        {
+            x = offsetX + (float)v.x;
+            z = offsetZ + (float)v.y;
+            Gizmos.DrawCube(new Vector3(offsetX + (float)v.x, 0, offsetZ + (float)v.y), new Vector3(1f, 1f, 1f));
+        }
+
+        // Visualization.DrawChunkBoundaryTriangles(mesh);
+        // Visualization.DrawChunkBoundaryEdges(this);
     }
 }

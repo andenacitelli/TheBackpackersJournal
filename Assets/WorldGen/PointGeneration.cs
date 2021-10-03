@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TriangleNet.Geometry;
 
@@ -7,21 +8,21 @@ using TriangleNet.Geometry;
 public class PointGeneration : MonoBehaviour
 {
     // Randomly generates a Triangle.NET polygon with NUM_POINTS random points distributed within the provided bounds
-    public static Polygon generatePointsRandom(int NUM_POINTS, Bounds bounds)
+    public static HashSet<Vertex> generatePointsRandom(int NUM_POINTS, Bounds bounds)
     {
-        Polygon polygon = new Polygon();
+        HashSet<Vertex> output = new HashSet<Vertex>();
         for (int i = 0; i < NUM_POINTS; i++)
         {
             // Generate random vertices within chunk boundaries
-            polygon.Add(new Vertex(
+            output.Add(new Vertex(
                 Random.Range(bounds.min.x, bounds.max.x),
                 Random.Range(bounds.min.z, bounds.max.z)));
         }
-        return polygon;
+        return output;
     }
 
     // Create a grid from the provided bounds and dimensions, then returns a Polygon with one random point generated per
-    public static Polygon generatePointsGrid(Bounds bounds, int numRows, int numColumns, float horizPadding, float vertPadding)
+    public static HashSet<Vertex> generatePointsGrid(Bounds bounds, int numRows, int numColumns, float horizPadding, float vertPadding)
     {
         /* Parameter Meanings:
             Bounds: Represents the overall area that the grid should be inside
@@ -41,13 +42,13 @@ public class PointGeneration : MonoBehaviour
         if (2 * vertPadding > cellHeight) throw new System.Exception("ERROR: generatePointsGrid() called with invalid vertical padding. Ensure vertPadding <= cellHeight.");
 
         // Iterate through each grid cell, randomly selecting points within bounds
-        Polygon output = new Polygon();
+        HashSet<Vertex> output = new HashSet<Vertex>();
         for (int row = 0; row < height / cellHeight; row++)
         {
             for (int col = 0; col < width / cellWidth; col++)
             {
                 // <Offset to get from world origin to chunk space> + <offset to get to right cell> + <random range within cell> 
-                float y = bounds.min.y + (row * cellHeight) + Random.Range(0 + vertPadding, cellWidth - vertPadding);
+                float y = bounds.min.z + (row * cellHeight) + Random.Range(0 + vertPadding, cellHeight - vertPadding);
                 float x = bounds.min.x + (col * cellWidth) + Random.Range(0 + horizPadding, cellWidth - horizPadding);
                 output.Add(new Vertex(x, y)); 
             }
@@ -58,16 +59,16 @@ public class PointGeneration : MonoBehaviour
     // Generates a Triangle.NET polygon with NUM_POINTS *mostly* random points; with Poisson disk sampling,
     // some care is taken such that they don't end up too close or too far from each other, resulting in roughly
     // similarly spaced polygons
-    public static Polygon generatePointsPoissonDiscSampling(int NUM_POINTS, Bounds bounds, float radius)
+    public static HashSet<Vertex> generatePointsPoissonDiscSampling(int NUM_POINTS, Bounds bounds, float radius)
     {
-        Polygon polygon = new Polygon();
+        HashSet<Vertex> output = new HashSet<Vertex>();
         PoissonDiscSampler sampler = new PoissonDiscSampler(bounds.max.x - bounds.min.x, bounds.max.z - bounds.min.z, radius);
 
         int i = 0;
         foreach (Vector2 sample in sampler.Samples()) // This is a generator function, so we have to handle it a little weirdly 
         {
             i++;
-            polygon.Add(new Vertex(
+            output.Add(new Vertex(
                 bounds.min.x + sample.x,
                 bounds.min.z + sample.y));
 
@@ -76,6 +77,6 @@ public class PointGeneration : MonoBehaviour
                 break;
             }
         }
-        return polygon; 
+        return output; 
     }
 }

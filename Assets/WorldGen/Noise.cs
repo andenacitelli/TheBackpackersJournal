@@ -19,8 +19,8 @@ public class Noise : MonoBehaviour
         List<float> noises = new List<float>();
         foreach (Vector2 point in localPoints)
         {
-            float sampleX = (point.x + offsetX) / scale;
-            float sampleZ = (point.y + offsetZ) / scale;
+            float sampleX = (offsetX + point.x) / scale;
+            float sampleZ = (offsetZ + point.y) / scale;
 
             float noise = 0f;
             float normalization = 0f;

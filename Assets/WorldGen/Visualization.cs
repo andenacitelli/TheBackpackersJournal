@@ -7,20 +7,20 @@ namespace Assets.WorldGen
 {
     public class Visualization : MonoBehaviour
     {
-        private void DrawTriangulations(TriangleNet.Mesh mesh)
+        public static void DrawTriangulations(TriangleNet.Mesh mesh, float offsetX, float offsetZ)
         {
-            Gizmos.color = Color.white;
+            // Gizmos.color = Color.white;
             foreach (Edge edge in mesh.Edges)
             {
                 Vertex v0 = mesh.vertices[edge.P0];
                 Vertex v1 = mesh.vertices[edge.P1];
-                Vector3 p0 = new Vector3((float)v0.x, 0.0f, (float)v0.y);
-                Vector3 p1 = new Vector3((float)v1.x, 0.0f, (float)v1.y);
+                Vector3 p0 = new Vector3(offsetX + (float)v0.x, 0.0f, offsetZ + (float)v0.y);
+                Vector3 p1 = new Vector3(offsetX + (float)v1.x, 0.0f, offsetZ + (float)v1.y);
                 Gizmos.DrawLine(p0, p1);
             }
         }
 
-        private void DrawChunkBoundaryTriangles(TriangleNet.Mesh mesh)
+        public static void DrawChunkBoundaryTriangles(TriangleNet.Mesh mesh)
         {
             Gizmos.color = Color.cyan;
             foreach (Triangle triangle in mesh.Triangles)
@@ -41,7 +41,7 @@ namespace Assets.WorldGen
 
         // Gets a list of boundary edges by iterating through the triangles array and finding the edges
         // ("subsegments" as Triangle.NET calls them) that are only referenced once 
-        private void DrawChunkBoundaryEdges(ChunkGen genComponent)
+        public static void DrawChunkBoundaryEdges(ChunkGen genComponent)
         {
             Gizmos.color = Color.yellow;
             foreach (Osub subseg in genComponent.GetBoundaryEdges())

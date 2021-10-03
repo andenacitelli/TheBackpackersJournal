@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6322903469593028105}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -150,8 +150,9 @@ MonoBehaviour:
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
-  mapScale: 80
-  heightMultiplier: 400
+  mapScale: 30
+  coords: {x: 0, y: 0}
+  heightMultiplier: 100
   heightCurve:
     serializedVersion: 2
     m_Curve:
