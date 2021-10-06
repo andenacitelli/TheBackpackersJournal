@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d843550cc7c4bd544a11d852ba109f5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 6322903469593028105}
   terrainTypes:
   - randomizationFactor: 0.05
     name: water
@@ -145,12 +146,13 @@ MonoBehaviour:
     amplitude: 2
   - seed: 3
     frequency: 0.25
-    amplitude: 8
+    amplitude: 4
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
-  mapScale: 40
-  heightMultiplier: 120
+  mapScale: 30
+  coords: {x: 0, y: 0}
+  heightMultiplier: 100
   heightCurve:
     serializedVersion: 2
     m_Curve:
@@ -164,8 +166,35 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
+      time: 0.29370108
+      value: 0.2103433
+      inSlope: 0.07721088
+      outSlope: 0.07721088
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.1352527
+    - serializedVersion: 3
+      time: 0.6882465
+      value: 0.58224785
+      inSlope: 0.17231959
+      outSlope: 0.17231959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.37676564
+    - serializedVersion: 3
+      time: 0.9647266
+      value: 0.92650676
+      inSlope: -0.054107003
+      outSlope: -0.054107003
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
       time: 1
-      value: 1
+      value: 0.9363823
       inSlope: 2
       outSlope: 2
       tangentMode: 0
