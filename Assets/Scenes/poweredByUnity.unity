@@ -153,13 +153,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: MainMenuBackground
+  - group: {fileID: 24300002, guid: f068ce60d1b8bcf4a9e8183dbb9b14da, type: 2}
+    name: MainMenuBackground
     clip: {fileID: 8300000, guid: 9cc11d218fda2ba4e894ba8b4e765a0d, type: 3}
     volume: 0.273
     pitch: 1
     loop: 1
     source: {fileID: 0}
-  - name: GameStart
+  - group: {fileID: 24300002, guid: f068ce60d1b8bcf4a9e8183dbb9b14da, type: 2}
+    name: GameStart
     clip: {fileID: 8300000, guid: a8a5106eb2c7e2b429144609d8f169b0, type: 3}
     volume: 0.5
     pitch: 1
