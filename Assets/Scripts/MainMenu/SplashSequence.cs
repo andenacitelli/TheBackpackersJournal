@@ -8,15 +8,24 @@ public class SplashSequence : MonoBehaviour
     public static int SceneNumber;
     void Start()
     {
-        if(SceneNumber == 0)
+        if (SceneNumber == 0)
         {
-            StartCoroutine(ToSplashTwo ());
+            StartCoroutine(ToSplashTwo());
         }
         if(SceneNumber == 1)
         {
             StartCoroutine(ToMainMenu ());
         }
     }
+
+/*    void Update()
+    {
+        if (GameObject.FindGameObjectWithTag("Player") != null && SceneNumber != 2)
+        {
+            GameObject.FindGameObjectWithTag("Player").SetActive(false);
+        }
+        
+    }*/
 
     IEnumerator ToSplashTwo()
     {
@@ -28,8 +37,9 @@ public class SplashSequence : MonoBehaviour
     IEnumerator ToMainMenu()
     {
         yield return new WaitForSeconds(3);
-        SceneNumber = 2;
         SceneManager.LoadScene(2);
+        SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+        SceneNumber = 2;
     }
 
 }
