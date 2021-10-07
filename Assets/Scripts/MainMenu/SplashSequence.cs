@@ -5,40 +5,49 @@ using UnityEngine.SceneManagement;
 
 public class SplashSequence : MonoBehaviour
 {
-    public static int SceneNumber;
+    public int SceneNumber;
+    public GameObject PoweredByUnity;
+    public GameObject MainMenu;
+    public GameObject CreditScreen;
+    public GameObject SplashScreenCam;
+    public GameObject MainMenuCam;
+
     void Start()
     {
+        SceneManager.LoadScene("Main", LoadSceneMode.Additive);
         if (SceneNumber == 0)
         {
             StartCoroutine(ToSplashTwo());
         }
-        if(SceneNumber == 1)
+        
+    }
+
+    void Update()
+    {
+        if (SceneNumber == 1)
         {
-            StartCoroutine(ToMainMenu ());
+            StartCoroutine(ToMainMenu());
         }
     }
 
-/*    void Update()
-    {
-        if (GameObject.FindGameObjectWithTag("Player") != null && SceneNumber != 2)
-        {
-            GameObject.FindGameObjectWithTag("Player").SetActive(false);
-        }
-        
-    }*/
 
     IEnumerator ToSplashTwo()
     {
         yield return new WaitForSeconds(2);
         SceneNumber = 1;
-        SceneManager.LoadScene(1);
+        Destroy(PoweredByUnity);
+        CreditScreen.SetActive(true);
     }
 
     IEnumerator ToMainMenu()
     {
         yield return new WaitForSeconds(3);
-        SceneManager.LoadScene(2);
-        SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+        Destroy(CreditScreen);
+        Destroy(PoweredByUnity);
+        Destroy(SplashScreenCam);
+        MainMenuCam.SetActive(true);
+        MainMenu.SetActive(true);
+        GameObject.Find("WorldGenCamera").GetComponent<Camera>().GetComponent<AudioListener>().enabled = true;
         SceneNumber = 2;
     }
 
