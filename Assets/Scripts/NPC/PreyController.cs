@@ -58,6 +58,10 @@ public class PreyController : AnimalController
     // Run away from the threats
     IEnumerator RunAway()
     {
+        // start running animation
+        //anim.SetBool("Running", true);
+        anim.SetTrigger("Run");
+
         fleeing = true;
         StartCoroutine(FleeTimer()); // can only flee for a certain amount of time
         currentSpeed = DashSpeed;
@@ -86,6 +90,9 @@ public class PreyController : AnimalController
     {
         fleeing = false;
         currentSpeed = MovementSpeed;
+        // stop running animation
+        //anim.SetBool("Running", false);
+        anim.SetTrigger("Walk");
     }
     
     // Calculate the centerpoint of the detected threats by taking the average of their locations

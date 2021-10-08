@@ -35,13 +35,19 @@ public class PredatorController : AnimalController
     {
 
         if (!IsHunting())
-        {// return to roaming
+        { // return to roaming
             yield return StartCoroutine(base.ActionAtTarget());
         }
         else
         { // murder prey
+            // start attack animation
+            //anim.SetBool("Attacking", true);
+            anim.SetTrigger("Attack");
+
             Debug.Log($"Absolutely wrecked the {huntingTarget.creatureType} at {huntingTarget.transform.position}");
             Destroy(huntingTarget.gameObject);
+
+
             StopCoroutine(HuntTimer()); // end the timer because no longer hunting
             StopChasing();
             yield return new WaitForSeconds(NewTargetDelay);
@@ -80,6 +86,11 @@ public class PredatorController : AnimalController
     // Follow current position of the target
     IEnumerator HuntTarget()
     {
+        // Start running animation sequence
+        //anim.SetBool("Running", true);
+        anim.SetTrigger("Run");
+
+
         StartCoroutine(HuntTimer());
         currentSpeed = DashSpeed;
         while (IsHunting())
@@ -87,6 +98,9 @@ public class PredatorController : AnimalController
             targetDestination = huntingTarget.transform.position;
             yield return null;
         }
+
+        // stop running animation
+        // anim.SetBool("Running", false);
     }
     // Control how long to chase a target
     IEnumerator HuntTimer()
@@ -101,6 +115,10 @@ public class PredatorController : AnimalController
     // stop following target
     void StopChasing()
     {
+        // stop running animation
+        //anim.SetBool("Running", false);
+        anim.SetTrigger("Walk");
+
         huntingTarget = null;
         currentSpeed = MovementSpeed;
         StopCoroutine(HuntTarget());

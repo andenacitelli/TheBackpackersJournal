@@ -439,12 +439,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnArea:
-    m_Center: {x: 0, y: 1.08, z: 0}
-    m_Extent: {x: 25, y: 1.08, z: 25}
-  predator: {fileID: 1054992708087064808, guid: dfa53fac313f1cb429c2a6bd4cf63135, type: 3}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 25, y: 0, z: 25}
+  predator: {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
   numPredators: 1
-  prey: {fileID: 514559866695895452, guid: e9495834b3271eb46bea1c6ead98c3fe, type: 3}
-  numPrey: 0
+  prey: {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
+  numPrey: 1
   target: {fileID: 3914045066834312031, guid: 7b9134bc0799c0740b105b14d5a97793, type: 3}
   numTargets: 0
 --- !u!4 &1131504593

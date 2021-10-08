@@ -33,9 +33,16 @@ public class AnimalController : MonoBehaviour
     protected CharacterController Controller { get => controller; }
     public Creature.CreatureTypes CreatureType { get => creatureType; }
 
+    // to make it work with all the animals the triggers are: startRun, stopRun, startAttack, startWalk, returnIdle
+    protected Animator anim;
+
     protected virtual void Initialize() { }
     protected virtual IEnumerator ActionAtTarget()
     {
+        // start idle animation
+        //anim.SetBool("Idling", true);
+        anim.SetTrigger("Idle");
+
         // wait at target and get new destination
         yield return new WaitForSeconds(newTargetDelay);
         GetNewRoamingDestination();
@@ -47,7 +54,8 @@ public class AnimalController : MonoBehaviour
         currentSpeed = MovementSpeed;
         creatureType = GetComponent<Creature>().creatureType;
         controller = GetComponent<CharacterController>();
-        senses = transform.GetComponent<AnimalSenses>();
+        senses = GetComponent<AnimalSenses>();
+        anim = GetComponent<Animator>();
 
         Initialize();
         StartCoroutine(AnimalBehavior());
@@ -73,16 +81,15 @@ public class AnimalController : MonoBehaviour
     // Move toward the current target
     IEnumerator MoveToTarget()
     {
+        //anim.SetBool("Idling", false);
+        //anim.SetBool("Moving", true);
+        anim.SetTrigger("Walk");
+
         while (!AtTarget())
         {
             // adjust target to be in territory
             StayInYaLane();
-            // move toward target
-            //proper move
-            controller.Move(((targetDestination - transform.position).normalized) * currentSpeed * Time.deltaTime);
-            // move ignoring walls
-            //transform.position = Vector3.MoveTowards(transform.position, targetDestination,  Time.deltaTime * currentSpeed);
-
+            
             // turn toward target
             Quaternion targetRotation = Quaternion.LookRotation(targetDestination - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
@@ -90,6 +97,8 @@ public class AnimalController : MonoBehaviour
 
             yield return null;
         }
+
+        //anim.SetBool("moving", false);
     }
 
     // very possibly going to get rid of this, makes it so that any animal can't leave the bounds given by maxX, maxY, maxZ
@@ -117,6 +126,5 @@ public class AnimalController : MonoBehaviour
         // return to default moving speed
         currentSpeed = MovementSpeed;
 
-        Debug.Log($"{CreatureType} now roaming toward {targetDestination}");
     }
 }
