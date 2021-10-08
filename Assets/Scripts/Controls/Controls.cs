@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Controls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Controls/Controls.inputactions'
 
 using System;
 using System.Collections;
@@ -36,7 +36,7 @@ public class @Controls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""RaiseCamera"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""faa4a872-52e0-4e47-9386-72e306d866d1"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -44,7 +44,7 @@ public class @Controls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""UseCamera"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""76b1e8d0-b283-4293-8872-deee0e9e8332"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",

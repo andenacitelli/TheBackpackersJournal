@@ -9,15 +9,13 @@ public class PolaroidController : MonoBehaviour
     public RectTransform shutter;
     public GameObject overlay;
     public GameObject flash;
-    public GameObject pauseObj;
-    public GameObject savePromptObj;
-    public GameObject camerRollUI;
-    public GameObject camerRollPopUp;
+
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
 
 
     public bool FlashOn { get; set; }
+    public bool inputAllowed { get; set; }
     private int picNum = 0;
     private const int WORLD_CURRENT = 0;
     private const int WORLD_END = 1;
@@ -34,6 +32,7 @@ public class PolaroidController : MonoBehaviour
     private void Awake()
     {
         cRoll = GetComponent<CameraRoll>();
+        inputAllowed = true;
     }
 
     private void Start()
@@ -49,25 +48,26 @@ public class PolaroidController : MonoBehaviour
         
     }
 
-    public void OnRaiseInput(float secondary)
+    public void OnSecondary(float secondary)
     {
-        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy && !camerRollUI.activeInHierarchy && !camerRollPopUp.activeInHierarchy)
+        if (inputAllowed)
         {
             if (!aimRunning && secondary == 1)
             {
+                Debug.Log("1");
                 StartCoroutine("EngagedAim");
             }
             else if (secondary == 0)
             {
+                Debug.Log("0");
                 aimDisengaged = true;
             }
-        }
-            
+        }     
     }
 
-    public void OnPrimaryInput(float primary)
+    public void OnPrimary(float primary)
     {
-        if (!pauseObj.activeInHierarchy && !savePromptObj.activeInHierarchy && !camerRollUI.activeInHierarchy && !camerRollPopUp.activeInHierarchy)
+        if (inputAllowed)
         {
             if (photoActive && !captureStart)
             {
@@ -81,7 +81,7 @@ public class PolaroidController : MonoBehaviour
             {
                 Debug.Log("No Aim. No picture.");
             }
-        }
+        }    
     }
 
     private IEnumerator EngagedAim()
@@ -229,7 +229,7 @@ public class PolaroidController : MonoBehaviour
         
         //Changed texture2d to byte[] as a test
         cRoll.RecievePhoto(screenImage.GetRawTextureData());
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.2f);
         
         picNum++;
         yield break;
