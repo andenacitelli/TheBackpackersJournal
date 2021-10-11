@@ -19,49 +19,58 @@ public class GameManager : MonoBehaviour
     //[Header("Game")]
 
     [Header("UI")]
+    public Canvas uiCanvas;
     public ChildrenActive popUpMenus;
 
     private PolaroidController polC;
+    private CameraRollMenu crMenu;
+    private string lastPopUp;
 
     public void Awake()
     {
         polC = cameraC.GetComponent<PolaroidController>();
+        crMenu = uiCanvas.GetComponent<CameraRollMenu>();
+        lastPopUp = "";
     }
 
     public void Update()
     {
+        DetermineInputState();
+    }
 
-        HandlePlayerInput();
-        
-        HandleCameraInputs();
+    private void DetermineInputState() 
+    {
+        string activePopUp = popUpMenus.ActiveChildren();
+        if (activePopUp.Equals(""))
+        {
+            HandlePlayerInput();
+            
+        } else if(lastPopUp.Equals(""))
+        {
+            // Pop Up was opened in last update:
+            ToggleCameraInputs(false);
+            ToggleCameraRollInputs(false);
+            
+        }
+        lastPopUp = activePopUp;
+    
     }
 
     private void HandlePlayerInput()
     {
-        //this needs jesus
-        switch (popUpMenus.ActiveChildren())
-        {
-            // if pause - lock out other menus
-
-            case "":
-                polC.inputAllowed = true;
-                playerC.UpdateMove();
-                playerC.UpdateLook();
-                break;
-            default:
-                polC.inputAllowed = false;
-                break;
-        }
+        ToggleCameraInputs(true);
+        ToggleCameraRollInputs(true);
+        playerC.UpdateMove();
+        playerC.UpdateLook();   
     }
 
-    private void HandleCameraInputs()
+    private void ToggleCameraInputs(bool pass)
     {
-        if (popUpMenus.noChildrenActive)
-        {
-            polC.inputAllowed = true;
-        } else
-        {
-            polC.inputAllowed = false;
-        }
+        polC.inputAllowed = pass;
+    }
+
+    private void ToggleCameraRollInputs(bool pass)
+    {
+        crMenu.canOpen = pass;
     }
 }

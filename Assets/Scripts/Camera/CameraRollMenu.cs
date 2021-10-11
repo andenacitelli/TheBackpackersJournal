@@ -14,7 +14,7 @@ public class CameraRollMenu : MonoBehaviour
     public GameObject cameraRollUI;
     public GameObject capturePopUpUI;
     
-
+    public bool canOpen { get; set; }
     PauseAction action;
 
     private CRUIGallery gallery;
@@ -22,6 +22,7 @@ public class CameraRollMenu : MonoBehaviour
     private GameObject photoViewGO;
     private CRPopUp popUp;
     private CRPhotoView photoView;
+    
 
     private void Awake()
     {
@@ -31,6 +32,7 @@ public class CameraRollMenu : MonoBehaviour
         photoView = cameraRollUI.GetComponent<CRPhotoView>();
         galleryGO = cameraRollUI.transform.GetChild(0).gameObject;
         photoViewGO = cameraRollUI.transform.GetChild(1).gameObject;
+        canOpen = true;
     }
 
     private void OnEnable()
@@ -50,14 +52,18 @@ public class CameraRollMenu : MonoBehaviour
 
     private void DetermineCR()
     {
-        if (!isCRMenu)
+        if (canOpen)
         {
-            OpenCR();
-        }
-        else
+            if (!isCRMenu)
+            {
+                OpenCR();
+            }
+            
+        } else if(isCRMenu)
         {
             CloseCR();
         }
+
     }
 
     public void CloseCR()

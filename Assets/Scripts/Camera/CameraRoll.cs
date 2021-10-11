@@ -29,6 +29,7 @@ public class CameraRoll : MonoBehaviour
     [Header("UI")]
     public CameraRollMenu crUI;
 
+    
     public List<photo> cRollStorage;
     private static photo buffer;
     private int counter = 0;

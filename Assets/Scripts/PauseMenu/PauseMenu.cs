@@ -92,6 +92,20 @@ public class PauseMenu : MonoBehaviour
         save.playerPositionX = GameObject.FindWithTag("Player").transform.position.x;
         save.playerPositionY = GameObject.FindWithTag("Player").transform.position.y;
         save.playerPositionZ = GameObject.FindWithTag("Player").transform.position.z;
+
+        #region getArray
+        string[] crPaths = new string[cr.cRollStorage.Count];
+        int i = 0;
+        Debug.Log("Saving...");
+        foreach(photo p in cr.cRollStorage)
+        {
+            Debug.Log(p.fileName);
+            crPaths[i] = p.fileName;
+            i++;
+        }
+        Debug.Log("-Finished-");
+        #endregion
+
         save.GamePercentage = 0;
         return save;
 
