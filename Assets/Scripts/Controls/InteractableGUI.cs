@@ -48,7 +48,7 @@ public class InteractableGUI : MonoBehaviour
     {
         if (fullVisible && !buttonPressed)
         {
-            obj.PlayInteractAnim();
+            obj.CallUIEvent();
             print("BUTTON PRESSSS: " + val);
             buttonPressed = true;
         }
@@ -68,6 +68,7 @@ public class InteractableGUI : MonoBehaviour
                 {
                     if(grab != interactableGO)
                     {
+                        Debug.Log("Switched obj in InteractableGUI");
                         interactableGO = grab;
                         obj = interactableGO.GetComponent<InteractableObject>();
                     }
@@ -101,6 +102,7 @@ public class InteractableGUI : MonoBehaviour
 
     private void CleanUpHelper()
     {
+        buttonPressed = false;
         halfVisible = false;
         fullVisible = false;
         var tempColor = cursor.color;
