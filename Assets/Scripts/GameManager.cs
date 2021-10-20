@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public Canvas uiCanvas;
     public ChildrenActive popUpMenus;
 
+    private InteractableGUI hud;
     private PolaroidController polC;
     private CameraRollMenu crMenu;
     private string lastPopUp;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     public void Awake()
     {
         polC = cameraC.GetComponent<PolaroidController>();
+        hud = uiCanvas.GetComponent<InteractableGUI>();
         crMenu = uiCanvas.GetComponent<CameraRollMenu>();
         lastPopUp = "";
     }
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour
             // Pop Up was opened in last update:
             ToggleCameraInputs(false);
             ToggleCameraRollInputs(false);
+            hud.ToggleCursor(false);
             
         }
         lastPopUp = activePopUp;
@@ -58,6 +61,7 @@ public class GameManager : MonoBehaviour
 
     private void HandlePlayerInput()
     {
+        hud.ToggleCursor(true);
         ToggleCameraInputs(true);
         ToggleCameraRollInputs(true);
         playerC.UpdateMove();
