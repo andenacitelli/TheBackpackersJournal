@@ -82,6 +82,13 @@ public class CameraRollMenu : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    public void OpenCRStorage()
+    {
+        isCRMenu = true;
+        gallery.isStorageMode = true;
+        cameraRollUI.SetActive(true);
+    }
+
     public void OpenPopUp()
     {
         capturePopUpUI.SetActive(true);
@@ -122,6 +129,14 @@ public class CameraRollMenu : MonoBehaviour
             }
             
         } 
+    }
+
+    public void RecieveStorageSelect(int option)
+    {
+        // send this photo to gallerystorage
+        gallery.isStorageMode = false;
+        cameraRollUI.SetActive(false);
+        print("placing cameraRoll index " + option + " in gallery");
     }
 
     public void PhotoViewResponse(int option)
