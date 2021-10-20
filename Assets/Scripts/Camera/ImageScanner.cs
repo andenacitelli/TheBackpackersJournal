@@ -41,7 +41,6 @@ public class ImageScanner : MonoBehaviour
                     //Will need changed
                     if (hit.transform.gameObject.CompareTag("Box") && !inView.Contains(hit.transform.gameObject))
                     {
-                        Debug.Log("Added to id list");
                         inView.Add(hit.transform.gameObject);
                     }
                     

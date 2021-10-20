@@ -25,6 +25,14 @@ public class @PauseAction : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""CameraRollMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""ed08c5b0-48be-486a-86f1-9cbb358ed357"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -38,6 +46,17 @@ public class @PauseAction : IInputActionCollection, IDisposable
                     ""action"": ""PauseGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1ef3743a-c537-42ec-85d7-ecc18aca7a5c"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraRollMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -47,6 +66,7 @@ public class @PauseAction : IInputActionCollection, IDisposable
         // Pause
         m_Pause = asset.FindActionMap("Pause", throwIfNotFound: true);
         m_Pause_PauseGame = m_Pause.FindAction("PauseGame", throwIfNotFound: true);
+        m_Pause_CameraRollMenu = m_Pause.FindAction("CameraRollMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -97,11 +117,13 @@ public class @PauseAction : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Pause;
     private IPauseActions m_PauseActionsCallbackInterface;
     private readonly InputAction m_Pause_PauseGame;
+    private readonly InputAction m_Pause_CameraRollMenu;
     public struct PauseActions
     {
         private @PauseAction m_Wrapper;
         public PauseActions(@PauseAction wrapper) { m_Wrapper = wrapper; }
         public InputAction @PauseGame => m_Wrapper.m_Pause_PauseGame;
+        public InputAction @CameraRollMenu => m_Wrapper.m_Pause_CameraRollMenu;
         public InputActionMap Get() { return m_Wrapper.m_Pause; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -114,6 +136,9 @@ public class @PauseAction : IInputActionCollection, IDisposable
                 @PauseGame.started -= m_Wrapper.m_PauseActionsCallbackInterface.OnPauseGame;
                 @PauseGame.performed -= m_Wrapper.m_PauseActionsCallbackInterface.OnPauseGame;
                 @PauseGame.canceled -= m_Wrapper.m_PauseActionsCallbackInterface.OnPauseGame;
+                @CameraRollMenu.started -= m_Wrapper.m_PauseActionsCallbackInterface.OnCameraRollMenu;
+                @CameraRollMenu.performed -= m_Wrapper.m_PauseActionsCallbackInterface.OnCameraRollMenu;
+                @CameraRollMenu.canceled -= m_Wrapper.m_PauseActionsCallbackInterface.OnCameraRollMenu;
             }
             m_Wrapper.m_PauseActionsCallbackInterface = instance;
             if (instance != null)
@@ -121,6 +146,9 @@ public class @PauseAction : IInputActionCollection, IDisposable
                 @PauseGame.started += instance.OnPauseGame;
                 @PauseGame.performed += instance.OnPauseGame;
                 @PauseGame.canceled += instance.OnPauseGame;
+                @CameraRollMenu.started += instance.OnCameraRollMenu;
+                @CameraRollMenu.performed += instance.OnCameraRollMenu;
+                @CameraRollMenu.canceled += instance.OnCameraRollMenu;
             }
         }
     }
@@ -128,5 +156,6 @@ public class @PauseAction : IInputActionCollection, IDisposable
     public interface IPauseActions
     {
         void OnPauseGame(InputAction.CallbackContext context);
+        void OnCameraRollMenu(InputAction.CallbackContext context);
     }
 }

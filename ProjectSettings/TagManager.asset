@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Box
+  - LoadMenu
+  - PlayerProfileButtons
   - Obstacle
   - Animal
   layers:
@@ -17,6 +19,8 @@ TagManager:
   - Obstacles
   - Creatures
   - 
+  - 
+  - Terrain
   - 
   - 
   - 

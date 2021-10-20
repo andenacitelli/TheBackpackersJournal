@@ -9,12 +9,13 @@ public class PolaroidController : MonoBehaviour
     public RectTransform shutter;
     public GameObject overlay;
     public GameObject flash;
-    public GameObject pauseObj;
+
     [Header("Parent Camera")]
     [SerializeField] GameObject polaroidPrefab;
 
 
     public bool FlashOn { get; set; }
+    public bool inputAllowed { get; set; }
     private int picNum = 0;
     private const int WORLD_CURRENT = 0;
     private const int WORLD_END = 1;
@@ -31,6 +32,7 @@ public class PolaroidController : MonoBehaviour
     private void Awake()
     {
         cRoll = GetComponent<CameraRoll>();
+        inputAllowed = true;
     }
 
     private void Start()
@@ -46,30 +48,32 @@ public class PolaroidController : MonoBehaviour
         
     }
 
-    public void OnRaiseInput(float secondary)
+    public void OnSecondary(float secondary)
     {
-        if (!pauseObj.activeInHierarchy)
+        if (inputAllowed)
         {
             if (!aimRunning && secondary == 1)
             {
+                Debug.Log("1");
                 StartCoroutine("EngagedAim");
             }
             else if (secondary == 0)
             {
+                Debug.Log("0");
                 aimDisengaged = true;
             }
-        }
-            
+        }     
     }
 
-    public void OnPrimaryInput(float primary)
+    public void OnPrimary(float primary)
     {
-        if (!pauseObj.activeInHierarchy)
+        if (inputAllowed)
         {
             if (photoActive && !captureStart)
             {
                 if (FlashOn)
                 {
+                    FindObjectOfType<AudioManager>().Play("ShutterCamera");
                     StartCoroutine("CapturePhoto");
                 }
             }
@@ -77,13 +81,12 @@ public class PolaroidController : MonoBehaviour
             {
                 Debug.Log("No Aim. No picture.");
             }
-        }
+        }    
     }
 
     private IEnumerator EngagedAim()
     {
         aimRunning = true;
-        Debug.Log("EngagedAim started");
         aimEngaged = true;
         aimDisengaged = false;
         shutterOn = false;
@@ -92,7 +95,7 @@ public class PolaroidController : MonoBehaviour
 
         Vector3[] worldPos = ConvertToWorldPoints();
         float currentShutter= 0;
-        
+        FindObjectOfType<AudioManager>().Play("OpenCamera");
         while (aimEngaged && (!shutterStopped && Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_END]) >= .005))
         {
             worldPos = ConvertToWorldPoints();
@@ -147,7 +150,7 @@ public class PolaroidController : MonoBehaviour
         photoActive = false;
         aimEngaged = false;
         shutterStopped = false;
-        
+        FindObjectOfType<AudioManager>().Play("CloseCamera");
         while (Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_START]) >= .005)
         {
             #region shutter2
@@ -224,12 +227,11 @@ public class PolaroidController : MonoBehaviour
         }
         overlay.SetActive(true);
         
-        cRoll.RecievePhoto(screenImage);
-        yield return new WaitForSeconds(.5f);
+        //Changed texture2d to byte[] as a test
+        cRoll.RecievePhoto(screenImage.GetRawTextureData());
+        yield return new WaitForSeconds(.2f);
         
         picNum++;
-        Debug.Log("capture!");
-
         yield break;
     }
 
