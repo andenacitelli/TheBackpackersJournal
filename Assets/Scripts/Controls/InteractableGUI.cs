@@ -5,20 +5,25 @@ using UnityEngine.UI;
 
 public class InteractableGUI : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [Header("GameObjects")]
     public GameObject cursorGO;
+    public GameObject interactableGO;
 
+    private InteractableObject obj;
     private Image cursor;
     private Vector3 middleV = new Vector3(0.5f, 0.5f, 0);
     private bool halfVisible;
     private bool fullVisible;
+    private bool buttonPressed;
     public bool cursorOn { get; set; }
     public void Start()
     {
         cursorOn = false;
         halfVisible = false;
         fullVisible = false;
+        buttonPressed = false;
         cursor = cursorGO.GetComponent<Image>();
+        obj = interactableGO.GetComponent<InteractableObject>();
     }
 
     public void ToggleCursor(bool pass)
@@ -26,19 +31,26 @@ public class InteractableGUI : MonoBehaviour
         if(cursorOn != pass)
         {
             if (pass)
-            {
-                
+            {   
                 StopCoroutine(cursorOpacity());
                 cursorOn = true;
                 StartCoroutine(cursorOpacity());
-                print("Started coroutine");
             } else
-            {
-                
+            {            
                 cursorOn = false;
                 StopCoroutine(cursorOpacity());
-                print("stopped coroutine");
             }
+        }
+    }
+
+    //When user engages Interact action
+    public void OnUserInteract(float val)
+    {
+        if (fullVisible && !buttonPressed)
+        {
+            obj.PlayInteractAnim();
+            print("BUTTON PRESSSS: " + val);
+            buttonPressed = true;
         }
     }
 
@@ -48,12 +60,18 @@ public class InteractableGUI : MonoBehaviour
         {
             Ray screenMiddle = Camera.main.ViewportPointToRay(middleV);
             RaycastHit hit;
-
-            if (Physics.Raycast(screenMiddle, out hit, 10f))
+            
+            if (Physics.Raycast(screenMiddle, out hit, 6f))
             {
-                if (hit.transform.gameObject.CompareTag("InteractableObject"))
+                GameObject grab = hit.transform.gameObject;
+                if (grab.CompareTag("InteractableObject"))
                 {
-                    Debug.Log("Hit!");
+                    if(grab != interactableGO)
+                    {
+                        interactableGO = grab;
+                        obj = interactableGO.GetComponent<InteractableObject>();
+                    }
+                    
                     if (hit.collider.isTrigger && !fullVisible)
                     {
                         var tempColor = cursor.color;
@@ -77,7 +95,7 @@ public class InteractableGUI : MonoBehaviour
             {
                 CleanUpHelper();
             }
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.25f);
         }
     }
 
