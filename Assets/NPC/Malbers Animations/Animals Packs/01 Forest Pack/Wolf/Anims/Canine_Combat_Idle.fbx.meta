@@ -1,0 +1,210 @@
+fileFormatVersion: 2
+guid: dee3adfd20e11b34d9c85d72e8f8b725
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: ' L Finger0'
+    100002: ' L Toe0'
+    100004: ' R Finger0'
+    100006: ' R Toe0'
+    100008: //RootNode
+    100010: CG
+    100012: CG L CheekNub
+    100014: CG R CheekNub
+    100016: CG TongueNub
+    100018: Eye L
+    100020: Eye R
+    100022: Head
+    100024: Jaw
+    100026: L Calf
+    100028: L Cheek
+    100030: L Clavicle
+    100032: L Ear
+    100034: L Foot
+    100036: L Forearm
+    100038: L Hand
+    100040: L HorseLink
+    100042: L Thigh
+    100044: L UpperArm
+    100046: Neck
+    100048: Pelvis
+    100050: R Calf
+    100052: R Cheek
+    100054: R Clavicle
+    100056: R Ear
+    100058: R Foot
+    100060: R Forearm
+    100062: R Hand
+    100064: R HorseLink
+    100066: R Thigh
+    100068: R UpperArm
+    100070: Root
+    100072: Spine
+    100074: Spine1
+    100076: Spine2
+    100078: Tail
+    100080: Tail1
+    100082: Tail2
+    100084: Tail3
+    100086: Tongue
+    400000: ' L Finger0'
+    400002: ' L Toe0'
+    400004: ' R Finger0'
+    400006: ' R Toe0'
+    400008: //RootNode
+    400010: CG
+    400012: CG L CheekNub
+    400014: CG R CheekNub
+    400016: CG TongueNub
+    400018: Eye L
+    400020: Eye R
+    400022: Head
+    400024: Jaw
+    400026: L Calf
+    400028: L Cheek
+    400030: L Clavicle
+    400032: L Ear
+    400034: L Foot
+    400036: L Forearm
+    400038: L Hand
+    400040: L HorseLink
+    400042: L Thigh
+    400044: L UpperArm
+    400046: Neck
+    400048: Pelvis
+    400050: R Calf
+    400052: R Cheek
+    400054: R Clavicle
+    400056: R Ear
+    400058: R Foot
+    400060: R Forearm
+    400062: R Hand
+    400064: R HorseLink
+    400066: R Thigh
+    400068: R UpperArm
+    400070: Root
+    400072: Spine
+    400074: Spine1
+    400076: Spine2
+    400078: Tail
+    400080: Tail1
+    400082: Tail2
+    400084: Tail3
+    400086: Tongue
+    7400000: C_Combat_IDle
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: C_Combat_IDle
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 96
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 1
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: CG
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 9a5a6e2d8587a644b9b2da5d4940b5e3,
+    type: 3}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
