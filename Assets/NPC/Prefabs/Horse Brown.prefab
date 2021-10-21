@@ -1598,7 +1598,7 @@ GameObject:
   - component: {fileID: 1606219010814067869}
   - component: {fileID: 5160899948141053876}
   - component: {fileID: 3928172131408098489}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Horse Brown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1692,7 +1692,7 @@ MonoBehaviour:
   newLocationMinDistance: 5
   territory:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 20, y: 0.5, z: 20}
   animTransitionTime: 0.5
   threatFleeTimeout: 2
   threatRefreshDelay: 2
