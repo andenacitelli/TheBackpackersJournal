@@ -152,7 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16149a8e31fdd534da1865ddc01a6c4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treePrefab: {fileID: 0}
+  terrainManager: {fileID: 1240365348}
+  treePrefab: {fileID: 100008, guid: 756e2b7657ad4c141b1521a92ef02e3d, type: 3}
 --- !u!4 &241417647
 Transform:
   m_ObjectHideFlags: 0

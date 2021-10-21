@@ -29,6 +29,16 @@ public class TerrainManager : MonoBehaviour
         return chunks.ContainsKey(coords) ? chunks[coords] : null; 
     }
 
+    public static List<(int, int)> getChunksCords()
+    {
+        List<(int, int)> currentChunks = new List<(int int1, int int2)>();
+        foreach (KeyValuePair<Vector2Int, GameObject> chunk in chunks)
+        {
+            currentChunks.Add(((int)(chunk.Value.transform.position.x/80), (int)(chunk.Value.transform.position.z / 80)));
+        }
+        return currentChunks;
+    }
+
     void Update() 
     {
         GenerateChunks(); // Generate ungenerated, in-range chunks
