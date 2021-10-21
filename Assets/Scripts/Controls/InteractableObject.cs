@@ -22,7 +22,6 @@ public class InteractableObject : MonoBehaviour
 
     public void CallUIEvent()
     {
-        Debug.Log("CAlled UI EVENT");
         galleryStorage.StartGalleryStorage();
     }
 }

@@ -8,6 +8,8 @@ TagManager:
   - LoadMenu
   - PlayerProfileButtons
   - InteractableObject
+  - EditableObject
+  - PlaceableObject
   layers:
   - Default
   - TransparentFX

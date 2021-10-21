@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     [Header("Player")]
     public PlayerController playerC;
     public GameObject cameraC;
-    //[Header("Game")]
+    [Header("Game")]
+    public GalleryStorage storage;
 
     [Header("UI")]
     public Canvas uiCanvas;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     private PolaroidController polC;
     private CameraRollMenu crMenu;
     private string lastPopUp;
+    private bool lastEditOn;
 
     public void Awake()
     {
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
         hud = uiCanvas.GetComponent<InteractableGUI>();
         crMenu = uiCanvas.GetComponent<CameraRollMenu>();
         lastPopUp = "";
+        lastEditOn = false;
     }
 
     public void Update()
@@ -45,27 +48,59 @@ public class GameManager : MonoBehaviour
         string activePopUp = popUpMenus.ActiveChildren();
         if (activePopUp.Equals(""))
         {
-            HandlePlayerInput();
+            if (storage.editingStorageOn)
+            {
+                if (!lastEditOn)
+                {
+                    //edit mode just turned on
+                    hud.ToggleCursor(false, true, storage.scaleModifier);
+                } else
+                {
+                    HandleStorageEditingInput();
+                }
+                
+            } else
+            {
+                if (lastEditOn)
+                {
+                    //edit mode just turned off
+                    hud.ToggleCursor(false, false, -1);
+                }
+                else
+                {
+                    HandlePlayerInput();
+                }
+                
+            }
+            
             
         } else if(lastPopUp.Equals(""))
         {
             // Pop Up was opened in last update:
             ToggleCameraInputs(false);
             ToggleCameraRollInputs(false);
-            hud.ToggleCursor(false);
+            hud.ToggleCursor(false, false, -1);
             
         }
         lastPopUp = activePopUp;
+        lastEditOn = storage.editingStorageOn;
     
     }
 
     private void HandlePlayerInput()
     {
-        hud.ToggleCursor(true);
+        hud.ToggleCursor(true, false, -1);
         ToggleCameraInputs(true);
         ToggleCameraRollInputs(true);
         playerC.UpdateMove();
         playerC.UpdateLook();   
+    }
+
+    private void HandleStorageEditingInput()
+    {
+        hud.ToggleCursor(true, true, storage.scaleModifier);
+        playerC.UpdateMove();
+        playerC.UpdateLook();
     }
 
     private void ToggleCameraInputs(bool pass)

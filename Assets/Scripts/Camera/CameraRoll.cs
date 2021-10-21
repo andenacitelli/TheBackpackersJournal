@@ -28,9 +28,11 @@ public class CameraRoll : MonoBehaviour
     private int internalIndex = 0;
     [Header("UI")]
     public CameraRollMenu crUI;
-
-    
+    [Header("Storage")]
+    public GameObject galleryStorageGO;
+   
     public List<photo> cRollStorage;
+    private GalleryStorage galleryStorage;
     private static photo buffer;
     private int counter = 0;
 
@@ -47,6 +49,7 @@ public class CameraRoll : MonoBehaviour
         imageScan = GetComponent<ImageScanner>();
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
+        galleryStorage = galleryStorageGO.GetComponent<GalleryStorage>();
         
         LoadCRoll();
         
@@ -99,6 +102,17 @@ public class CameraRoll : MonoBehaviour
 
         }
 
+    }
+
+    public void ForwardPhotoToStorage(int indexChosen)
+    {
+        photo grabP = cRollStorage[indexChosen];
+        Texture2D tex = grabP.captureData;
+        //crUI.UpdateCR(indexChosen, null);
+        galleryStorage.ReceivePhoto(indexChosen);
+
+        //TODO: HANDLE FILES
+        //cRollStorage.RemoveAt(indexChosen);
     }
 
     public void RecievePhoto(byte[] rawData)

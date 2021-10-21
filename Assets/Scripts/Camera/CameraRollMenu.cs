@@ -84,7 +84,6 @@ public class CameraRollMenu : MonoBehaviour
 
     public void OpenCRStorage()
     {
-        isCRMenu = true;
         gallery.isStorageMode = true;
         cameraRollUI.SetActive(true);
     }
@@ -136,7 +135,7 @@ public class CameraRollMenu : MonoBehaviour
         // send this photo to gallerystorage
         gallery.isStorageMode = false;
         cameraRollUI.SetActive(false);
-        print("placing cameraRoll index " + option + " in gallery");
+        cr.ForwardPhotoToStorage(option);
     }
 
     public void PhotoViewResponse(int option)
