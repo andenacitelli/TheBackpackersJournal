@@ -28,15 +28,19 @@ public class PolaroidController : MonoBehaviour
     private float shutterStop, shutterWidth;
     private float raiseHalfDist, shutterT;
     private CameraRoll cRoll;
+    private AudioSource cameraAudio;
+    private AudioManager audioMan;
 
     private void Awake()
     {
         cRoll = GetComponent<CameraRoll>();
+        cameraAudio = GetComponent<AudioSource>();
         inputAllowed = true;
     }
 
     private void Start()
     {
+        audioMan = FindObjectOfType<AudioManager>();
         FlashOn = true;
         aimRunning = false;
         photoActive = false;
@@ -73,7 +77,8 @@ public class PolaroidController : MonoBehaviour
             {
                 if (FlashOn)
                 {
-                    FindObjectOfType<AudioManager>().Play("ShutterCamera");
+                    audioMan.Assign3DSource(cameraAudio, "ShutterCamera");
+                    audioMan.Play("ShutterCamera");
                     StartCoroutine("CapturePhoto");
                 }
             }
@@ -95,7 +100,8 @@ public class PolaroidController : MonoBehaviour
 
         Vector3[] worldPos = ConvertToWorldPoints();
         float currentShutter= 0;
-        FindObjectOfType<AudioManager>().Play("OpenCamera");
+        audioMan.Assign3DSource(cameraAudio, "OpenCamera");
+        audioMan.Play("OpenCamera");
         while (aimEngaged && (!shutterStopped && Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_END]) >= .005))
         {
             worldPos = ConvertToWorldPoints();
@@ -150,7 +156,8 @@ public class PolaroidController : MonoBehaviour
         photoActive = false;
         aimEngaged = false;
         shutterStopped = false;
-        FindObjectOfType<AudioManager>().Play("CloseCamera");
+        audioMan.Assign3DSource(cameraAudio, "CloseCamera");
+        audioMan.Play("CloseCamera");
         while (Vector3.Distance(worldPos[WORLD_CURRENT], worldPos[WORLD_START]) >= .005)
         {
             #region shutter2
