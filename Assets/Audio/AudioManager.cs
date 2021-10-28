@@ -11,6 +11,8 @@ public class AudioManager : MonoBehaviour
 
     public static AudioManager instance;
 
+    public AudioSource aSrc;
+
     void Awake()
     {
 
@@ -26,20 +28,14 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         /*load audio source for each sound*/
-        foreach(Sound s in sounds)
-        {
-            
-            s.source = gameObject.AddComponent<AudioSource>();
-            s.source.clip = s.clip;
-            s.source.outputAudioMixerGroup = s.group;
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
-        }
+        aSrc = gameObject.GetComponent<AudioSource>();
+
+        
     }
 
     private void Start()
     {
+        Assign3DSource(aSrc, "MainMenuBackground");
         Play("MainMenuBackground");
     }
 
@@ -54,6 +50,29 @@ public class AudioManager : MonoBehaviour
         }
 
         s.source.Play();
+
+    }
+
+    public void Assign3DSource(AudioSource newSrc, String name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        if (s == null)
+        {
+            Debug.LogWarning("Sound: " + name + " not found!(When asked to play)");
+            return;
+        } else if (s.source == null) {
+            Debug.Log("AudioSource newly assigned.");
+        } else
+        {
+            Debug.Log("AudioSource replaced");
+        }
+        s.source = newSrc;
+        s.source.clip = s.clip;
+        s.source.outputAudioMixerGroup = s.group;
+        s.source.volume = s.volume;
+        s.source.pitch = s.pitch;
+        s.source.loop = s.loop;
 
     }
 
@@ -81,7 +100,7 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
-        foreach (Sound s in sounds)
+        /*foreach (Sound s in sounds)
         {
             if (PauseMenu.isPaused)
             {
@@ -92,6 +111,6 @@ public class AudioManager : MonoBehaviour
                 s.source.volume = .5f;
 
             }
-        }
+        }*/
     }
 }
