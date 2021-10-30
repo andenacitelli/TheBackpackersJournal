@@ -10,9 +10,9 @@ public class SpawnManager : MonoBehaviour
 
     [Header("Animal Spawn Settings")]
     [SerializeField] int maxSpawns = 10;
-    [SerializeField] float minDistanceFromPlayer = 10.0f;
-    [SerializeField] float maxDistanceFromPlayer = 40.0f;
-    [SerializeField] float minDistanceFromAnimals = 5.0f;
+    [SerializeField] float minPlayerDistance = 10.0f;
+    [SerializeField] float maxPlayerDistance = 40.0f;
+    [SerializeField] float minAnimalsDistance = 5.0f;
     [SerializeField] float aboveGroundOffset = 1.0f; // to ensure that they spawn above ground level. they'll drop to touch ground with gravity
 
 
@@ -92,15 +92,22 @@ public class SpawnManager : MonoBehaviour
             // clean up the object's name to help with photoID obviously won't work if we 
             string objectName = newSpawn.name;
             if (objectName.Contains("(Clone)")) newSpawn.name = objectName.Substring(0, objectName.LastIndexOf("(Clone)"));
-            
+            // start despawn timer
+            StartCoroutine(DespawnTimer(newSpawn));
             Debug.Log($"{newSpawn.name} spawned into the world.");
         }
     }
 
-    // TODO: add despawning
-    IEnumerator Despawn()
+    // Despawn animal
+    IEnumerator DespawnTimer(GameObject animal)
     {
-        yield return null;
+        do
+        { // wait for despawn timer to hit, and then if player is out of range get rid of the animal
+            yield return new WaitForSeconds(despawnTime);
+        } while (Vector3.Distance(playerTransform.position, animal.transform.position) < despawnRange);
+
+        worldAnimals.Remove(animal);
+        Destroy(animal);
     }
     // returns the array of animals to spawn from
     GameObject[] GetSpawnSource()
@@ -115,12 +122,12 @@ public class SpawnManager : MonoBehaviour
 
         do {
             // get a point within the spawn range
-            location.x = Random.Range(playerPos.x - maxDistanceFromPlayer, playerPos.x + maxDistanceFromPlayer);
-            location.z = Random.Range(playerPos.z - maxDistanceFromPlayer, playerPos.z + maxDistanceFromPlayer);
+            location.x = Random.Range(playerPos.x - maxPlayerDistance, playerPos.x + maxPlayerDistance);
+            location.z = Random.Range(playerPos.z - maxPlayerDistance, playerPos.z + maxPlayerDistance);
 
             heightData = TerrainFunctions.GetTerrainPointData(new Vector2(location.x, location.z));
             // loop if point not on a chunk or if it's too close to player
-        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < minDistanceFromPlayer);
+        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < minPlayerDistance);
 
         // TODO: might add min distance from other animals as well.
 

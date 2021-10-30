@@ -474,12 +474,14 @@ MonoBehaviour:
   - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   commonPredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
-  maxSpawns: 10
-  spawnDistanceFromPlayer: 40
+  maxSpawns: 1
+  minPlayerDistance: 10
+  maxPlayerDistance: 40
+  minAnimalsDistance: 5
   aboveGroundOffset: 1
   preySpawnChance: 65
   despawnRange: 20
-  despawnTime: 120
+  despawnTime: 30
 --- !u!4 &1709368672
 Transform:
   m_ObjectHideFlags: 0
