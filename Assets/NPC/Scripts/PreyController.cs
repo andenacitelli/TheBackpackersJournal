@@ -49,7 +49,7 @@ public class PreyController : AnimalController
             }
 
             // flee from detected threats
-            if (threats.Count > 0) yield return RunAway();
+            if (threats.Count > 0) yield return StartCoroutine(RunAway());
             // not constantly updating threat reaction
             yield return new WaitForSeconds(threatRefreshDelay);
         }

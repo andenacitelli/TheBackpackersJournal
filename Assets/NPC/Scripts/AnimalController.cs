@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using Assets.WorldGen;
 
 public class AnimalController : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private bool canFly = false;
+    private readonly float GRAVITY = -9.8f;
     [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 5.0f)] private float turnSpeed = 0.5f; // public for spawner testing, will be private when using actual models
@@ -92,7 +94,7 @@ public class AnimalController : MonoBehaviour
         while (!AtTarget())
         {
             // adjust target to be in territory
-            StayInYaLane();
+            //StayInYaLane();
 
             // turn toward target
             Quaternion targetRotation = Quaternion.LookRotation(targetDestination - transform.position);
@@ -100,7 +102,9 @@ public class AnimalController : MonoBehaviour
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
             // move toward target
-            controller.Move(transform.TransformDirection(Vector3.forward) * currentSpeed * Time.deltaTime);
+            Vector3 moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
+            moveDirection.y = GRAVITY;
+            controller.Move(moveDirection * Time.deltaTime);
             yield return null;
         }
     }
@@ -117,7 +121,7 @@ public class AnimalController : MonoBehaviour
     }
 
     // Start roaming toward a new random location
-    protected void GetNewRoamingDestination()
+    protected void GetNewRoamingDetination()
     {
         float minX = territory.min.x, minY = territory.min.y, minZ = territory.min.z;
         float maxX = territory.max.x, maxY = territory.max.y, maxZ = territory.max.z;
@@ -127,5 +131,20 @@ public class AnimalController : MonoBehaviour
         while(Vector3.Distance(targetDestination, transform.position) < newLocationMinDistance) targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
         if (!canFly) targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
 
+    }
+
+    protected void GetNewRoamingDestination()
+    {
+        float minX = transform.position.x - newLocationMinDistance * 1.5f, minZ = transform.position.z - newLocationMinDistance * 1.5f;
+        float maxX = transform.position.x + newLocationMinDistance * 1.5f, maxZ = transform.position.z + newLocationMinDistance * 1.5f;
+        Vector2 newCoord;
+        TerrainFunctions.TerrainPointData heightData;
+        do
+        {
+            newCoord = new Vector2(Random.Range(minX, maxX), Random.Range(minZ, maxZ));
+            heightData = TerrainFunctions.GetTerrainPointData(newCoord);
+        } while (!heightData.isHit && Vector2.Distance(newCoord, new Vector2(transform.position.x, transform.position.z)) < newLocationMinDistance);
+        
+        targetDestination = new Vector3(newCoord.x, heightData.height, newCoord.y);
     }
 }

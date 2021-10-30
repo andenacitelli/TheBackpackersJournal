@@ -51,6 +51,7 @@ public class AnimalSenses : MonoBehaviour
             {
                 if (heard.gameObject != transform.gameObject && heard.TryGetComponent<Creature>(out creature))
                     heardCreatures.Add(creature);
+                yield return null;
             }
 
             yield return new WaitForSeconds(detectRate);
@@ -85,7 +86,7 @@ public class AnimalSenses : MonoBehaviour
                         seenCreatures.Add(seenCreature);
                     }
                 }
-
+                yield return null;
             }
 
             yield return new WaitForSeconds(detectRate);

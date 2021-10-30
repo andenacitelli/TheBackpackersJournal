@@ -1,4 +1,6 @@
 using UnityEngine;
+using Assets.WorldGen;
+
 /// <summary>
 /// Spawns a number of predators, prey, and stationary targets onto the scene
 /// </summary>
@@ -12,11 +14,12 @@ public class Spawner : MonoBehaviour
     public int numTargets;
     public GameObject target;
     public Bounds spawnArea;
+
     void Start()
     {
         SpawnObjects(numPredators, predators);
         SpawnObjects(numPrey, prey);
-        SpawnObjects(numTargets, target);
+        //SpawnObjects(numTargets, target);
     }
 
     // spawn quantity number of prefab objects at random locations within the spawnArea
