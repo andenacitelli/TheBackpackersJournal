@@ -14,7 +14,7 @@ public class SplashSequence : MonoBehaviour
 
     void Start()
     {
-        SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+        SceneManager.LoadScene("worldGen", LoadSceneMode.Additive);
         if (SceneNumber == 0)
         {
             StartCoroutine(ToSplashTwo());

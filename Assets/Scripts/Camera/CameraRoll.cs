@@ -160,7 +160,7 @@ public class CameraRoll : MonoBehaviour
 
         //Creates a new Sprite based on the Texture2D
         
-
+        /*
         #region debugScreenCapture
         string objectsInImage = "On Display: ";
         if(currView.Count > 0)
@@ -178,6 +178,7 @@ public class CameraRoll : MonoBehaviour
         uiImage.sprite = fromTex;
         uiText.text = objectsInImage;
         #endregion
+        */
     }
 
     public void CapturePopUp()
