@@ -51,8 +51,7 @@ public class GroveToWilderness : MonoBehaviour
         Scene thisScene = SceneManager.GetSceneByName("firstperson");
         Scene wilderness = SceneManager.GetSceneByName("worldGen");
         yield return new WaitForEndOfFrame();
-        GameObject additiveCam = GameObject.Find("WorldGenPlayer");
-        additiveCam.SetActive(false);
+        
         GameObject terrainGO = GameObject.Find("TerrainManager");
 
         TerrainManager terrainM = terrainGO.GetComponent<TerrainManager>();
@@ -60,6 +59,9 @@ public class GroveToWilderness : MonoBehaviour
         
         Vector3 currPos = player.transform.position;
         player.transform.position = new Vector3(currPos.x, currPos.y + 50f, currPos.z);
+
+        //This would be the spot for a loading screen or something
+
         toWildernessGUI.SetActive(false);
         //SceneManager.MoveGameObjectToScene(player, wilderness);
         // SceneManager.MoveGameObjectToScene(player, wilderness);

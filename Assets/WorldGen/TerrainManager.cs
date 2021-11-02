@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /* Manages, spawns, and deletes chunks. */
 public class TerrainManager : MonoBehaviour
@@ -18,8 +19,24 @@ public class TerrainManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
-        player = GameObject.Find("WorldGenPlayer");
+        //player = GameObject.Find("WorldGenPlayer");
+        if(player == null)
+        {
+            Debug.Log("(TM)Player is null");
+        } else
+        {
+            Debug.Log("(TM) player " + player.name + " pos: " + player.transform.position.x + ", " + player.transform.position.y + ", " + player.transform.position.z);
+        }
+        GenerateChunks();
+
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("OnDisable-TerrainManager");
+        chunks = new Dictionary<Vector2Int, GameObject>();
     }
 
     // Essentially just a getter
@@ -90,7 +107,10 @@ public class TerrainManager : MonoBehaviour
                         if (!chunks.ContainsKey(pos))
                         {
                             Vector3 chunkPos = new Vector3(xIndex * ChunkGen.size, this.gameObject.transform.position.y, zIndex * ChunkGen.size);
+                            print("(TM):Initializing chunk at " + chunkPos);
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
+                            tile.GetComponent<ChunkGen>().GenerateChunk();
+                            tile.SetActive(true);
                             tile.layer = LayerMask.NameToLayer("Terrain");
                             chunks[pos] = tile;
                             chunksGeneratedThisFrame++;

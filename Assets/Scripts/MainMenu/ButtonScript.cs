@@ -11,6 +11,7 @@ public class ButtonScript : MonoBehaviour
     public GameObject SettingsMenu;
     public void PlayGame()
     {
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Single);
         FindObjectOfType<AudioManager>().Stop("MainMenuBackground");
         FindObjectOfType<AudioManager>().Play("GameStart");

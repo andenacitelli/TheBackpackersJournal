@@ -43,10 +43,10 @@ public class PlayerController : MonoBehaviour
         // Move Player
         Vector3 moveDirection = Vector3.forward * moveVert + Vector3.right * moveHoriz + Vector3.up * -9.81f;
         moveDirection = transform.TransformDirection(moveDirection);
-        if (!controller.isGrounded)
+        /*if (!controller.isGrounded)
         {
             Debug.Log("Player isn't in contact with the ground");
-        }
+        }*/
         controller.Move(moveDirection * moveSpeed * Time.deltaTime); 
     }
 
