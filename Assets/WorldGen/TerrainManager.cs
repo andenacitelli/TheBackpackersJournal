@@ -22,13 +22,7 @@ public class TerrainManager : MonoBehaviour
         Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
         //player = GameObject.Find("WorldGenPlayer");
-        if(player == null)
-        {
-            Debug.Log("(TM)Player is null");
-        } else
-        {
-            Debug.Log("(TM) player " + player.name + " pos: " + player.transform.position.x + ", " + player.transform.position.y + ", " + player.transform.position.z);
-        }
+       
         GenerateChunks();
 
     }

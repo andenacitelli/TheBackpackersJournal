@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameObject cameraC;
     [Header("Game")]
     public GalleryStorage storage;
+    
 
     [Header("UI")]
     public Canvas uiCanvas;
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
     public void Update()
     {
         DetermineInputState();
+        DetermineGameState();
     }
 
     private void DetermineInputState() 
@@ -87,6 +89,10 @@ public class GameManager : MonoBehaviour
     
     }
 
+    private void DetermineGameState()
+    {
+
+    }
     private void HandlePlayerInput()
     {
         hud.ToggleCursor(true, false, -1);

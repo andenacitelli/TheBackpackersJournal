@@ -61,6 +61,7 @@ public class GroveToWilderness : MonoBehaviour
         player.transform.position = new Vector3(currPos.x, currPos.y + 50f, currPos.z);
 
         //This would be the spot for a loading screen or something
+        // Pass up to GameManager
 
         toWildernessGUI.SetActive(false);
         //SceneManager.MoveGameObjectToScene(player, wilderness);

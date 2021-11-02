@@ -13,6 +13,7 @@ public class PauseMenu : MonoBehaviour
     PauseAction action;
     public GameObject savePrompt;
     public CameraRoll cr;
+    public GameObject groveReturn;
 
     private string input;
 
@@ -116,6 +117,11 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
+    }
+
+    public void ReturnToGrove()
+    {
+        Debug.Log("Return to Grove Started");
     }
 
     public void Quit()
