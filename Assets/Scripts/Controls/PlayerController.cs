@@ -21,9 +21,20 @@ public class PlayerController : MonoBehaviour
     float lookHoriz, lookVert;
     float vertRotation;
     Transform playerCamera;
-
+    public static PlayerController instance;
     private void Awake()
     {
+        /*has one and only one PlayerController throughout the game*/
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
         controller = GetComponent<CharacterController>();
         playerCamera = transform.Find("PlayerCamera");
     }

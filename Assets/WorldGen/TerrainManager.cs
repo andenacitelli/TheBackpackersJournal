@@ -8,8 +8,7 @@ public class TerrainManager : MonoBehaviour
     [SerializeField]
     private GameObject tilePrefab;
 
-    [SerializeField]
-    private GameObject player; 
+    public GameObject player; 
 
     [SerializeField]
     private int generateRadius;
@@ -19,7 +18,8 @@ public class TerrainManager : MonoBehaviour
 
     private void Start()
     {
-        Physics.autoSyncTransforms = true;    
+        Physics.autoSyncTransforms = true;
+        player = GameObject.Find("WorldGenPlayer");
     }
 
     // Essentially just a getter

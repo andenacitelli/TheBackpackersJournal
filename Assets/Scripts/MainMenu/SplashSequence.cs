@@ -47,7 +47,10 @@ public class SplashSequence : MonoBehaviour
         Destroy(SplashScreenCam);
         MainMenuCam.SetActive(true);
         MainMenu.SetActive(true);
-        GameObject.Find("WorldGenCamera").GetComponent<Camera>().GetComponent<AudioListener>().enabled = true;
+        GameObject additiveCam = GameObject.Find("WorldGenCamera");
+        /*additiveCam.transform.parent.gameObject.SetActive(true);
+        additiveCam.SetActive(true);*/
+        additiveCam.GetComponent<Camera>().GetComponent<AudioListener>().enabled = true;
         SceneNumber = 2;
     }
 

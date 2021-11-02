@@ -13428,7 +13428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a96db739233403a469f7ea09c0e0e883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2.55
+  moveSpeed: 3.38
   horizontalSensitivity: 0.293
   verticalSensitivity: 0.25
   verticalClamp: 65
@@ -29721,6 +29721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toWildernessGUI: {fileID: 1516348639}
+  player: {fileID: 879062989}
 --- !u!1001 &2022545248
 PrefabInstance:
   m_ObjectHideFlags: 0
