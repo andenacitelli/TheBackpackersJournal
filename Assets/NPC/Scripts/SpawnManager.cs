@@ -68,7 +68,7 @@ public class SpawnManager : MonoBehaviour
     }
     
     // Return whether the chunks have been placed in world yet
-    bool ChunksRenderedAtPlayer()
+    bool PlayerChunksHaveGenerated()
     {
         return TerrainFunctions.GetTerrainPointData(new Vector2(playerTransform.position.x, playerTransform.position.z)).isHit;
     }
@@ -257,7 +257,7 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnFirstAnimals()
     {
         // cannot begin placing animals until there is a spot to put them in the world
-        yield return new WaitUntil(ChunksRenderedAtPlayer);
+        yield return new WaitUntil(PlayerChunksHaveGenerated);
 
         Vector3 spawnLoc;
         GameObject[] source;
@@ -298,7 +298,7 @@ public class SpawnManager : MonoBehaviour
     IEnumerator WildlifeEventSpawner()
     {
         // cannot begin placing events until there is a spot to put them in the 
-        yield return new WaitUntil(ChunksRenderedAtPlayer);
+        yield return new WaitUntil(PlayerChunksHaveGenerated);
 
         Vector3 spawnLoc;
         GameObject[] eventSource;

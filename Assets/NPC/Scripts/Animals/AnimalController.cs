@@ -27,6 +27,8 @@ public class AnimalController : MonoBehaviour
     private CharacterController controller;
     
     protected Animator anim;
+    protected AudioManager audioManager;
+    protected AudioSource audioSource;
 
     [SerializeField] [Range(0.0f, 1.0f)] protected float animTransitionTime = 0.5f;
     public bool CanFly { get => canFly; }
@@ -60,10 +62,14 @@ public class AnimalController : MonoBehaviour
     void Start()
     {
         currentSpeed = WalkSpeed;
+
         creatureType = GetComponent<Creature>().creatureType;
         controller = GetComponent<CharacterController>();
         senses = GetComponent<AnimalSenses>();
         anim = GetComponent<Animator>();
+
+        audioManager = FindObjectOfType<AudioManager>();
+        audioSource = GetComponent<AudioSource>();
 
         Initialize();
         StartCoroutine(AnimalBehavior());

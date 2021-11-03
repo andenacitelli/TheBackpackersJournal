@@ -7,6 +7,9 @@ public class PredatorController : AnimalController
     [Header("Predator Settings")]
     [SerializeField] [Range(0.0f, 60.0f)] float huntTimeout = 5.0f;
 
+    [Header("Sound Names")]
+    [SerializeField] protected string attackSoundName;
+
     Creature huntingTarget;
 
     bool IsHunting()
@@ -27,9 +30,10 @@ public class PredatorController : AnimalController
 
     protected override void Initialize()
     {
-        creatureType = Creature.CreatureTypes.PREDATOR;
         StartCoroutine(LocateHuntingTargets());
     }
+
+    protected virtual void PlayAttackSound() { }
 
     protected override IEnumerator ActionAtTarget()
     {
@@ -41,9 +45,8 @@ public class PredatorController : AnimalController
         else
         { // murder prey
             // start attack animation
-            //anim.SetBool("Attacking", true);
-            // anim.SetTrigger("Attack");
             Animations.Play("Attack");
+            PlayAttackSound();
             yield return new WaitForSeconds(Animations.GetCurrentAnimatorStateInfo(0).normalizedTime/2); // finish attack animation
 
             // start target's death sequence
@@ -57,7 +60,6 @@ public class PredatorController : AnimalController
             // end the timer because no longer hunting
             StopCoroutine(HuntTimer());
 
-            //anim.SetTrigger("Idle");
             Animations.CrossFade("Walk", animTransitionTime);
             currentSpeed = movementSpeed;
 
@@ -66,7 +68,7 @@ public class PredatorController : AnimalController
     }
 
     // Monitor vision for things to hunt
-    IEnumerator LocateHuntingTargets()
+    protected IEnumerator LocateHuntingTargets()
     {
         while (true)
         {
@@ -98,7 +100,7 @@ public class PredatorController : AnimalController
     }
     
     // Follow current position of the target
-    IEnumerator HuntTarget()
+    protected IEnumerator HuntTarget()
     {
         // Start running animation sequence
         Animations.Play("Run");
@@ -115,7 +117,7 @@ public class PredatorController : AnimalController
     }
     
     // Control how long to chase a target
-    IEnumerator HuntTimer()
+    protected IEnumerator HuntTimer()
     {
         yield return new WaitForSeconds(huntTimeout);
         if (huntingTarget != null && !StillHearsTarget())
