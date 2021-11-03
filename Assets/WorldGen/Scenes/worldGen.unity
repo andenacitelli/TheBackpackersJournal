@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &241417646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,6 +462,7 @@ MonoBehaviour:
   tilePrefab: {fileID: 6322903469593028105, guid: 2f020166ef04cae4bad76b88ada1ac75, type: 3}
   player: {fileID: 1782234108}
   generateRadius: 5
+  TreeRockDropper: {fileID: 241417645}
 --- !u!4 &1240365349
 Transform:
   m_ObjectHideFlags: 0

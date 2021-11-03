@@ -41,7 +41,6 @@ public class DropTree : MonoBehaviour
     static private List<(int, int)> toDoChunks;
     static private List<(int, int)> toRemoveChunks;
     static private List<(int, int)> finishedChunks;
-    static private bool finishedFirstGeneration = false;
 
     public List<GameObject> bushPrefabs;
     public List<GameObject> flowerPrefabs;
@@ -53,16 +52,8 @@ public class DropTree : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentChunks = TerrainManager.getChunksCords();
         currentChunks = new List<(int int1, int int2)>();
-        currentChunks.Add((0,0));
-        currentChunks.Add((0, 1));
-        currentChunks.Add((0, -1));
-        currentChunks.Add((1, 1));
-        currentChunks.Add((1, 0));
-        currentChunks.Add((1, -1));
-        currentChunks.Add((-1, 1));
-        currentChunks.Add((-1, 0));
-        currentChunks.Add((-1, -1));
         toDoChunks = currentChunks;
         finishedChunks = new List<(int int1, int int2)>();
         toRemoveChunks = new List<(int int1, int int2)>();
@@ -92,16 +83,9 @@ public class DropTree : MonoBehaviour
     }
     // Update is called once per frame
     void Update()
-        {
-            if (TerrainManager.getChunksCords().Count == 9)
-            {
-                finishedFirstGeneration = true;
-            }
+    {
+        currentChunks = TerrainManager.getChunksCords();
 
-        if (finishedFirstGeneration)
-        {
-            currentChunks = TerrainManager.getChunksCords();
-        }
         toDoChunks = new List<(int, int)>();
         foreach ((int, int) chunk in currentChunks)
         {
@@ -325,6 +309,7 @@ public class DropTree : MonoBehaviour
         flower 1;
         bush 2;
         shoorm 3;*/
+        GameObject temp;
         Vector2 pos2D = center + relativeToCenter;
         TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(pos2D);
         Vector3 pos = new Vector3(pos2D.x, heightData.height, pos2D.y);
@@ -333,23 +318,29 @@ public class DropTree : MonoBehaviour
         switch (type)
         {
             case 0:
-                plants.gameObjects.Add(Instantiate(grassPrefabs[plantRandoms[0].Next(0, 39)], pos, Quaternion.identity));
+                temp = Instantiate(grassPrefabs[plantRandoms[0].Next(0, 39)], pos, Quaternion.identity);                                
                 break;
             case 1:
-                plants.gameObjects.Add(Instantiate(flowerPrefabs[plantRandoms[1].Next(0, 19)], pos, Quaternion.identity));
+                temp = Instantiate(flowerPrefabs[plantRandoms[1].Next(0, 19)], pos, Quaternion.identity);
                 break;
             case 2:
-                plants.gameObjects.Add(Instantiate(bushPrefabs[plantRandoms[2].Next(0, 9)], pos, Quaternion.identity));
+                temp = Instantiate(bushPrefabs[plantRandoms[2].Next(0, 9)], pos, Quaternion.identity);
                 break;
             case 3:
-                plants.gameObjects.Add(Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 32)], pos, Quaternion.identity));
+                temp = Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 32)], pos, Quaternion.identity);
                 break;
             case 4:
-                plants.gameObjects.Add(Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity));
+                temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
+                break;
+            default:
+                temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
                 break;
         }
+        plants.gameObjects.Add(temp);
+        temp.transform.parent = this.transform;
 
 
-        
+
+
     }
 }

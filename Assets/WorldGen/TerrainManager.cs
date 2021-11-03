@@ -14,9 +14,12 @@ public class TerrainManager : MonoBehaviour
     [SerializeField]
     private int generateRadius;
 
+    public GameObject TreeRockDropper;
+
     // Holds references to chunks we've generated so that we don't regenerate them 
     static private Dictionary<Vector2Int, GameObject> chunks = new Dictionary<Vector2Int, GameObject>();
 
+    private static bool finishedFirstTimeGeneration = false;
     private void Start()
     {
         Debug.Log("Start - TerrainManager");
@@ -80,6 +83,7 @@ public class TerrainManager : MonoBehaviour
         //      Theoretically, the most we should ever recalculate and reorder is
         //      the frame that a player switches chunks, if not even less frequently.
         Vector2Int currentChunk = new Vector2Int(playerPosChunks.x, playerPosChunks.y);
+        int counter = 0;
         for (int currentRadius = 0; currentRadius < generateRadius; currentRadius++)
         {
             for (int xIndex = currentChunk.x - currentRadius; xIndex <= currentChunk.x + currentRadius; xIndex++)
@@ -112,6 +116,7 @@ public class TerrainManager : MonoBehaviour
                         {
                             Vector3 chunkPos = new Vector3(xIndex * ChunkGen.size, this.gameObject.transform.position.y, zIndex * ChunkGen.size);
                             print("(TM):Initializing chunk at " + chunkPos);
+                            counter++;
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
                             tile.GetComponent<ChunkGen>().GenerateChunk();
                             tile.SetActive(true);
@@ -122,6 +127,10 @@ public class TerrainManager : MonoBehaviour
                     }
                 }
             }
+        }
+        if(counter == 0 && finishedFirstTimeGeneration == false)
+        {
+            TreeRockDropper.SetActive(true);
         }
     }
 
