@@ -77,7 +77,7 @@ public class DropTree : MonoBehaviour
          * the additive wilderness scene is affecting your code. To fix the error thrown
          * when running the game from the main menu, just uncomment the line below:
          */
-        //plantsD = new Dictionary<(int, int), List<plantsGroup>>();
+        plantsD = new Dictionary<(int, int), List<plantsGroup>>();
 
         /*GENERAL NOTES ON DESIGN of foliage:
          * -----> NEEDS FIXES <------
