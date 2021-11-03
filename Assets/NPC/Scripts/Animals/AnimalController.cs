@@ -4,6 +4,7 @@ using Assets.WorldGen;
 
 public class AnimalController : MonoBehaviour
 {
+    [SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
     [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
@@ -133,8 +134,10 @@ public class AnimalController : MonoBehaviour
 
     }
 
+    // start roaming toward a new random location
     protected void GetNewRoamingDestination()
     {
+
         float minX = transform.position.x - newLocationMinDistance * 1.5f, minZ = transform.position.z - newLocationMinDistance * 1.5f;
         float maxX = transform.position.x + newLocationMinDistance * 1.5f, maxZ = transform.position.z + newLocationMinDistance * 1.5f;
         Vector2 newCoord;
