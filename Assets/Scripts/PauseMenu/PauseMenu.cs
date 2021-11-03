@@ -13,13 +13,17 @@ public class PauseMenu : MonoBehaviour
     PauseAction action;
     public GameObject savePrompt;
     public CameraRoll cr;
+    public GameObject groveReturnPrompt;
     public GameObject groveReturn;
 
     private string input;
+    private ReturnToGrove rTG;
+    
 
     private void Awake()
     {
         action = new PauseAction();
+        rTG = groveReturn.GetComponent<ReturnToGrove>();
     }
 
     private void OnEnable()
@@ -38,13 +42,25 @@ public class PauseMenu : MonoBehaviour
     }
 
     private void DeterminePause()
-    {
+    {  
         if(!isSaving){
             if (isPaused)
                 Resume();
             else
                 Pause();
+                DetermineReturnPrompt();
         }      
+    }
+
+    private void DetermineReturnPrompt()
+    {
+        if (rTG.playerRoaming)
+        {
+            groveReturnPrompt.SetActive(true);
+        } else
+        {
+            groveReturnPrompt.SetActive(false);
+        }
     }
 
     public void Resume()
@@ -122,6 +138,8 @@ public class PauseMenu : MonoBehaviour
     public void ReturnToGrove()
     {
         Debug.Log("Return to Grove Started");
+        rTG.UserReturn();
+        Resume();
     }
 
     public void Quit()

@@ -5,22 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class GroveToWilderness : MonoBehaviour
 {
+    [Header("SceneChangeObjs")]
     public GameObject toWildernessGUI;
     public GameObject player;
-    
+    public GameObject groveVisual;
+
+    private ReturnToGrove rTG;
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        
+        rTG = gameObject.GetComponent<ReturnToGrove>();
     }
 
     public void ConfirmWildernessTravel()
     {
+        
         StartCoroutine(LoadWilderness());
-        
-        
-        
-        
+
     }
 
     public void DenyWildernessTravel()
@@ -62,8 +63,9 @@ public class GroveToWilderness : MonoBehaviour
 
         //This would be the spot for a loading screen or something
         // Pass up to GameManager
-
+        groveVisual.SetActive(false);
         toWildernessGUI.SetActive(false);
+        rTG.WildernessLoaded();
         //SceneManager.MoveGameObjectToScene(player, wilderness);
         // SceneManager.MoveGameObjectToScene(player, wilderness);
     }
