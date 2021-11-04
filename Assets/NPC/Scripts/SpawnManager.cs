@@ -64,7 +64,7 @@ public class SpawnManager : MonoBehaviour
 
         // begin spawning animals and wildlife events into the world
         StartCoroutine(AnimalSpawner());
-        StartCoroutine(WildlifeEventSpawner());
+        //StartCoroutine(WildlifeEventSpawner());
     }
     
     // Return whether the chunks have been placed in world yet

@@ -153,7 +153,7 @@ public class AnimalController : MonoBehaviour
         }
     }
 
-    // Start roaming toward a new random location
+    // Start roaming toward a new random location 
     protected void GetNewRoamingDestination()
     {
         float minX = territory.min.x, minY = territory.min.y, minZ = territory.min.z;
@@ -166,7 +166,7 @@ public class AnimalController : MonoBehaviour
 
     }
 
-    // start roaming toward a new random location
+    // start roaming toward a new random location using the world gen
     protected void GetNewRoamingDetination()
     {
 
