@@ -188,7 +188,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1131504592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +206,7 @@ MonoBehaviour:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
   numPrey: 1
   prey:
-  - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
+  - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   numTargets: 0
   target: {fileID: 3914045066834312031, guid: 7b9134bc0799c0740b105b14d5a97793, type: 3}
   spawnArea:
@@ -462,7 +462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 100
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -758,7 +758,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2030504916
 MonoBehaviour:
   m_ObjectHideFlags: 0

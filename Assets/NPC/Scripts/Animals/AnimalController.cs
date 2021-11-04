@@ -12,11 +12,12 @@ public class AnimalController : MonoBehaviour
     [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 5.0f)] private float turnSpeed = 0.5f; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 10.0f)] protected float targetTolerance = 3.0f; // public for spawner testing, will be private when using actual prefabs
-    [SerializeField] [Range(0.0f, 10.0f)] private float newTargetDelay = 0.5f;
+    [SerializeField] [Range(0.0f, 10.0f)] protected float newTargetDelay = 0.5f;
     [SerializeField] protected float currentSpeed;
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
+    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 50.0f;
     [SerializeField] public Bounds territory;
 
 
@@ -27,10 +28,13 @@ public class AnimalController : MonoBehaviour
     private CharacterController controller;
     
     protected Animator anim;
+    [SerializeField] [Range(0.0f, 1.0f)] protected float animTransitionTime = 0.5f;
+
     protected AudioManager audioManager;
     protected AudioSource audioSource;
+    [SerializeField] protected string[] soundNames;
 
-    [SerializeField] [Range(0.0f, 1.0f)] protected float animTransitionTime = 0.5f;
+
     public bool CanFly { get => canFly; }
     protected float WalkSpeed { get => movementSpeed; }
     protected float RunSpeed { get => dashSpeed; }
@@ -49,6 +53,10 @@ public class AnimalController : MonoBehaviour
     protected virtual void Initialize() { }
     protected virtual IEnumerator ActionAtTarget()
     {
+        yield return StartCoroutine(IdleBehavior());
+    }
+    protected virtual IEnumerator IdleBehavior()
+    {
         // start idle animation
         Animations.CrossFade("Idle", animTransitionTime);
 
@@ -57,6 +65,8 @@ public class AnimalController : MonoBehaviour
         currentSpeed = WalkSpeed;
         GetNewRoamingDestination();
     }
+
+    protected virtual IEnumerator AttackBehavior() { yield return null; }
 
     // Animal behavior
     void Start()
@@ -80,6 +90,22 @@ public class AnimalController : MonoBehaviour
     {
         return Vector3.Distance(targetDestination, transform.position) <= targetTolerance;
     }
+    protected bool IsIdling()
+    {
+        return AnimationStateMatchesName("Idling");
+    }
+
+    // returns true if current animation state matches the passed name
+    protected bool AnimationStateMatchesName(string name)
+    {
+        return Animations.GetCurrentAnimatorStateInfo(0).IsName(name);
+    }
+
+    protected void PlaySound(string name)
+    {
+        //audioManager.Assign3DSource(audioSource, name);
+        //audioManager.Play(name); 
+    }
 
     // Carry out all of the animal's functions
     IEnumerator AnimalBehavior()
@@ -93,7 +119,7 @@ public class AnimalController : MonoBehaviour
     }
 
     // Move toward the current target
-    IEnumerator MoveToTarget()
+    protected virtual IEnumerator MoveToTarget()
     {
         // start moving animations
         Animations.CrossFade("Walk", animTransitionTime);
@@ -101,7 +127,7 @@ public class AnimalController : MonoBehaviour
         while (!AtTarget())
         {
             // adjust target to be in territory
-            //StayInYaLane();
+            StayInYaLane();
 
             // turn toward target
             Quaternion targetRotation = Quaternion.LookRotation(targetDestination - transform.position);
@@ -128,7 +154,7 @@ public class AnimalController : MonoBehaviour
     }
 
     // Start roaming toward a new random location
-    protected void GetNewRoamingDetination()
+    protected void GetNewRoamingDestination()
     {
         float minX = territory.min.x, minY = territory.min.y, minZ = territory.min.z;
         float maxX = territory.max.x, maxY = territory.max.y, maxZ = territory.max.z;
@@ -141,7 +167,7 @@ public class AnimalController : MonoBehaviour
     }
 
     // start roaming toward a new random location
-    protected void GetNewRoamingDestination()
+    protected void GetNewRoamingDetination()
     {
 
         float minX = transform.position.x - newLocationMinDistance * 1.5f, minZ = transform.position.z - newLocationMinDistance * 1.5f;

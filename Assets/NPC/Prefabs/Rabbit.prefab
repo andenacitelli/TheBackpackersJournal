@@ -1036,7 +1036,7 @@ GameObject:
   - component: {fileID: 7502804793581682414}
   - component: {fileID: 7426581328117726883}
   - component: {fileID: 6523815731795233451}
-  - component: {fileID: 6523815731795233448}
+  - component: {fileID: 7842520520923863679}
   - component: {fileID: 6523815731795233444}
   - component: {fileID: 1657813829099594966}
   m_Layer: 7
@@ -1072,7 +1072,7 @@ Animator:
   m_GameObject: {fileID: 6523815731795233445}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: e1f61507af3734e4eb2f4bf1b1214c24, type: 3}
-  m_Controller: {fileID: 9100000, guid: b8094b95c99fdeb4e975a7a99a31c6d8, type: 2}
+  m_Controller: {fileID: 9100000, guid: cab61f22011502843af087803123d4d6, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1092,7 +1092,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 0.1
+  m_Height: 0.285
   m_Radius: 0.1
   m_SlopeLimit: 45
   m_StepOffset: 0.1
@@ -1108,7 +1108,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 6523815731795233445}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.15
   m_Height: 0.5
   m_Direction: 2
@@ -1126,7 +1126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   creatureType: 1
---- !u!114 &6523815731795233448
+--- !u!114 &7842520520923863679
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1135,7 +1135,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6523815731795233445}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 887dba758f21e0142aa968d9ae3dc186, type: 3}
+  m_Script: {fileID: 11500000, guid: a2d64c0c8ae927c4ba1eeb2d485b4389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inEvent: 0
@@ -1144,15 +1144,19 @@ MonoBehaviour:
   dashSpeed: 7
   turnSpeed: 2
   targetTolerance: 3
-  newTargetDelay: 0.5
+  newTargetDelay: 1.5
   currentSpeed: 0
   newLocationMinDistance: 5
+  newLocationMaxDistance: 10
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
-  animTransitionTime: 0.5
+  animTransitionTime: 1
+  soundNames:
+  - peterCottontail
   threatFleeTimeout: 2
   threatRefreshDelay: 2
+  eatTime: 5
 --- !u!114 &6523815731795233444
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1597,7 +1597,7 @@ GameObject:
   - component: {fileID: 143460972871814582}
   - component: {fileID: 7576389005460963219}
   - component: {fileID: 1606219010814067869}
-  - component: {fileID: 5160899948141053876}
+  - component: {fileID: 8971305011326903458}
   - component: {fileID: 3928172131408098489}
   - component: {fileID: 8536754021737864841}
   m_Layer: 7
@@ -1632,7 +1632,7 @@ Animator:
   m_GameObject: {fileID: 1847083141549040}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 13dc339e98cd43441afa6d390c08c477, type: 3}
-  m_Controller: {fileID: 9100000, guid: 9417d14664587ee48a4dde7448693b54, type: 2}
+  m_Controller: {fileID: 9100000, guid: d5ecc4d25d9f84e4f8bf6bc545c7b926, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1652,7 +1652,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 0.5
+  m_Height: 1.9
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -1686,7 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   creatureType: 1
---- !u!114 &5160899948141053876
+--- !u!114 &8971305011326903458
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1695,7 +1695,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1847083141549040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 887dba758f21e0142aa968d9ae3dc186, type: 3}
+  m_Script: {fileID: 11500000, guid: 53283aa9f6556ab4e8d355acbe13e5cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inEvent: 0
@@ -1707,12 +1707,16 @@ MonoBehaviour:
   newTargetDelay: 0.5
   currentSpeed: 0
   newLocationMinDistance: 5
+  newLocationMaxDistance: 50
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 20, y: 0.5, z: 20}
   animTransitionTime: 0.5
+  soundNames:
+  - feelingHoarse
   threatFleeTimeout: 2
   threatRefreshDelay: 2
+  eatTime: 2
 --- !u!114 &3928172131408098489
 MonoBehaviour:
   m_ObjectHideFlags: 0

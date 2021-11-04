@@ -531,7 +531,7 @@ GameObject:
   - component: {fileID: 576656855491369984}
   - component: {fileID: 2940527990192995197}
   - component: {fileID: 3698854628543796562}
-  - component: {fileID: 3869808662131344505}
+  - component: {fileID: 700259753915978574}
   - component: {fileID: 6201111640451084628}
   - component: {fileID: 7204642064613595106}
   m_Layer: 7
@@ -567,7 +567,7 @@ Animator:
   m_GameObject: {fileID: 6450717611911589797}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2efb3c7f410b9a347abe1202bd798394, type: 3}
-  m_Controller: {fileID: 9100000, guid: 2bd1734a8173a2e469b05d671fe998a6, type: 2}
+  m_Controller: {fileID: 9100000, guid: f1cee8d097d607147807572f8fed61f1, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -587,8 +587,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 0.4
-  m_Radius: 0.4
+  m_Height: 1.9
+  m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -621,7 +621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   creatureType: 1
---- !u!114 &3869808662131344505
+--- !u!114 &700259753915978574
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -630,7 +630,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6450717611911589797}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 887dba758f21e0142aa968d9ae3dc186, type: 3}
+  m_Script: {fileID: 11500000, guid: 07763fca6661ace458ef54df15395150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inEvent: 0
@@ -639,15 +639,19 @@ MonoBehaviour:
   dashSpeed: 5
   turnSpeed: 0.5
   targetTolerance: 3
-  newTargetDelay: 0.5
+  newTargetDelay: 3
   currentSpeed: 0
   newLocationMinDistance: 5
+  newLocationMaxDistance: 10
   territory:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 25, y: 0.5, z: 25}
-  animTransitionTime: 0.5
+    m_Extent: {x: 20, y: 0.5, z: 20}
+  animTransitionTime: 1
+  soundNames:
+  - ohDeer
   threatFleeTimeout: 2
   threatRefreshDelay: 2
+  eatTime: 3
 --- !u!114 &6201111640451084628
 MonoBehaviour:
   m_ObjectHideFlags: 0
