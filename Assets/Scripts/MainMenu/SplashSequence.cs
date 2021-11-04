@@ -12,9 +12,13 @@ public class SplashSequence : MonoBehaviour
     public GameObject SplashScreenCam;
     public GameObject MainMenuCam;
 
+    private GameObject additivePlayer;
+    private GameObject additiveCam;
+
     void Start()
     {
-        SceneManager.LoadScene("Main", LoadSceneMode.Additive);
+        SceneManager.LoadScene("worldGen", LoadSceneMode.Additive);
+        
         if (SceneNumber == 0)
         {
             StartCoroutine(ToSplashTwo());
@@ -35,6 +39,7 @@ public class SplashSequence : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         SceneNumber = 1;
+        additivePlayer = GameObject.Find("WorldGenPlayer");
         Destroy(PoweredByUnity);
         CreditScreen.SetActive(true);
     }
@@ -42,12 +47,16 @@ public class SplashSequence : MonoBehaviour
     IEnumerator ToMainMenu()
     {
         yield return new WaitForSeconds(3);
+        additiveCam = additivePlayer.transform.GetChild(0).gameObject;
         Destroy(CreditScreen);
         Destroy(PoweredByUnity);
         Destroy(SplashScreenCam);
         MainMenuCam.SetActive(true);
         MainMenu.SetActive(true);
-        GameObject.Find("WorldGenCamera").GetComponent<Camera>().GetComponent<AudioListener>().enabled = true;
+        
+        //additiveCam.transform.parent.gameObject.SetActive(true);
+        additiveCam.SetActive(true);
+        MainMenuCam.GetComponent<Camera>().GetComponent<AudioListener>().enabled = true;
         SceneNumber = 2;
     }
 

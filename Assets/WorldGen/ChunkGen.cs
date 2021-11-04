@@ -71,16 +71,21 @@ public class ChunkGen : MonoBehaviour
      * */
 
     // Need to generate the chunk immediately on initialization, otherwise the parallelism-type stuff with connective tissue gets really complicated
-    private void Awake()
+    private void Start()
     {
         // Rounding necessary otherwise, for example, chunk (1, 0) at real coords (40, 0) would get set as (0, 0) if floating precision 
         // reported it as very slightly below 40, if we were doing integer division/truncation
         coords = new Vector2Int(Mathf.RoundToInt(transform.position.x / size), Mathf.RoundToInt(transform.position.z / size));
         print("Initializing chunk at " + coords);
-        GenerateChunk();
+        //GenerateChunk();
 
         // For debug; needs to be a light enough color to show up against Unity's dark skybox 
         gizmoColor = new Color(Random.Range(.3f, 1), Random.Range(.3f, 1), Random.Range(.3f, 1));
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("OnEnable - ChuckGen");
     }
 
     // Makes chunk direction-related code much more readable
@@ -130,7 +135,7 @@ public class ChunkGen : MonoBehaviour
         return output;
     }
 
-    private void GenerateChunk()
+    public void GenerateChunk()
     {
         // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
