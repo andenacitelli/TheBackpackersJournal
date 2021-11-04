@@ -10,7 +10,7 @@ Material:
   m_Name: ChunkMaterial
   m_Shader: {fileID: 4800000, guid: bee44b4a58655ee4cbff107302a3e131, type: 3}
   m_ShaderKeywords: DR_OUTLINE_ON DR_VERTEX_COLORS_ON _CELPRIMARYMODE_NONE _TEXTUREBLENDINGMODE_MULTIPLY
-    _UNITYSHADOWMODE_NONE
+    _UNITYSHADOWMODE_MULTIPLY _UNITYSHADOW_OCCLUSION
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -87,7 +87,7 @@ Material:
     - _FlatSpecularEdgeSmoothness: 0
     - _FlatSpecularSize: 0.1
     - _Flatness: 1
-    - _FlatnessExtra: 1
+    - _FlatnessExtra: 0.72
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -106,15 +106,15 @@ Material:
     - _OutlineDepthOffset: 0.232
     - _OutlineEnabled: 1
     - _OutlineScale: 1
-    - _OutlineWidth: 1
+    - _OutlineWidth: 2
     - _OverrideLightmapDir: 0
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _RimEnabled: 0
-    - _SelfShadingSize: 0.5
-    - _SelfShadingSizeExtra: 0.6
+    - _SelfShadingSize: 0.254
+    - _SelfShadingSizeExtra: 0.68
     - _ShadowEdgeSize: 0.05
-    - _ShadowEdgeSizeExtra: 0.05
+    - _ShadowEdgeSizeExtra: 0.069
     - _SmoothnessTextureChannel: 0
     - _SpecularEnabled: 0
     - _SpecularHighlights: 1
@@ -123,10 +123,10 @@ Material:
     - _TextureBlendingMode: 0
     - _TextureImpact: 1
     - _UVSec: 0
-    - _UnityShadowMode: 0
-    - _UnityShadowOcclusion: 0
-    - _UnityShadowPower: 0.142
-    - _UnityShadowSharpness: 1
+    - _UnityShadowMode: 1
+    - _UnityShadowOcclusion: 1
+    - _UnityShadowPower: 0.7
+    - _UnityShadowSharpness: 3
     - _VertexColorsEnabled: 1
     - _ZWrite: 1
     m_Colors:
@@ -142,5 +142,5 @@ Material:
     - _FlatSpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _LightmapDirection: {r: 0, g: 1, b: 0, a: 0}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _UnityShadowColor: {r: 0.85023, g: 0.85034, b: 0.8504499, a: 0.85056}
+    - _UnityShadowColor: {r: 0.17647055, g: 0.17647055, b: 0.17647055, a: 1}
   m_BuildTextureStacks: []
