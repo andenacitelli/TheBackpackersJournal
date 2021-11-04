@@ -25,7 +25,7 @@ public class FlyCamController : MonoBehaviour
 
     private Vector3 moveAmount;
 
-    void Awake()
+    void Start()
     {
         cc = GetComponent<CharacterController>();
         cameraTransform = Camera.main.transform;

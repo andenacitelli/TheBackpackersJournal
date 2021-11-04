@@ -28,9 +28,11 @@ public class CameraRoll : MonoBehaviour
     private int internalIndex = 0;
     [Header("UI")]
     public CameraRollMenu crUI;
-
-    
+    [Header("Storage")]
+    public GameObject galleryStorageGO;
+   
     public List<photo> cRollStorage;
+    private GalleryStorage galleryStorage;
     private static photo buffer;
     private int counter = 0;
 
@@ -47,6 +49,7 @@ public class CameraRoll : MonoBehaviour
         imageScan = GetComponent<ImageScanner>();
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
+        galleryStorage = galleryStorageGO.GetComponent<GalleryStorage>();
         
         LoadCRoll();
         
@@ -101,6 +104,17 @@ public class CameraRoll : MonoBehaviour
 
     }
 
+    public void ForwardPhotoToStorage(int indexChosen)
+    {
+        photo grabP = cRollStorage[indexChosen];
+        Texture2D tex = grabP.captureData;
+        //crUI.UpdateCR(indexChosen, null);
+        galleryStorage.ReceivePhoto(indexChosen);
+
+        //TODO: HANDLE FILES
+        //cRollStorage.RemoveAt(indexChosen);
+    }
+
     public void RecievePhoto(byte[] rawData)
     {
         Debug.Log("Recieved Photo");
@@ -146,7 +160,7 @@ public class CameraRoll : MonoBehaviour
 
         //Creates a new Sprite based on the Texture2D
         
-
+        /*
         #region debugScreenCapture
         string objectsInImage = "On Display: ";
         if(currView.Count > 0)
@@ -164,6 +178,7 @@ public class CameraRoll : MonoBehaviour
         uiImage.sprite = fromTex;
         uiText.text = objectsInImage;
         #endregion
+        */
     }
 
     public void CapturePopUp()

@@ -7,6 +7,9 @@ TagManager:
   - Box
   - LoadMenu
   - PlayerProfileButtons
+  - InteractableObject
+  - EditableObject
+  - PlaceableObject
   - Obstacle
   - Animal
   layers:

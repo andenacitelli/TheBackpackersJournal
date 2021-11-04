@@ -13,6 +13,8 @@ public class LookInputEvent: UnityEvent<float, float> { }
 public class RaiseCameraInputEvent : UnityEvent<float> { }
 [Serializable]
 public class UseCameraInputEvent : UnityEvent<float> { }
+[Serializable]
+public class InteractInputEvent : UnityEvent<float> {  }
 
 public class InputController : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class InputController : MonoBehaviour
     public RaiseCameraInputEvent raiseCameraInputEvent;
     [Header("UseCamera")]
     public UseCameraInputEvent useCameraInputEvent;
+    [Header("Interact")]
+    public InteractInputEvent interactInputEvent;
 
     private void Awake()
     {
@@ -50,6 +54,8 @@ public class InputController : MonoBehaviour
 
         controls.Gameplay.UseCamera.performed += OnUseCameraPerformed;
         //controls.Gameplay.UseCamera.canceled += OnUseCameraPerformed;
+
+        controls.Gameplay.Interact.performed += OnInteractPerformed;
     }
     private void OnDisable()
     {
@@ -79,6 +85,12 @@ public class InputController : MonoBehaviour
     {
         float useCamInput = context.ReadValue<float>();
         useCameraInputEvent.Invoke(useCamInput);
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext context)
+    {
+        float interactInput = context.ReadValue<float>();
+        interactInputEvent.Invoke(interactInput);
     }
 
 }

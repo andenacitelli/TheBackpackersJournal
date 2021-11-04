@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 [System.Serializable]
 public delegate void SendGallerySelect(int val, bool replace);
+public delegate void SendGallerySelect2(int val);
 
 public class CRUIGallery : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class CRUIGallery : MonoBehaviour
 
     //If isReplaceMode, gallery was opened with intention to replace photo.
     public bool isReplaceMode { get; set; }
-
+    public bool isStorageMode { get; set; }
 
     public void Awake()
     {
@@ -81,8 +82,17 @@ public class CRUIGallery : MonoBehaviour
 
     private void ClickResponse(int index)
     {
-        SendGallerySelect send = crUI.RecieveGallerySelect;
-        send(index, isReplaceMode);
+        if (isStorageMode)
+        {
+            //case where player has opened cr under context of storage
+            SendGallerySelect2 send2 = crUI.RecieveStorageSelect;
+            send2(index);
+        } else
+        {
+            SendGallerySelect send = crUI.RecieveGallerySelect;
+            send(index, isReplaceMode);
+        }
+        
     }
 
     private GameObject DeterminePhoto(int index)

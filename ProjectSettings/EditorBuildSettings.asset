@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/poweredByUnity.unity
-    guid: 6277034230f29d74aa55aa8e65fd6f56
-  - enabled: 1
-    path: Assets/Scenes/Credit.unity
-    guid: 40ba61aa8a0a5214fafc005aaa2c4175
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
@@ -18,10 +18,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Game.unity
     guid: e1b7d440920ba2a4d8dc9820269f7d92
   - enabled: 1
-    path: Assets/Scenes/firstperson.unity
+    path: Assets/Scenes/GroveGallery/firstperson.unity
     guid: 4e602fe0786ee2645b8b3a15084d1b7f
   - enabled: 1
-    path: Assets/WorldGen/Scenes/Main.unity
+    path: Assets/WorldGen/Scenes/worldGen.unity
     guid: b56acca35cc58344da80122e18612851
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: f654372bf5e472149b71c4bb06074038, type: 2}
