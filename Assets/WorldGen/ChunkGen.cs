@@ -297,9 +297,10 @@ public class ChunkGen : MonoBehaviour
     private void UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
         Vector3[] meshVertices = mesh.vertices;
-        Color[] colors = new Color[meshVertices.Length];
+        
 
-        // TODO: Seed color randomization
+        // Because vertices are duplicated across triangles rather than shared, we need to store what the first instance of each vertex's color was and then
+        // use that cached color instead of randomly generating a new one the next time
         for (int i = 0; i < meshVertices.Length; i++)
         {
             // This gets a little confusing to keep track of, so here are the things happening here:
@@ -313,6 +314,7 @@ public class ChunkGen : MonoBehaviour
             meshVertices[i] = new Vector3(vertex.x, this.heightCurve.Evaluate(height) * this.heightMultiplier, vertex.z);
 
             // Slightly randomize a given color so that a given height level doesn't look super monotone 
+            /*
             Color tweakColor(float randomizationFactor, Color color)
             {
                 return new Color(
@@ -321,10 +323,18 @@ public class ChunkGen : MonoBehaviour
                     Mathf.Clamp(color.b + Random.Range(-1 * randomizationFactor, randomizationFactor), 0, 1),
                     color.a);
             }
+            */
 
-            // Update mesh colors; I have a shader that draws from the vertex colors 
-            TerrainType terrainType = ChooseTerrainType(height);
-            colors[i] = tweakColor(terrainType.randomizationFactor, terrainType.color);
+            // Colors need treated in triplets, as we assign the color to be the average of the three vertices in each given triangle
+            // Note that {0, 1, 2}, {3, 4, 5}, {6, 7, 8} represents the grouping of each triangle vertex; it's easy because we don't do shared
+        }
+
+        Color[] colors = new Color[meshVertices.Length];
+        for (int i = 0; i < meshVertices.Length; i += 3)
+        {
+            float averageHeight = (meshVertices[i].y + meshVertices[i + 1].y + meshVertices[i + 2].y) / 3 / this.heightMultiplier;
+            TerrainType terrainType = ChooseTerrainType(averageHeight);
+            colors[i] = colors[i+1] = colors[i+2] = terrainType.color;
         }
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 
