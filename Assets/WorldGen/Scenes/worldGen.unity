@@ -123,6 +123,75 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &318097871
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 318097873}
+  - component: {fileID: 318097872}
+  m_Layer: 0
+  m_Name: Spawn Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &318097872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318097871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c92361393e0b8243a86335436047d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  commonPrey:
+  - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
+  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
+  - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
+  - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
+  commonPredators:
+  - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
+  maxSpawns: 10
+  spawnDelaySeconds: 5
+  minPlayerDistance: 10
+  maxPlayerDistance: 40
+  minAnimalsDistance: 5
+  aboveGroundOffset: 1
+  preySpawnChance: 65
+  despawnRange: 20
+  despawnDelaySeconds: 10
+  commonEvents: []
+  uncommonEvents: []
+  rareEvents: []
+  maxEvents: 2
+  multiEventChance: 5
+  eventSpawnDelaySeconds: 300
+  eventDistanceFromPlayer: 50
+  despawnEventAfterDistance: 200
+  uncommonEventRate: 38.25
+  rareEventRate: 1.5
+--- !u!4 &318097873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318097871}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &521344237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2731847667364621170, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
