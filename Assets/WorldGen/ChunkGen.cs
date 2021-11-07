@@ -46,6 +46,8 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private MeshCollider meshCollider;
 
+    private Noise heightNoise; 
+
     // Holds the inner triangulation of this chunk in Triangle.NET's format
     private TriangleNet.Mesh mesh;
 
@@ -236,8 +238,10 @@ public class ChunkGen : MonoBehaviour
         gameObject.GetComponent<MeshCollider>().sharedMesh = actualMesh;
         
         List<Vector2> tempVertices = Vector3ToVector2(this.meshFilter.mesh.vertices);
-        float offsetX = transform.position.x, offsetZ = transform.position.z; 
-        List<float> noiseValues = this.noise.GenerateNoiseMap(tempVertices, this.mapScale, offsetX, offsetZ, waves);
+        float offsetX = transform.position.x, offsetZ = transform.position.z;
+
+        this.heightNoise = gameObject.AddComponent<Noise>();
+        List<float> noiseValues = this.heightNoise.GenerateNoiseMap(tempVertices, offsetX, offsetZ);
         UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues);
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
     }

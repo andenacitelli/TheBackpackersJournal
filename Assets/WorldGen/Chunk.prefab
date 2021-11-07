@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6322903469593028111}
   - component: {fileID: 6322903469593028110}
   - component: {fileID: 6322903469593028099}
-  - component: {fileID: 6322903469593028098}
   m_Layer: 0
   m_Name: Chunk
   m_TagString: Untagged
@@ -136,17 +135,7 @@ MonoBehaviour:
     name: snow
     height: 0.7
     color: {r: 0.9339623, g: 0.8062033, b: 0.8062033, a: 1}
-  noise: {fileID: 6322903469593028098}
-  waves:
-  - seed: 1
-    frequency: 1
-    amplitude: 1
-  - seed: 2
-    frequency: 0.5
-    amplitude: 2
-  - seed: 3
-    frequency: 0.25
-    amplitude: 4
+  noise: {fileID: 0}
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
@@ -204,15 +193,3 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6322903469593028098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322903469593028105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15da3f6a02c99134c868b7b3961a79ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
