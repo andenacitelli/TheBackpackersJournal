@@ -46,7 +46,8 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private MeshCollider meshCollider;
 
-    private Noise heightNoise; 
+    private Noise heightNoise; // Used for heightmap values
+    private Noise colorRandomizationNoise; // Used to randomize vertex colors a little bit
 
     // Holds the inner triangulation of this chunk in Triangle.NET's format
     private TriangleNet.Mesh mesh;
@@ -305,8 +306,10 @@ public class ChunkGen : MonoBehaviour
     // Modifies the input mesh in-place to avoid some costly array reassignments
     private void UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
-        Vector3[] meshVertices = mesh.vertices;
-        
+        this.colorRandomizationNoise = gameObject.AddComponent<Noise>();
+        this.colorRandomizationNoise.scale = 30; // We want a pretty minor shift
+
+        Vector3[] meshVertices = mesh.vertices;        
 
         // Because vertices are duplicated across triangles rather than shared, we need to store what the first instance of each vertex's color was and then
         // use that cached color instead of randomly generating a new one the next time
@@ -338,12 +341,39 @@ public class ChunkGen : MonoBehaviour
             // Note that {0, 1, 2}, {3, 4, 5}, {6, 7, 8} represents the grouping of each triangle vertex; it's easy because we don't do shared
         }
 
+        // Given coordinates of the center point of a triangle, returns the color that triangle should be
+        Color ChooseColor(Vector3 point)
+        {
+            // 1. Determine base color
+            TerrainType type = ChooseTerrainType(point.y);
+            Color baseColor = type.color;
+            float randomizationFactor = type.randomizationFactor;
+
+            // 2. Tweak 80% by Perlin noise
+            float noise = colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z);
+            const float perlin_weight = .75f; 
+            baseColor = new Color(
+                Mathf.Clamp(baseColor.r + perlin_weight * noise, 0, 1), 
+                Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1), 
+                Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
+
+            // 3. Tweak 20% by pure randomness
+            const float random_weight = .1f;
+            baseColor = new Color(
+                Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
+                Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
+                Mathf.Clamp(baseColor.b + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1));
+
+            return baseColor;
+        }
+
         Color[] colors = new Color[meshVertices.Length];
         for (int i = 0; i < meshVertices.Length; i += 3)
         {
-            float averageHeight = (meshVertices[i].y + meshVertices[i + 1].y + meshVertices[i + 2].y) / 3 / this.heightMultiplier;
-            TerrainType terrainType = ChooseTerrainType(averageHeight);
-            colors[i] = colors[i+1] = colors[i+2] = terrainType.color;
+            Vector3 averagePoint = (meshVertices[i] + meshVertices[i + 1] + meshVertices[i + 2]) / 3;
+            averagePoint.y /= this.heightMultiplier;    
+            Color color = ChooseColor(averagePoint);
+            colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 

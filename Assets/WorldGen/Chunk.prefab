@@ -122,7 +122,7 @@ MonoBehaviour:
   - randomizationFactor: 0.5
     name: lowlands
     height: 0.48
-    color: {r: 0.08167672, g: 1, b: 0, a: 1}
+    color: {r: 0.12223364, g: 0.5566038, b: 0.08086506, a: 1}
   - randomizationFactor: 0.15
     name: highlands
     height: 0.57
