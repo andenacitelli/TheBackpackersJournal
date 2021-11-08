@@ -17,8 +17,9 @@ public class Noise : MonoBehaviour
 
     private const float DEFAULT_SCALE = 100;
 
-    // The implementer can either specify their own waves to feed into the constructor or use this function to get a random set of waves that will perform well
-    public static Wave[] GenWaves()
+    // Get a random set of waves that will perform well
+    // If the implementer wants a non-random set of waves, they can modify this.waves after constructing
+    private Wave[] GenWaves()
     {
         Wave[] waves = new Wave[3];
         waves[0] = new Wave();
@@ -41,7 +42,7 @@ public class Noise : MonoBehaviour
         return waves;
     }
 
-    private void Awake()
+    void Awake()
     {
         this.waves = GenWaves();
         this.scale = DEFAULT_SCALE; // Arbitrary number modifiable by the callee after constructor

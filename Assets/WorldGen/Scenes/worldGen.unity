@@ -276,7 +276,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -577,7 +577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105, guid: 2f020166ef04cae4bad76b88ada1ac75, type: 3}
   player: {fileID: 1782234108}
-  generateRadius: 6
+  generateRadius: 3
   TreeRockDropper: {fileID: 926933605}
 --- !u!4 &1240365349
 Transform:
