@@ -80,39 +80,6 @@ public class ChunkGen : MonoBehaviour
     // Makes chunk direction-related code much more readable
     public enum Direction { UP, LEFT, RIGHT, DOWN }
 
-    // Returns the border vertices of the current chunk
-    public List<Vertex> GetBorderVertices(Direction direction)
-    {
-        List<Vertex> output = new List<Vertex>();
-        foreach (Vertex v in vertices)
-        {
-            switch (direction)
-            {
-                case Direction.UP:
-                    {
-                        if (v.y <= bounds.max.z && Mathf.Abs(bounds.max.z - (float)v.y) <= cellHeight) output.Add(v);
-                        break; 
-                    }
-                case Direction.LEFT:
-                    {
-                        if (v.x >= bounds.min.x && Mathf.Abs(bounds.min.x - (float)v.x) <= cellWidth) output.Add(v);
-                        break;
-                    }
-                case Direction.RIGHT:
-                    {
-                        if (v.x <= bounds.max.x && Mathf.Abs(bounds.max.x - (float)v.x) <= cellWidth) output.Add(v);
-                        break;
-                    }
-                case Direction.DOWN:
-                    {
-                        if (v.y >= bounds.min.z && Mathf.Abs(bounds.min.z - (float)v.y) <= cellHeight) output.Add(v);
-                        break;
-                    }
-            }
-        }
-        return output; 
-    }
-
     // Update vertex heights and apply height-based coloration
     private List<Vector2> Vector3ToVector2(Vector3[] vList)
     {
@@ -136,7 +103,7 @@ public class ChunkGen : MonoBehaviour
         cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
         vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
 
-        /* 
+        /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
         int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
         int NUM_POINTS = Mathf.RoundToInt(Random.Range(.9f * NUM_POINTS_BASELINE, 1.1f * NUM_POINTS_BASELINE));
         const float RADIUS = 6; 
@@ -145,51 +112,6 @@ public class ChunkGen : MonoBehaviour
 
         // Turn points into a Triangle.NET polygon which we can use for triangulation
         Polygon polygon = new Polygon();
-
-        /* 
-        // TODO: Probably cleaner to turn this into a function\
-        GameObject above = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y + 1));
-        if (above != null)
-        {
-            print("New chunk is generating connective tissue above itself!");
-            List<Vertex> borderVertices = above.GetComponent<ChunkGen>().GetBorderVertices(Direction.DOWN);
-            //foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x, v.y + size)); // Need to adjust coords because the above chunk's vertices will still be local; we have to convert from local of the above chunk to local of current chunk
-            vertices.Add(new Vertex(bounds.min.x, bounds.max.y));
-            vertices.Add(new Vertex(bounds.max.x, bounds.max.y));
-        }
-
-        GameObject left = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x - 1, coords.y));
-        if (left != null)
-        {
-            print("New chunk is generating connective tissue to its left!");
-            List<Vertex> borderVertices = left.GetComponent<ChunkGen>().GetBorderVertices(Direction.RIGHT);
-            //foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x - size, v.y));
-            vertices.Add(new Vertex(bounds.min.x, bounds.max.y));
-            vertices.Add(new Vertex(bounds.min.x, bounds.min.y));
-        }
-
-        GameObject right = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x + 1, coords.y));
-        if (right != null)
-        {
-            print("New chunk is generating connective tissue to its right!");
-            List<Vertex> borderVertices = right.GetComponent<ChunkGen>().GetBorderVertices(Direction.LEFT);
-            // foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x + size, v.y));
-            vertices.Add(new Vertex(bounds.max.x, bounds.max.y));
-            vertices.Add(new Vertex(bounds.max.x, bounds.min.y));  
-        }
-
-        GameObject down = TerrainManager.GetChunkAtCoords(new Vector2Int(coords.x, coords.y - 1));
-        if (down != null)
-        {
-            print("New chunk is generating connective tissue below itself!");
-            List<Vertex> borderVertices = down.GetComponent<ChunkGen>().GetBorderVertices(Direction.UP);
-            // foreach (Vertex v in borderVertices) vertices.Add(new Vertex(v.x, v.y - size));
-            vertices.Add(new Vertex(bounds.min.x, bounds.min.y));
-            vertices.Add(new Vertex(bounds.max.x, bounds.min.y));
-        }
-        */
-
-        // Generate vertices along each side
 
         // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         foreach (Vertex v in vertices) polygon.Add(v);
@@ -253,11 +175,6 @@ public class ChunkGen : MonoBehaviour
             }
 
             TriangleNet.Topology.Triangle currentTriangle = triangleEnum.Current;
-
-            //print("Current Triangle: " + currentTriangle);
-            //print("v1: " + currentTriangle.vertices[0]);
-            //print("v2: " + currentTriangle.vertices[1]);
-            //print("v3: " + currentTriangle.vertices[2]);
 
             Vector3 v0 = new Vector3((float)currentTriangle.vertices[2].x, 0, (float)currentTriangle.vertices[2].y);
             Vector3 v1 = new Vector3((float)currentTriangle.vertices[1].x, 0, (float)currentTriangle.vertices[1].y);
@@ -387,14 +304,6 @@ public class ChunkGen : MonoBehaviour
     // A useful thing Unity adds that lets us essentially do a height distribution rather than relying entirely on noise ourselves
     [SerializeField]
     private AnimationCurve heightCurve;
-
-    // Contains all the data about nearby terrain needed to determine color for a triangle with given centerpoint
-    private struct TerrainData
-    {
-        TerrainType type; // Data for the biome this triangle belongs to
-        TerrainType below; // Data for the biome one higher (used for a gradient effect)
-        TerrainType above; // Data for the biome one lower (used for a gradient effect)
-    }
 
     // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
     TerrainType ChooseTerrainType(float height)
