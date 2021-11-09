@@ -16,6 +16,10 @@ public class TerrainManager : MonoBehaviour
 
     public GameObject TreeRockDropper;
 
+    public static Noise heightNoise; // Used for heightmap values
+    public static Noise colorRandomizationNoise; // Used to randomize vertex colors a little bit
+    public static Noise heightFuzzingNoise; // Used to semi-randomly alter biome height cutoffs so it's less jarring when we get a shift
+
     // Holds references to chunks we've generated so that we don't regenerate them 
     static private Dictionary<Vector2Int, GameObject> chunks = new Dictionary<Vector2Int, GameObject>();
 
@@ -25,7 +29,15 @@ public class TerrainManager : MonoBehaviour
         Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
         //player = GameObject.Find("WorldGenPlayer");
-       
+
+        // Initialize noise functions used by World Generation
+        heightNoise = gameObject.AddComponent<Noise>(); // Heightmap
+        heightNoise.scale = 130;
+        colorRandomizationNoise = gameObject.AddComponent<Noise>(); // Used to tweak vertex colors a bit to give us a more tesselated look
+        colorRandomizationNoise.scale = 50;
+        heightFuzzingNoise = gameObject.AddComponent<Noise>(); // Used to make biome height boundaries a little more fuzzy to avoid the discrete layers look
+        heightFuzzingNoise.scale = 50;
+
         GenerateChunks();
 
     }
