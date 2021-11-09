@@ -9,10 +9,10 @@ using Assets.WorldGen;
 // Selectively shade chunks 
 [System.Serializable]
 public class TerrainType {
-    public float randomizationFactor; // Allows us to vary the amount we randomize colors a bit in each biome
-	public string name;
-	public float height;
-	public Color color;
+    public float start;
+    public float end;
+    public Color color;
+    public float randomizationFactor;
 }
 
 // Generate chunks 
@@ -32,9 +32,6 @@ public class ChunkGen : MonoBehaviour
     private TerrainType[] terrainTypes;
 
     [SerializeField]
-    private Wave[] waves;
-
-    [SerializeField]
     private MeshRenderer meshRenderer;
 
     [SerializeField]
@@ -49,10 +46,6 @@ public class ChunkGen : MonoBehaviour
     // The mesh above ends up holding vertices in other chunks as well; this is a simple list of just the inner vertices
     int cellWidth, cellHeight; 
     private HashSet<Vertex> vertices = new HashSet<Vertex>(); 
-
-    // Represents how much to spread the Perlin noise out; for a flatter, smoother map, make this value high
-    [SerializeField]
-    private float mapScale;
 
     // Set by the class Instanting the gameObject linked to this script
     public Vector2Int coords;
@@ -316,28 +309,53 @@ public class ChunkGen : MonoBehaviour
         }
 
         // Given coordinates of the center point of a triangle, returns the color that triangle should be
+        // belowColor, belowThreshold: Color of the biome below this, and the threshold at which the chosen layer becomes that layer.
+        // Used to add a bit of a gradient between height-based biomes 
         Color ChooseColor(Vector3 point)
         {
-            // Determine height fuzzing, which helps us avoid discrete singularly-height-based biome lines
+            // 1. Determine height fuzzing, which varies the heights biomes begins at deterministically and continuously via Perlin noise
             float fuzzingNoise = (TerrainManager.heightFuzzingNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
-            const float HEIGHT_BLEND_AMPLITUDE = 25; // Amount up or down we want boundaries to be able to change
+            const float HEIGHT_BLEND_AMPLITUDE = 20; // Amount (in meters) up or down we want boundaries to be able to change. World ranges from like [0, 70] meters
             float fuzzAmount = fuzzingNoise * HEIGHT_BLEND_AMPLITUDE / this.heightMultiplier;
 
-            // 1. Determine base color
-            TerrainType type = ChooseTerrainType(point.y + fuzzAmount);
-            Color baseColor = type.color;
-            float randomizationFactor = type.randomizationFactor;
+            // 2. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
+            float heightPostFuzz = point.y + fuzzAmount; 
+            TerrainType type = ChooseTerrainType(heightPostFuzz);
+            float percentageAlongBiome = (heightPostFuzz - type.start) / (type.end - type.start);
 
-            // 2. Tweak 80% by Perlin noise
+            // 2a. Blend color towards the biome below this (if this isn't already the bottom)
+            // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
+            Color baseColor = type.color;
+            if (percentageAlongBiome <= .15f && type != terrainTypes[0])
+            {
+                float height = heightPostFuzz;
+                while (ChooseTerrainType(height) == type) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
+                float percentAlongBottom = (.15f - percentageAlongBiome) / .15f;
+                Color colorDiff = ChooseTerrainType(height).color - baseColor;
+                baseColor += percentAlongBottom * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
+            }
+
+            // 2b. Blend color towards the biome above this (if this isn't already the top)
+            else if (percentageAlongBiome >= .85f && type != terrainTypes[terrainTypes.Length - 1])
+            {
+                float height = heightPostFuzz;
+                while (ChooseTerrainType(height) == type) height += .001f;
+                float percentAlongTop = (percentageAlongBiome - .85f) / .15f;
+                Color colorDiff = ChooseTerrainType(height).color - baseColor;
+                baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
+            }
+
+            // 3. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
-            const float perlin_weight = .4f; 
+            const float perlin_weight = .35f; 
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + perlin_weight * noise, 0, 1), 
                 Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
 
-            // 3. Tweak 20% by pure randomness
-            const float random_weight = .1f;
+            // 4. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
+            const float random_weight = .06f;
+            float randomizationFactor = type.randomizationFactor;
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
                 Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
@@ -370,6 +388,14 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private AnimationCurve heightCurve;
 
+    // Contains all the data about nearby terrain needed to determine color for a triangle with given centerpoint
+    private struct TerrainData
+    {
+        TerrainType type; // Data for the biome this triangle belongs to
+        TerrainType below; // Data for the biome one higher (used for a gradient effect)
+        TerrainType above; // Data for the biome one lower (used for a gradient effect)
+    }
+
     // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
     TerrainType ChooseTerrainType(float height)
     {
@@ -378,7 +404,7 @@ public class ChunkGen : MonoBehaviour
             // Triggers on the first one where we qualify the condition
             // For instance, we have water below .3, then lowlands below like .5, so if I feed in .4, it won't get in
             // here for water but it will get in here for lowlands 
-            if (height <= terrainType.height)
+            if (height <= terrainType.end)
             {
                 return terrainType;
             }
