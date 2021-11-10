@@ -556,6 +556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1240365349}
   - component: {fileID: 1240365348}
+  - component: {fileID: 1240365350}
   m_Layer: 0
   m_Name: TerrainManager
   m_TagString: Untagged
@@ -577,7 +578,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105, guid: 2f020166ef04cae4bad76b88ada1ac75, type: 3}
   player: {fileID: 1782234108}
-  generateRadius: 8
   TreeRockDropper: {fileID: 926933605}
 --- !u!4 &1240365349
 Transform:
@@ -593,6 +593,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1240365350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240365347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efd2eb00f8d53564e8de04f6c3e67096, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1782234108}
+  cloudPrefab1: {fileID: 919132149155446097, guid: 73c0e23fd6276084ebadf1409acc2663, type: 3}
+  cloudPrefab2: {fileID: 919132149155446097, guid: 39f200b12e5a4644ab295c587f47cf9c, type: 3}
+  cloudPrefab3: {fileID: 919132149155446097, guid: 5e865d11156169140857841732175c83, type: 3}
+  cloudPrefab4: {fileID: 919132149155446097, guid: 0d4f691973260e844b6f84c50117e0f2, type: 3}
+  cloudHeightUpperBound: 100
+  cloudHeightLowerBound: 150
+  timeBetweenCloudSpawns: 3
+  CLOUD_SPEED: 0.03
 --- !u!1001 &1305649867
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -682,7 +703,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: field of view
-      value: 120
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621174, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: far clip plane
@@ -840,7 +861,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1886648248}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 29, z: 0}
+  m_LocalPosition: {x: 0, y: 28, z: 0}
   m_LocalScale: {x: 200, y: 1, z: 200}
   m_Children: []
   m_Father: {fileID: 0}
