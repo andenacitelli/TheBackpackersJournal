@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 /* Manages, spawns, and deletes chunks. */
 public class TerrainManager : MonoBehaviour
 {
+    // Unfortunately can't really make static variales editable from the Editor
+    static public int generateRadius = 6; 
+
     [SerializeField]
     private GameObject tilePrefab;
 
     public GameObject player; 
-
-    [SerializeField]
-    private int generateRadius;
 
     public GameObject TreeRockDropper;
 

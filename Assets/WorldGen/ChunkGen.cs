@@ -243,21 +243,21 @@ public class ChunkGen : MonoBehaviour
             // 2a. Blend color towards the biome below this (if this isn't already the bottom)
             // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
             Color baseColor = type.color;
-            if (percentageAlongBiome <= .15f && type != terrainTypes[0])
+            if (percentageAlongBiome <= .25f && type != terrainTypes[0])
             {
                 float height = heightPostFuzz;
                 while (ChooseTerrainType(height) == type) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
-                float percentAlongBottom = (.15f - percentageAlongBiome) / .15f;
+                float percentAlongBottom = (.25f - percentageAlongBiome) / .25f;
                 Color colorDiff = ChooseTerrainType(height).color - baseColor;
                 baseColor += percentAlongBottom * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
             }
 
             // 2b. Blend color towards the biome above this (if this isn't already the top)
-            else if (percentageAlongBiome >= .85f && type != terrainTypes[terrainTypes.Length - 1])
+            else if (percentageAlongBiome >= .75f && type != terrainTypes[terrainTypes.Length - 1])
             {
                 float height = heightPostFuzz;
                 while (ChooseTerrainType(height) == type) height += .001f;
-                float percentAlongTop = (percentageAlongBiome - .85f) / .15f;
+                float percentAlongTop = (percentageAlongBiome - .75f) / .25f;
                 Color colorDiff = ChooseTerrainType(height).color - baseColor;
                 baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
             }
