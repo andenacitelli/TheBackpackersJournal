@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6322903469593028111}
   - component: {fileID: 6322903469593028110}
   - component: {fileID: 6322903469593028099}
-  - component: {fileID: 6322903469593028098}
   m_Layer: 0
   m_Name: Chunk
   m_TagString: Untagged
@@ -112,47 +111,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105}
   terrainTypes:
-  - randomizationFactor: 0.05
-    name: water
-    height: 0
+  - start: 0
+    end: 0
     color: {r: 0, g: 0.12516737, b: 1, a: 1}
-  - randomizationFactor: 0.05
-    name: beach
-    height: 0.3
+    randomizationFactor: 0.05
+  - start: 0
+    end: 0.25
     color: {r: 0.5800872, g: 0.5849056, b: 0.41660732, a: 1}
-  - randomizationFactor: 0.5
-    name: lowlands
-    height: 0.48
-    color: {r: 0.08167672, g: 1, b: 0, a: 1}
-  - randomizationFactor: 0.15
-    name: highlands
-    height: 0.57
-    color: {r: 0.08725024, g: 0.20754719, b: 0.047970816, a: 1}
-  - randomizationFactor: 0.075
-    name: mountains
-    height: 0.65
+    randomizationFactor: 0.05
+  - start: 0.25
+    end: 0.4
+    color: {r: 0.12223364, g: 0.5566038, b: 0.08086506, a: 1}
+    randomizationFactor: 0.5
+  - start: 0.4
+    end: 0.47
+    color: {r: 0.12848811, g: 0.2924528, b: 0.07559627, a: 1}
+    randomizationFactor: 0.05
+  - start: 0.47
+    end: 0.54
     color: {r: 0.24528301, g: 0.15852223, b: 0.09140263, a: 1}
-  - randomizationFactor: 0.1
-    name: snow
-    height: 0.7
+    randomizationFactor: 0.075
+  - start: 0.54
+    end: 1
     color: {r: 0.9339623, g: 0.8062033, b: 0.8062033, a: 1}
-  noise: {fileID: 6322903469593028098}
-  waves:
-  - seed: 1
-    frequency: 1
-    amplitude: 1
-  - seed: 2
-    frequency: 0.5
-    amplitude: 2
-  - seed: 3
-    frequency: 0.25
-    amplitude: 4
+    randomizationFactor: 0.1
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
-  mapScale: 30
   coords: {x: 0, y: 0}
-  heightMultiplier: 100
+  heightMultiplier: 120
   heightCurve:
     serializedVersion: 2
     m_Curve:
@@ -204,15 +191,3 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6322903469593028098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322903469593028105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15da3f6a02c99134c868b7b3961a79ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
