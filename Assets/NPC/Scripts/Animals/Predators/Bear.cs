@@ -67,7 +67,7 @@ public class Bear : PredatorController
 
         // start target's death sequence
         PreyController prey = huntingTarget.gameObject.GetComponent<PreyController>();
-        if (prey != null)
+        if (prey != null && !prey.IsAttacked)
         {
             prey.StopAllCoroutines();
             // wait until the target has finished its death animation

@@ -7,11 +7,14 @@ public class PreyController : AnimalController
 {
     [Header("Prey Settings")]
     bool fleeing = false;
+    bool isAttacked = false;
     [SerializeField] [Range(0.0f, 60.0f)] protected float threatFleeTimeout = 2.0f;
     [SerializeField] [Range(0.0f, 60.0f)] protected float threatRefreshDelay = 2.0f;
     readonly List<Creature> threats = new List<Creature>();
 
     Vector3 threatCenter; // center point of detected threats to flee
+
+    public bool IsAttacked { get => isAttacked; }
 
     protected override void Initialize()
     {
@@ -121,6 +124,7 @@ public class PreyController : AnimalController
     {
         //play death animation
         currentSpeed = 0;
+        isAttacked = true;
         Animations.CrossFade("Death", animTransitionTime);
 
         yield return new WaitForSeconds(Animations.GetCurrentAnimatorStateInfo(0).normalizedTime); // finish death animation
