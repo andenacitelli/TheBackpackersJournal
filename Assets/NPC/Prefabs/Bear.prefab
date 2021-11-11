@@ -251,9 +251,12 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
   animTransitionTime: 0.5
-  huntTimeout: 5
-  soundNames:
+  audioManagerNames:
+  - BearGrowl
+  - BearGrowlAlt
+  - BearSnarl
   - BearRoar
+  huntTimeout: 5
   sleepTime: 10
   eatTime: 5
 --- !u!114 &6231814617072822572
@@ -289,7 +292,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Assets.WorldGen;
 
@@ -32,7 +33,10 @@ public class AnimalController : MonoBehaviour
 
     protected AudioManager audioManager;
     protected AudioSource audioSource;
-    [SerializeField] protected string[] soundNames;
+    [SerializeField] protected string[] audioManagerNames;
+
+    // key is animal specific shorthand for the sound, value is the index of the 
+    protected readonly Dictionary<string, int> sounds = new Dictionary<string, int>();
 
 
     public bool CanFly { get => canFly; }
@@ -51,10 +55,12 @@ public class AnimalController : MonoBehaviour
 
 
     protected virtual void Initialize() { }
+
     protected virtual IEnumerator ActionAtTarget()
     {
         yield return StartCoroutine(IdleBehavior());
     }
+
     protected virtual IEnumerator IdleBehavior()
     {
         // start idle animation
@@ -67,6 +73,11 @@ public class AnimalController : MonoBehaviour
     }
 
     protected virtual IEnumerator AttackBehavior() { yield return null; }
+
+    protected IEnumerator WaitOnAnimationState(string stateName)
+    {
+        while (!AnimationStateMatchesName(stateName)) yield return null;
+    }
 
     // Animal behavior
     void Start()
@@ -90,6 +101,7 @@ public class AnimalController : MonoBehaviour
     {
         return Vector3.Distance(targetDestination, transform.position) <= targetTolerance;
     }
+
     protected bool IsIdling()
     {
         return AnimationStateMatchesName("Idling");
@@ -101,10 +113,17 @@ public class AnimalController : MonoBehaviour
         return Animations.GetCurrentAnimatorStateInfo(0).IsName(name);
     }
 
-    protected void PlaySound(string name)
+    // uses the shorthand to get the actual sound name and send that to audiomanager
+    private string TrueSoundName(string shorthand)
     {
-        //audioManager.Assign3DSource(audioSource, name);
-        //audioManager.Play(name); 
+        return audioManagerNames[sounds[shorthand]];
+    }
+
+    //
+    protected void AnimalPlaySound(string shorthand)
+    {
+        audioManager.Assign3DSource(audioSource, TrueSoundName(shorthand));
+        audioManager.Play(name);
     }
 
     // Carry out all of the animal's functions

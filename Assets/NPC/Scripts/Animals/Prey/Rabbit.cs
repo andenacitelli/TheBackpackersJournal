@@ -22,7 +22,7 @@ public class Rabbit : PreyController
         {
             Animations.SetTrigger("eat");
             while (!AnimationStateMatchesName("Eating")) yield return null;
-            PlaySound(ChangeMoo());
+            AnimalPlaySound(ChangeMoo());
             yield return new WaitForSeconds(eatTime);
             Animations.SetTrigger("idle");
             yield return new WaitUntil(IsIdling);
@@ -36,7 +36,7 @@ public class Rabbit : PreyController
     // changes the sound that the cow makes to a random
     private string ChangeMoo()
     {
-        string newMoo = soundNames[Random.Range(0, soundNames.Length)];
+        string newMoo = audioManagerNames[Random.Range(0, audioManagerNames.Length)];
         //audioManager.Assign3DSource(audioSource, newMoo);
         return newMoo;
     }

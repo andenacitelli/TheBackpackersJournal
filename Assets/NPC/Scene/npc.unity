@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &830748781
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -268,63 +268,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22a8d20b16ab59441b3be88e858a2cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1131504591
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1131504593}
-  - component: {fileID: 1131504592}
-  m_Layer: 0
-  m_Name: Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1131504592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1131504591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47662e1003214924a92adbfff772e26f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  numPredators: 1
-  predators:
-  - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
-  numPrey: 0
-  prey:
-  - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
-  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
-  - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
-  - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
-  numTargets: 0
-  target: {fileID: 3914045066834312031, guid: 7b9134bc0799c0740b105b14d5a97793, type: 3}
-  spawnArea:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 20, y: 0.5, z: 20}
---- !u!4 &1131504593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1131504591}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1385859486 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2731847666348560378, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
@@ -436,6 +379,232 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9ca455e2f3affc4397598d69b58df63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1534689095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1534689098}
+  - component: {fileID: 1534689097}
+  - component: {fileID: 1534689096}
+  m_Layer: 0
+  m_Name: AudioManger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &1534689096
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534689095}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1534689097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534689095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554a364d346629b4eb6b3c5ce2b0baba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - group: {fileID: 24300002, guid: f068ce60d1b8bcf4a9e8183dbb9b14da, type: 2}
+    name: MainMenuBackground
+    clip: {fileID: 8300000, guid: 9cc11d218fda2ba4e894ba8b4e765a0d, type: 3}
+    volume: 0.273
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - group: {fileID: 24300002, guid: f068ce60d1b8bcf4a9e8183dbb9b14da, type: 2}
+    name: GameStart
+    clip: {fileID: 8300000, guid: a8a5106eb2c7e2b429144609d8f169b0, type: 3}
+    volume: 0.5
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: OpenCamera
+    clip: {fileID: 8300000, guid: 5c5df3c3af2db0a428285fdfc295eeb4, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: CloseCamera
+    clip: {fileID: 8300000, guid: 5dcc0ae3f0fbe754c8f286267515d2c3, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: ShutterCamera
+    clip: {fileID: 8300000, guid: beb3162aa278ee34b8fae315e713f276, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: BearGrowl
+    clip: {fileID: 8300000, guid: 05b3ed2c09e49784c80fa49802c1cd4c, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: BearGrowlAlt
+    clip: {fileID: 8300000, guid: 5bdf1b514025cd74bade5c5f415bff20, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: BearSnarl
+    clip: {fileID: 8300000, guid: e79e8a214da12b8418b3821a7f6b6cbf, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: BearRoar
+    clip: {fileID: 8300000, guid: 9a8e957e14bda624e9379089be4f4b14, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: DeerSound
+    clip: {fileID: 8300000, guid: 267583589e3d574448ff0367ea2c6877, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: DeerGrunt
+    clip: {fileID: 8300000, guid: d429a64f4fb2c7545ade42b57761acef, type: 3}
+    volume: 0.25
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: DeerBleat
+    clip: {fileID: 8300000, guid: 4ab7f88b2ab89c143b2b7c51e3bcdded, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  aSrc: {fileID: 1534689096}
+--- !u!4 &1534689098
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534689095}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1684878393
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560383, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -911,7 +1080,7 @@ MonoBehaviour:
   maxPlayerDistance: 40
   minAnimalsDistance: 5
   aboveGroundOffset: 1
-  preySpawnChance: 65
+  preySpawnChance: 0
   despawnRange: 20
   despawnDelaySeconds: 120
   commonEvents: []
@@ -936,7 +1105,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1811251574
 GameObject:
@@ -1029,7 +1198,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1993893826
 GameObject:
@@ -1047,7 +1216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1993893827
 MonoBehaviour:
   m_ObjectHideFlags: 0

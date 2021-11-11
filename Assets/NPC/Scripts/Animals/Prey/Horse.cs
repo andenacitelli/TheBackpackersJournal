@@ -21,7 +21,7 @@ public class Horse : PreyController
         {
             Animations.SetTrigger("eat");
             while (!AnimationStateMatchesName("Eating")) yield return null;
-            PlaySound(ChangeSound());
+            AnimalPlaySound(ChangeSound());
             yield return new WaitForSeconds(eatTime);
             Animations.SetTrigger("idle");
             yield return new WaitUntil(IsIdling);
@@ -35,7 +35,7 @@ public class Horse : PreyController
     // changes the sound that the cow makes to a random
     private string ChangeSound()
     {
-        string newSound = soundNames[Random.Range(0, soundNames.Length)];
+        string newSound = audioManagerNames[Random.Range(0, audioManagerNames.Length)];
         //audioManager.Assign3DSource(audioSource, newMoo);
         return newSound;
     }

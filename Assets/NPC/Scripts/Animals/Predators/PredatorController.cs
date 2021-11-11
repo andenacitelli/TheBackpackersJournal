@@ -64,16 +64,10 @@ public class PredatorController : AnimalController
 
         // start attack animation
         Animations.Play("Attack");
-        PlaySound(soundNames[0]);
+        AnimalPlaySound(audioManagerNames[0]);
         yield return new WaitForSeconds(Animations.GetCurrentAnimatorStateInfo(0).normalizedTime / 2); // finish attack animation
 
-        // start target's death sequence
-        PreyController prey = huntingTarget.gameObject.GetComponent<PreyController>();
-        if (prey != null)
-        {
-            prey.StopAllCoroutines();
-            yield return StartCoroutine(prey.Attacked());
-        }
+        yield return StartCoroutine(AffectPrey());
 
         // end the timer because no longer hunting
         StopCoroutine(HuntTimer());
@@ -82,6 +76,19 @@ public class PredatorController : AnimalController
         currentSpeed = WalkSpeed;
 
         yield return new WaitForSeconds(NewTargetDelay);
+    }
+
+    // Start target's death sequence
+    protected IEnumerator AffectPrey()
+    {
+        // start target's death sequence
+        PreyController prey = huntingTarget.gameObject.GetComponent<PreyController>();
+        if (prey != null && !prey.IsAttacked)
+        {
+            prey.StopAllCoroutines();
+            // wait until the target has finished its death animation
+            yield return StartCoroutine(prey.Attacked());
+        }
     }
 
     // Monitor vision for things to hunt
@@ -132,7 +139,7 @@ public class PredatorController : AnimalController
             yield return new WaitForSeconds(Senses.DetectRate * 2);
         }
     }
-    
+
     // Control how long to chase a target
     protected IEnumerator HuntTimer()
     {

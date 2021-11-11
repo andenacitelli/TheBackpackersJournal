@@ -647,8 +647,9 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 20, y: 0.5, z: 20}
   animTransitionTime: 1
-  soundNames:
-  - ohDeer
+  audioManagerNames:
+  - DeerSound
+  - DeerBleat
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   eatTime: 3
