@@ -9,6 +9,18 @@ public class LoadGame : MonoBehaviour
 {
     private string[] filenames = new string[10];
 
+    public void Awake()
+    {
+
+        int i = 0;
+        string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");
+        foreach (string file in XMLfiles)
+        {
+            filenames[i] = Path.ChangeExtension(Path.GetFileName(file), null);
+            i++;
+        }
+    }
+
     public Save GetSaveForGame(int i)
     {
         string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");

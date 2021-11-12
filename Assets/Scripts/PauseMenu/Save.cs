@@ -15,8 +15,7 @@ public class Save
     public float playerPositionX;
     public float playerPositionY;
     public float playerPositionZ;
-    [XmlArray("test"), XmlArrayItem("testItem")]
-    public string[] cameraRollPaths;
+    
     [XmlArrayAttribute("CameraRoll")]
     public photo[] crTest;
     /*ToDo: Add features of the player profile*/

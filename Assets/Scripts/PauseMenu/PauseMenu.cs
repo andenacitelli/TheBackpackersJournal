@@ -41,7 +41,7 @@ public class PauseMenu : MonoBehaviour
         action.Pause.PauseGame.performed += _ => DeterminePause();
     }
 
-    private void DeterminePause()
+    public void DeterminePause()
     {  
         if(!isSaving){
             if (isPaused)
@@ -75,10 +75,39 @@ public class PauseMenu : MonoBehaviour
         savePrompt.SetActive(true);
         isSaving = true;
     }
+
+    public void AutoSave()
+    {
+        SaveByXML(PlayerPrefs.GetString("profileName"));
+        Resume();
+    }
+
     public void SaveByXML(string s)
     {
         if (s != "")
         {
+            if (cr.cRollStorage == null)
+            {
+                // No load was ran, because player has no data.
+                cr.cRollStorage = new List<photo>();
+            } else
+            {
+                // Check to be sure target directory exists
+                DirectoryInfo crInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/CameraRoll/");
+                DirectoryInfo grInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/GalleryRoll/");
+                // probably will need to add business here for the journal
+                if (!crInfo.Exists)
+                {
+                    crInfo.Create();
+                }
+                if (!grInfo.Exists)
+                {
+                    grInfo.Create();
+                }
+            }
+
+            print("profileName pref set to: " + s);
+            PlayerPrefs.SetString("profileName", s);
             Save save = createSaveGameObject(s);
             XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
@@ -95,8 +124,13 @@ public class PauseMenu : MonoBehaviour
             pauseMenuUI.SetActive(true);
             isSaving = false;
 
-            foreach (photo p in cr.cRollStorage)
+            
+            foreach (photo p in save.crTest)
             {
+                if(cr.profileName != s)
+                {
+                    cr.profileName = s;
+                }
                 cr.WriteFile(p.fileName, p.captureData);
             }
         }
@@ -124,7 +158,7 @@ public class PauseMenu : MonoBehaviour
         }
         Debug.Log("-Finished-");
         #endregion
-        save.cameraRollPaths = crPaths;
+        //save.cameraRollPaths = crPaths;
         save.crTest = cr.cRollStorage.ToArray();
         save.GamePercentage = 0;
         return save;

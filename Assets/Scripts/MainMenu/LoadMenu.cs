@@ -72,6 +72,4 @@ public class LoadMenu : MonoBehaviour
         */
         
     }
-    
-
 }

@@ -17,7 +17,7 @@ public class Hovering : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             Quaternion q = new Quaternion(0, 1, 0, 0);
-            this.transform.Rotate(new Vector3(0, 20, 0) * Time.deltaTime, Space.World);
+            this.transform.Rotate(new Vector3(0, 5, 0) * Time.deltaTime, Space.World);
         }
 
     }

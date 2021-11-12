@@ -41,6 +41,7 @@ public class CameraRoll : MonoBehaviour
     private GalleryStorage galleryStorage;
     private static photo buffer;
     private int counter = 0;
+    public string profileName;
 
     #region UItest
     [Header("TestConnections")]
@@ -50,14 +51,14 @@ public class CameraRoll : MonoBehaviour
     private Image uiImage;
     private TextMeshProUGUI uiText;
     #endregion
-    private void Awake()
+    private void Start()
     {
         imageScan = GetComponent<ImageScanner>();
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         galleryStorage = galleryStorageGO.GetComponent<GalleryStorage>();
-        
-        LoadCRoll();
+        profileName = PlayerPrefs.GetString("profileName");
+        //LoadCRoll();
         
     }
 
@@ -72,41 +73,49 @@ public class CameraRoll : MonoBehaviour
         counter++;
     }
 
-    private void LoadCRoll() 
+    public void LoadCRoll(Save s) 
     {
+        print("ProfileNAME: " + s.playerName);
+        profileName = s.playerName;
         cRollStorage = new List<photo>();
-        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/";
-        DirectoryInfo info = new DirectoryInfo(pathNoFile);
-        if (!info.Exists)
+        if(profileName != "")
         {
-            info.Create();
-        }
-        FileInfo[] fileInfo = info.GetFiles();
-        int index = 0;
-        foreach (FileInfo f in fileInfo)
-        {
-            if (!f.Name.Contains("meta"))
+            string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
+            DirectoryInfo info = new DirectoryInfo(pathNoFile);
+            /*if (!info.Exists)
             {
-                
-                string path = "/PhotoStorage/" + index;
-                string absolutePath = pathNoFile + f.Name;
-                Texture2D t2D = new Texture2D(Screen.width, Screen.height);
-
-                byte[] data = File.ReadAllBytes(absolutePath);
-                ImageConversion.LoadImage(t2D, data);
-                t2D.Apply();
-
-                photo grabPhoto = new photo
+                info.Create();
+            }*/
+            FileInfo[] fileInfo = info.GetFiles();
+            int index = 0;
+            photo[] loadArray = s.crTest;
+            foreach (FileInfo f in fileInfo)
+            {
+                if (!f.Name.Contains("meta"))
                 {
-                    captureData = t2D,
-                    fileName = absolutePath
-                };
-                SaveBuffer(index, grabPhoto, true);
-                index++;
-            }
-            
 
+                    string path = "/PhotoStorage/" + profileName + "/CameraRoll/" + index;
+                    string absolutePath = pathNoFile + f.Name;
+                    Texture2D t2D = new Texture2D(Screen.width, Screen.height);
+
+                    byte[] data = File.ReadAllBytes(absolutePath);
+                    ImageConversion.LoadImage(t2D, data);
+                    t2D.Apply();
+
+                    photo grabPhoto = new photo
+                    {
+                        captureData = t2D,
+                        fileName = absolutePath,
+                        inView = loadArray[index].inView
+                    };
+                    SaveBuffer(index, grabPhoto, true);
+                    index++;
+                }
+   
+
+            }
         }
+        
 
     }
 
@@ -216,23 +225,23 @@ public class CameraRoll : MonoBehaviour
     }
     private void SaveBuffer(int crIndex, photo buffPass, bool isLoad)
     {
-        string fileName = Application.persistentDataPath + "/PhotoStorage/" + crIndex + ".png";
-
+        string pName = PlayerPrefs.GetString("profileName");
+        string fileName = Application.persistentDataPath + "/PhotoStorage/" + pName + "/CameraRoll/" + crIndex + ".png";
+        
         buffPass.fileName = fileName;
         crUI.UpdateCR(crIndex, buffPass.captureData);
         cRollStorage.Insert(crIndex, buffPass);
 
 
-        if (!isLoad)
-        {
-            //WriteFile(fileName);
-        }
+        
         
     }
 
     public async void WriteFile(string fileName, Texture2D data)
     {
         byte[] rawData = data.EncodeToPNG();
+        string pName = PlayerPrefs.GetString("profileName");
+        
         using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
         {
             fs.Seek(0, SeekOrigin.End);
