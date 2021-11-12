@@ -94,12 +94,14 @@ public class PauseMenu : MonoBehaviour
             savePrompt.SetActive(false);
             pauseMenuUI.SetActive(true);
             isSaving = false;
+
+            foreach (photo p in cr.cRollStorage)
+            {
+                cr.WriteFile(p.fileName, p.captureData);
+            }
         }
 
-        foreach(photo p in cr.cRollStorage)
-        {
-            cr.WriteFile(p.fileName, p.captureData);
-        }
+        
     }
 
     private Save createSaveGameObject(string s)
@@ -122,7 +124,8 @@ public class PauseMenu : MonoBehaviour
         }
         Debug.Log("-Finished-");
         #endregion
-
+        save.cameraRollPaths = crPaths;
+        save.crTest = cr.cRollStorage.ToArray();
         save.GamePercentage = 0;
         return save;
 

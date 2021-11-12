@@ -7,12 +7,18 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 using System;
+using System.Xml.Serialization;
 
 public struct photo
 {
+    [XmlIgnore]
     public Texture2D captureData;
+
     public string fileName;
-    public List<GameObject> inView;
+    [XmlArray("ObjsInPhoto"), XmlArrayItem("Object")]
+    public string[] inView;
+
+    public string nullValTest;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -22,7 +28,7 @@ public class CameraRoll : MonoBehaviour
     private static bool autoPlace = true;
     private bool bufferFilled = false;
     public int capacity = 9;
-    private List<GameObject> currView;
+    private List<string> currView;
     private ImageScanner imageScan;
     private CRUIGallery galleryUI;
     private int internalIndex = 0;
@@ -124,7 +130,7 @@ public class CameraRoll : MonoBehaviour
         newTex.Apply();
         buffer = new photo
         {
-            inView = currView,
+            inView = currView.ToArray(),
             captureData = newTex
         };
         bufferFilled = true;

@@ -26,17 +26,23 @@ public class LoadMenu : MonoBehaviour
             i++;
         }
     }
+
     public void LoadByXML(int i)
     {
         Save save = new Save();
         string file = filenames[i];
         if (File.Exists(Application.persistentDataPath + "/XMLSaves/" + file + ".xml"))
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Save));
+            PlayerPrefs.SetInt("SaveIndex", i);
+            myButtonScript.PlayGame();
+
+            //No need to deserialize before pertinent scene loads - handle on wakeup, just capture input now
+            /*XmlSerializer serializer = new XmlSerializer(typeof(Save));
             FileStream stream = new FileStream(Application.persistentDataPath + "/XMLSaves/" + file + ".xml", FileMode.Open);
             save = serializer.Deserialize(stream) as Save;
             stream.Close();
-            Debug.Log(save.playerPositionX);
+            Debug.Log(save.playerPositionX);*/
+
             /*            XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.Load(Application.dataPath + "/DataXML.text");
 
@@ -59,11 +65,13 @@ public class LoadMenu : MonoBehaviour
             Debug.Log("XML SAVE FILE NOT FOUND");
             return;
         }
-
+        /*
         PlayerPrefs.SetFloat("PlayerPosX", save.playerPositionX);
         PlayerPrefs.SetFloat("PlayerPosY", save.playerPositionY);
         PlayerPrefs.SetFloat("PlayerPosZ", save.playerPositionZ);
-        myButtonScript.PlayGame();
+        */
+        
     }
+    
 
 }

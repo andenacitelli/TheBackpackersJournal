@@ -29,20 +29,53 @@ public class GameManager : MonoBehaviour
     private CameraRollMenu crMenu;
     private string lastPopUp;
     private bool lastEditOn;
-
+    private Save saveInfo;
+    private LoadGame lMenu;
     public void Awake()
     {
+        //DontDestroyOnLoad(this);
+        lMenu = GetComponent<LoadGame>();
+
+        int profileIndex;
+        if (PlayerPrefs.HasKey("SaveIndex"))
+        {
+            profileIndex = PlayerPrefs.GetInt("SaveIndex");
+        } else
+        {
+            profileIndex = -1;
+        }
+
+        var newSave = lMenu.GetSaveForGame(profileIndex);
+
+        if(newSave == null)
+        {
+            Debug.Log("No file to load - fresh start");
+        } else
+        {
+            AssignSaveOnStart(newSave);
+        }
+        
         polC = cameraC.GetComponent<PolaroidController>();
         hud = uiCanvas.GetComponent<InteractableGUI>();
         crMenu = uiCanvas.GetComponent<CameraRollMenu>();
         lastPopUp = "";
         lastEditOn = false;
     }
-
+    private void OnDisable()
+    {
+        // Gottta override this or it will persist between plays
+        PlayerPrefs.DeleteKey("SaveIndex");
+    }
     public void Update()
     {
         DetermineInputState();
         DetermineGameState();
+    }
+
+    private void AssignSaveOnStart(Save newSave)
+    {
+        saveInfo = newSave;
+        Debug.Log("Profile Name: " + saveInfo.playerName);  
     }
 
     private void DetermineInputState() 

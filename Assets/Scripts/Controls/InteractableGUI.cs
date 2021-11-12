@@ -123,7 +123,7 @@ public class InteractableGUI : MonoBehaviour
 
                 } else if (grab.CompareTag("PlaceableObject"))
                 {
-                    //For picking up picture frames?
+                    //For picking up picture frames? - need to add editing buffer & check if it's not full
                 }
                 else if (showSampleCanvas)
                 {
