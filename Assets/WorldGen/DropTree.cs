@@ -315,6 +315,7 @@ public class DropTree : MonoBehaviour
         Vector3 pos = new Vector3(pos2D.x, heightData.height, pos2D.y);
         if (heightData.height < 30)
             type = 4;
+            /*pos.y += 2f;*/
         switch (type)
         {
             case 0:
@@ -336,6 +337,7 @@ public class DropTree : MonoBehaviour
                 temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
                 break;
         }
+        temp.transform.up = heightData.normal;
         plants.gameObjects.Add(temp);
         temp.transform.parent = this.transform;
 
