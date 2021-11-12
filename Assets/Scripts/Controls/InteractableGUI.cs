@@ -76,6 +76,7 @@ public class InteractableGUI : MonoBehaviour
         {
             StopCoroutine(editCursor());
             obj2.StoreOnWall(placeObject);
+            showSampleCanvas = false;
             print("Placed Canvas");
         }
     }
