@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0.99999905, b: 0.99999905, a: 1}
+  m_IndirectSpecularColor: {r: 0.17379376, g: 0.20892765, b: 0.25182813, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -161,8 +161,8 @@ MonoBehaviour:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
   maxSpawns: 10
   spawnDelaySeconds: 5
-  minPlayerDistance: 10
-  maxPlayerDistance: 40
+  minPlayerDistance: 20
+  maxPlayerDistance: 200
   minAnimalsDistance: 5
   aboveGroundOffset: 1
   preySpawnChance: 65
