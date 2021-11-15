@@ -531,7 +531,7 @@ MonoBehaviour:
   - {fileID: 116080, guid: ede6abcf2bac9df4fb9e863b39184d13, type: 3}
   - {fileID: 131868, guid: 35a294405f386ee42aa85e96605d3740, type: 3}
   - {fileID: 126840, guid: ff4279bf1c5ced847ac4d35342006d4d, type: 3}
-  treePrefab: {fileID: 919132149155446097, guid: e717015b91af6ae48a9e1e244ca20716, type: 3}
+  treePrefab: {fileID: 5147920355588411500, guid: 216bdce5715b9d04f85e298bd293185a, type: 3}
 --- !u!4 &926933607
 Transform:
   m_ObjectHideFlags: 0

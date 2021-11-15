@@ -133,10 +133,11 @@ public class DropTree : MonoBehaviour
             plantRandoms.Add(new Random(bushSeed));
             plantRandoms.Add(new Random(shroomSeed));
             plantRandoms.Add(new Random(waterPlantSeed));
+            
             for (int i = 0; i < 3; i++)
             {
-                Vector2 random2D = RandomPointInChunk(xCord, yCord, chunkRand);
-                plantsGroup toAdd = GenerateGroup(chunkRand.Next(1, 5), random2D, plantRandoms);
+                Vector2 random2D = RandomPointInChunk(xCord, yCord, chunkRand);                
+                plantsGroup toAdd = GenerateGroup(chunkRand, chunkRand.Next(1, 5), random2D, plantRandoms);
                 plantsD[(xCord, yCord)].Add(toAdd);
 /*                GameObject thisTree = Instantiate(treePrefabs[treeRand.Next(0,4)], pos, Quaternion.identity);
                 thisTree.transform.localScale = new Vector3(3f, 3f, 3f);
@@ -242,13 +243,15 @@ public class DropTree : MonoBehaviour
         return new Vector2(x, z);
     }
 
-    private plantsGroup GenerateGroup(int i, Vector2 center, List<Random> plantRandoms)
+    private plantsGroup GenerateGroup(Random chunkRand, int i, Vector2 center, List<Random> plantRandoms)
     {
         plantsGroup plants = new plantsGroup();
         /*      grass 0;
         flower 1;
         bush 2;
         shoorm 3;*/
+        float moistNoise = 0.2f;
+        
         switch (i)
         {
             case 1:
@@ -315,6 +318,7 @@ public class DropTree : MonoBehaviour
         Vector3 pos = new Vector3(pos2D.x, heightData.height, pos2D.y);
         if (heightData.height < 30)
             type = 4;
+            /*pos.y += 2f;*/
         switch (type)
         {
             case 0:
@@ -336,6 +340,7 @@ public class DropTree : MonoBehaviour
                 temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
                 break;
         }
+        temp.transform.up = heightData.normal;
         plants.gameObjects.Add(temp);
         temp.transform.parent = this.transform;
 
