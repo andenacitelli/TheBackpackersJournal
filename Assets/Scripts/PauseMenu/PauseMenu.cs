@@ -19,12 +19,18 @@ public class PauseMenu : MonoBehaviour
 
     private string input;
     private ReturnToGrove rTG;
+    private bool autoSaveThisFrame;
+    private bool roamLastFrame;
+    private bool storageLastFrame;
     
 
     private void Awake()
     {
         action = new PauseAction();
         rTG = groveReturn.GetComponent<ReturnToGrove>();
+        autoSaveThisFrame = false;
+        roamLastFrame = false;
+        storageLastFrame = false;
     }
 
     private void OnEnable()
@@ -40,6 +46,44 @@ public class PauseMenu : MonoBehaviour
     private void Start()
     {
         action.Pause.PauseGame.performed += _ => DeterminePause();
+    }
+
+    private void Update()
+    {
+        
+        if (!autoSaveThisFrame && ShouldAutoSave())
+        {
+            autoSaveThisFrame = true;
+            AutoSave();
+        } else if(autoSaveThisFrame)
+        {
+            autoSaveThisFrame = false;
+        }
+    }
+
+    private bool ShouldAutoSave()
+    {
+        bool shouldSave = false;
+        //autosave when...
+        if(roamLastFrame && !rTG.playerRoaming)
+        {
+            //player returns to the grove
+            shouldSave = true;
+        } else if(!storageLastFrame && storage.isOn)
+        {
+            print("Storage started - from Autosave detection");
+            //Player starts editing
+            shouldSave = true;
+        } else if(storageLastFrame && !storage.isOn)
+        {
+            //Player stops editing
+            print("Storage ended - from Autosave detection");
+            shouldSave = true;
+        }
+
+        roamLastFrame = rTG.playerRoaming;
+        storageLastFrame = storage.isOn;
+        return shouldSave;
     }
 
     public void DeterminePause()
@@ -168,6 +212,12 @@ public class PauseMenu : MonoBehaviour
         //save.cameraRollPaths = crPaths;
         save.crTest = cr.cRollStorage.ToArray();
         save.gallRoll = storage.gallery.ToArray();
+        print("saved gallRoll:");
+        foreach(photo p in save.gallRoll)
+        {
+            print(p.fileName);
+        }
+        print("---------------------");
         save.GamePercentage = 0;
         return save;
 

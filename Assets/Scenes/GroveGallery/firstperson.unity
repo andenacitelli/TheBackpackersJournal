@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16215807, g: 0.18875188, b: 0.21098675, a: 1}
+  m_IndirectSpecularColor: {r: 0.16215773, g: 0.18875146, b: 0.21098639, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2999,6 +2999,7 @@ MonoBehaviour:
   cr: {fileID: 484376109}
   groveReturnPrompt: {fileID: 584128847}
   groveReturn: {fileID: 2012664422}
+  storage: {fileID: 1697035929}
 --- !u!114 &179127649
 MonoBehaviour:
   m_ObjectHideFlags: 0

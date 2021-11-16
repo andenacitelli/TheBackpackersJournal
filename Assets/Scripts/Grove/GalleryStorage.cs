@@ -22,11 +22,16 @@ public class GalleryStorage : MonoBehaviour
     private CameraRoll cameraRoll;
     private CameraRollMenu cameraRollUI;
 
-    public List<photo> gallery = new List<photo>();
+    public List<photo> gallery; 
     public photo lastPhotoPtr;
     private GalleryScaleUI rescale;
     private int lastIndex;
 
+
+    private void Awake()
+    {
+        gallery = new List<photo>();
+    }
     private void Start()
     {
         rescale = galleryUIscale.GetComponent<GalleryScaleUI>();
@@ -51,7 +56,7 @@ public class GalleryStorage : MonoBehaviour
     {
         //crIndex is the moved camera roll index - in case it's needed
         Debug.Log("Recieved Photo in gallery storage");
-        gallery.Add(grab);
+        
         lastIndex = gallery.IndexOf(grab);
         galleryUIstart.SetActive(false);
         
@@ -85,7 +90,7 @@ public class GalleryStorage : MonoBehaviour
     public void FinishStoragePlace(GameObject frame)
     {
         Image display = frame.GetComponentInChildren<Image>();
-        Vector3 framePos = frame.transform.position;
+        Vector3 framePos = frame.transform.parent.position;
         //get photo from gallerystorage here
         photo grabP = gallery[lastIndex];
         grabP.wallX = framePos.x;
@@ -132,6 +137,7 @@ public class GalleryStorage : MonoBehaviour
         }
         Debug.Log("Exited editing mode");
         editingStorageOn = false;
+        isOn = false;
         yield break;
     }
 
@@ -140,11 +146,14 @@ public class GalleryStorage : MonoBehaviour
         byte[] rawData = data.EncodeToPNG();
         string pName = PlayerPrefs.GetString("profileName");
 
+        
         using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
         {
             fs.Seek(0, SeekOrigin.End);
             await fs.WriteAsync(rawData, 0, rawData.Length);
         }
+        
+        
 
         print("File Written.");
 

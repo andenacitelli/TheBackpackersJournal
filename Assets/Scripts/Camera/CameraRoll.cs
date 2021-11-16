@@ -21,7 +21,7 @@ public struct photo
 
     public string nullValTest;
 
-    public bool inStorage;
+    public int inStorage;
     public string wallName;
     public float wallX;
     public float wallY;
@@ -128,30 +128,44 @@ public class CameraRoll : MonoBehaviour
     public void ForwardPhotoToStorage(int indexChosen)
     {
         photo grabP = cRollStorage[indexChosen];
+        cRollStorage.RemoveAt(indexChosen);
         string oldFName = grabP.fileName;
+        galleryStorage.gallery.Add(grabP);
         string newFName = galleryStorage.ReceivePhoto(indexChosen, grabP);
-
+        grabP.fileName = newFName;
+        grabP.inStorage = 1;
+        print("crForward-oldFName: " + oldFName);
+        print("crForward-newFName: " + grabP.fileName);
         //handle files
-        FileUtil.CopyFileOrDirectory(oldFName, newFName); 
-        
-        FileUtil.DeleteFileOrDirectory(oldFName);
+        StartCoroutine(TransferFiles(oldFName, newFName));
 
         // update 
         //crUI.UpdateCR(indexChosen, null);
         //int galleryIndex = newFName[newFName.Length - 5];
-        grabP.fileName = newFName;
-        grabP.inStorage = true;
-        cRollStorage.RemoveAt(indexChosen);
+        
+        //cRollStorage.Remove(grabP);
         
         // Maintain order ~ slide over entries so no empty space
-        ReformatCR(indexChosen);
+        StartCoroutine(ReformatCR(indexChosen));
         
         
     }
 
-    // Cleans up changes in index
-    private void ReformatCR(int removedIndex)
+    private IEnumerator TransferFiles(string oldFName, string newFName)
     {
+        FileUtil.CopyFileOrDirectory(oldFName, newFName);
+        yield return new WaitForEndOfFrame();
+
+        FileUtil.DeleteFileOrDirectory(oldFName);
+        yield return new WaitForEndOfFrame();
+
+    }
+
+    // Cleans up changes in index
+    private IEnumerator ReformatCR(int removedIndex)
+    {
+        yield return new WaitForEndOfFrame();
+
         string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
         DirectoryInfo info = new DirectoryInfo(pathNoFile);
         FileInfo[] fileInfo = info.GetFiles();
@@ -164,23 +178,31 @@ public class CameraRoll : MonoBehaviour
                 char oldName = f.Name[0];
                 if (index >= removedIndex)
                 {
-                    //print("old name: " + oldName + ".png");
-                    //print("new name: " + index + ".png");
+                    print("old name: " + oldName + ".png");
+                    print("new name: " + index + ".png");
                     string oldFPath = pathNoFile + oldName + ".png";
                     string newFPath = pathNoFile + index + ".png";
                     FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
-                    FileUtil.DeleteFileOrDirectory(oldFPath);
+                    yield return new WaitForEndOfFrame();
+
+                    
                     crUI.UpdateCR(index, cRollStorage[index].captureData);
                     photo grab = cRollStorage[index];
                     grab.fileName = newFPath;
+                    yield return new WaitForEndOfFrame();
+
+                    FileUtil.DeleteFileOrDirectory(oldFPath);
+                    yield return new WaitForEndOfFrame();
                 }
                 index++;
             }
         }
 
         print("Updating final camera roll slot after shift.");
+
         crUI.UpdateCR(cRollStorage.Count, null);
-        
+        yield return new WaitForEndOfFrame();
+
     }
 
     public void RecievePhoto(byte[] rawData)
