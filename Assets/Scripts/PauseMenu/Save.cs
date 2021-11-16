@@ -18,5 +18,7 @@ public class Save
     
     [XmlArrayAttribute("CameraRoll")]
     public photo[] crTest;
+    [XmlArrayAttribute("GalleryRoll")]
+    public photo[] gallRoll;
     /*ToDo: Add features of the player profile*/
 }

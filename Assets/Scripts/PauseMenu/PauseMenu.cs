@@ -15,6 +15,7 @@ public class PauseMenu : MonoBehaviour
     public CameraRoll cr;
     public GameObject groveReturnPrompt;
     public GameObject groveReturn;
+    public GalleryStorage storage;
 
     private string input;
     private ReturnToGrove rTG;
@@ -133,6 +134,11 @@ public class PauseMenu : MonoBehaviour
                 }
                 cr.WriteFile(p.fileName, p.captureData);
             }
+
+            foreach(photo p in save.gallRoll)
+            {
+                storage.WriteFile(p.fileName, p.captureData);
+            }
         }
 
         
@@ -146,20 +152,22 @@ public class PauseMenu : MonoBehaviour
         save.playerPositionY = GameObject.FindWithTag("Player").transform.position.y;
         save.playerPositionZ = GameObject.FindWithTag("Player").transform.position.z;
 
-        #region getArray
+        /*
+        #region getCRArray
         string[] crPaths = new string[cr.cRollStorage.Count];
         int i = 0;
         Debug.Log("Saving...");
         foreach(photo p in cr.cRollStorage)
         {
             Debug.Log(p.fileName);
-            crPaths[i] = p.fileName;
+            //crPaths[i] = p.fileName;
             i++;
         }
         Debug.Log("-Finished-");
-        #endregion
+        #endregion*/
         //save.cameraRollPaths = crPaths;
         save.crTest = cr.cRollStorage.ToArray();
+        save.gallRoll = storage.gallery.ToArray();
         save.GamePercentage = 0;
         return save;
 

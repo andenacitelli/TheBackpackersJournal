@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public GameObject cameraC;
     [Header("Game")]
     public GalleryStorage storage;
-    
+    public PauseMenu pMenu;
 
     [Header("UI")]
     public Canvas uiCanvas;
@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
                 if (!lastEditOn)
                 {
                     //edit mode just turned on
+                    pMenu.AutoSave();
                     hud.ToggleCursor(false, true, storage.scaleModifier);
                 } else
                 {
@@ -107,6 +108,7 @@ public class GameManager : MonoBehaviour
                 if (lastEditOn)
                 {
                     //edit mode just turned off
+                    pMenu.AutoSave();
                     hud.ToggleCursor(false, false, -1);
                 }
                 else

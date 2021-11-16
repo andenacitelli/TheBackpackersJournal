@@ -16,7 +16,9 @@ public class EditableObject : MonoBehaviour
     {
         gallery = galleryStorageGO.GetComponent<GalleryStorage>();
         validPlacement = gameObject.GetComponent<BoxCollider>();
+
         storedOnThisWall = new Dictionary<GameObject, Vector3>();
+        //Load GalleryRoll
     }
 
     public void StoreOnWall(GameObject frame)
@@ -24,7 +26,9 @@ public class EditableObject : MonoBehaviour
         frame.name = wallName + storedOnThisWall.Count;
         print("New frame " + frame.name + " added to wall");
         Vector3 storePoint = frame.transform.position;
+        //probably dont need
         frame.transform.position = storePoint;
+
         transform.InverseTransformPoint(storePoint);
         frame.transform.parent = transform;
         storedOnThisWall.Add(frame, storePoint);

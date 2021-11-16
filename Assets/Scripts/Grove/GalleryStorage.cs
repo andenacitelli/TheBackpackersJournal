@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Xml.Serialization;
+using System.IO;
 
 public class GalleryStorage : MonoBehaviour
 {
@@ -19,7 +21,9 @@ public class GalleryStorage : MonoBehaviour
     private bool distanceWarned = false;
     private CameraRoll cameraRoll;
     private CameraRollMenu cameraRollUI;
-    private List<photo> gallery = new List<photo>();
+
+    public List<photo> gallery = new List<photo>();
+    public photo lastPhotoPtr;
     private GalleryScaleUI rescale;
     private int lastIndex;
 
@@ -43,16 +47,20 @@ public class GalleryStorage : MonoBehaviour
         cameraRollUI.OpenCRStorage();
     }
 
-    public void ReceivePhoto(int crIndex)
+    public string ReceivePhoto(int crIndex, photo grab)
     {
-        photo grab = cameraRoll.cRollStorage[crIndex];
         //crIndex is the moved camera roll index - in case it's needed
         Debug.Log("Recieved Photo in gallery storage");
         gallery.Add(grab);
         lastIndex = gallery.IndexOf(grab);
         galleryUIstart.SetActive(false);
+        
+        //calculate score?
         rescale.PreloadPhoto(grab.captureData);
         galleryUIscale.SetActive(true);
+
+        string newFName = Application.persistentDataPath + "/PhotoStorage/" + cameraRoll.profileName + "/GalleryRoll/" + lastIndex + ".png";
+        return newFName;
     }
 
     public void IncreaseScale()
@@ -77,14 +85,17 @@ public class GalleryStorage : MonoBehaviour
     public void FinishStoragePlace(GameObject frame)
     {
         Image display = frame.GetComponentInChildren<Image>();
-        photo grabP = cameraRoll.cRollStorage[lastIndex];
+        Vector3 framePos = frame.transform.position;
+        //get photo from gallerystorage here
+        photo grabP = gallery[lastIndex];
+        grabP.wallX = framePos.x;
+        grabP.wallY = framePos.y;
+        grabP.wallZ = framePos.z;
         Sprite newS = Sprite.Create(grabP.captureData, new Rect(0.0f, 0.0f, grabP.captureData.width, grabP.captureData.height), new Vector2(0.0f, 0.0f), display.pixelsPerUnit);
         display.sprite = newS;
         Color holdColor = new Color(255f, 255f, 255f);
         display.color = holdColor;
         editingStorageOn = false;
-
-
     }
 
     public void ExitGalleryStorage()
@@ -117,10 +128,25 @@ public class GalleryStorage : MonoBehaviour
         {
             CheckDistanceWarning(dist);
             dist = Vector3.Distance(transform.position, polaroidCamera.transform.position);
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.25f);
         }
         Debug.Log("Exited editing mode");
         editingStorageOn = false;
         yield break;
+    }
+
+    public async void WriteFile(string fileName, Texture2D data)
+    {
+        byte[] rawData = data.EncodeToPNG();
+        string pName = PlayerPrefs.GetString("profileName");
+
+        using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
+        {
+            fs.Seek(0, SeekOrigin.End);
+            await fs.WriteAsync(rawData, 0, rawData.Length);
+        }
+
+        print("File Written.");
+
     }
 }

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Collections;
 using System;
 using System.Xml.Serialization;
+using UnityEditor;
 
 public struct photo
 {
@@ -19,6 +20,12 @@ public struct photo
     public string[] inView;
 
     public string nullValTest;
+
+    public bool inStorage;
+    public string wallName;
+    public float wallX;
+    public float wallY;
+    public float wallZ;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -58,7 +65,6 @@ public class CameraRoll : MonoBehaviour
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         galleryStorage = galleryStorageGO.GetComponent<GalleryStorage>();
         profileName = PlayerPrefs.GetString("profileName");
-        //LoadCRoll();
         
     }
 
@@ -122,12 +128,59 @@ public class CameraRoll : MonoBehaviour
     public void ForwardPhotoToStorage(int indexChosen)
     {
         photo grabP = cRollStorage[indexChosen];
-        Texture2D tex = grabP.captureData;
-        //crUI.UpdateCR(indexChosen, null);
-        galleryStorage.ReceivePhoto(indexChosen);
+        string oldFName = grabP.fileName;
+        string newFName = galleryStorage.ReceivePhoto(indexChosen, grabP);
 
-        //TODO: HANDLE FILES
-        //cRollStorage.RemoveAt(indexChosen);
+        //handle files
+        FileUtil.CopyFileOrDirectory(oldFName, newFName); 
+        
+        FileUtil.DeleteFileOrDirectory(oldFName);
+
+        // update 
+        //crUI.UpdateCR(indexChosen, null);
+        //int galleryIndex = newFName[newFName.Length - 5];
+        grabP.fileName = newFName;
+        grabP.inStorage = true;
+        cRollStorage.RemoveAt(indexChosen);
+        
+        // Maintain order ~ slide over entries so no empty space
+        ReformatCR(indexChosen);
+        
+        
+    }
+
+    // Cleans up changes in index
+    private void ReformatCR(int removedIndex)
+    {
+        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
+        DirectoryInfo info = new DirectoryInfo(pathNoFile);
+        FileInfo[] fileInfo = info.GetFiles();
+        int index = 0;
+        foreach (FileInfo f in fileInfo)
+        {
+            if (!f.Name.Contains("meta"))
+            {
+
+                char oldName = f.Name[0];
+                if (index >= removedIndex)
+                {
+                    //print("old name: " + oldName + ".png");
+                    //print("new name: " + index + ".png");
+                    string oldFPath = pathNoFile + oldName + ".png";
+                    string newFPath = pathNoFile + index + ".png";
+                    FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                    FileUtil.DeleteFileOrDirectory(oldFPath);
+                    crUI.UpdateCR(index, cRollStorage[index].captureData);
+                    photo grab = cRollStorage[index];
+                    grab.fileName = newFPath;
+                }
+                index++;
+            }
+        }
+
+        print("Updating final camera roll slot after shift.");
+        crUI.UpdateCR(cRollStorage.Count, null);
+        
     }
 
     public void RecievePhoto(byte[] rawData)
@@ -230,11 +283,7 @@ public class CameraRoll : MonoBehaviour
         
         buffPass.fileName = fileName;
         crUI.UpdateCR(crIndex, buffPass.captureData);
-        cRollStorage.Insert(crIndex, buffPass);
-
-
-        
-        
+        cRollStorage.Insert(crIndex, buffPass);  
     }
 
     public async void WriteFile(string fileName, Texture2D data)

@@ -67,7 +67,7 @@ public class GalleryScaleUI : MonoBehaviour
         // returns true if overflow prevented advancing list
         bool didOverFlow = false;
         int newIndex = currentSizeIndex + change;
-        print("Prospective new index: " + newIndex);
+        //print("Prospective new index: " + newIndex);
         if (newIndex == sizeList.Length)
         {
             newIndex--;
@@ -77,7 +77,7 @@ public class GalleryScaleUI : MonoBehaviour
             newIndex++;
             didOverFlow = true;
         }
-        print("Actual new index: " + newIndex);
+        //print("Actual new index: " + newIndex);
 
         currentSizeIndex = newIndex;
 
