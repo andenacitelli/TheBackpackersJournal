@@ -9,35 +9,12 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] GameObject[] commonPrey;
     [SerializeField] GameObject[] commonPredators;
 
+    [Header("Settings")]
+    [SerializeField] SpawnSettings spawnSettings;
+
     [Header("Animal Spawning")]
     // (chunk coordinates, List<animals on the chunk>)
     readonly Dictionary<Vector3, HashSet<GameObject>> worldAnimals = new Dictionary<Vector3, HashSet<GameObject>>();
-
-    [SerializeField] int maxSpawns = 10;
-    int totalSpawns = 0;
-    [SerializeField] [Range(0.0f, 300.0f)] float spawnDelaySeconds = 30.0f;
-
-    // min and max distances to spawn animals from respective things
-    [SerializeField] float minPlayerDistance = 10.0f;
-    [SerializeField] float maxPlayerDistance = 40.0f; 
-    [SerializeField] float minAnimalsDistance = 5.0f;
-
-    // to ensure that they spawn above ground level. they'll drop to touch ground with gravity
-    [SerializeField] float aboveGroundOffset = 1.0f;
-
-    // The chance that an animal spawned will be predator or prey
-    // predator chance will be equal to 100 - prey chance.
-    [SerializeField] [Range(0.0f, 100.0f)] float preySpawnChance = 65.0f;
-
-    // this hasn't been used because it can be applied without storing a separate number
-    float predatorSpawnChance; 
-
-    [Header("Animal Despawning")]
-    // distance from player at which to despawn the animal
-    [SerializeField] float despawnRange = 20.0f;
-
-    // time ater player leaves range to despawn animals
-    [SerializeField] [Range(0.0f, 300.0f)] float despawnDelaySeconds = 120.0f;
 
     [Header("Wildlife Events to Spawn")]
     [SerializeField] private GameObject[] commonEvents;
@@ -62,7 +39,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] [Range(0.0f, 10.0f)]  private float rareEventRate = 1.5f;
 
     TerrainFunctions.TerrainPointData heightData;
-    Noise spawnNoise;
+    Noise quantityNoise, creatureTypeNoise;
 
     Transform playerTransform;
 
@@ -72,9 +49,11 @@ public class SpawnManager : MonoBehaviour
     
     void Start()
     {
-        spawnNoise = gameObject.AddComponent<Noise>(); // noise object with random seeding
+        quantityNoise = gameObject.AddComponent<Noise>(); // noise object with random seeding
+        creatureTypeNoise = gameObject.AddComponent<Noise>();
+        creatureTypeNoise.scale = 200.0f; // hopefully less change around a small area so you're more likely to spawn groups of the same kind
+
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        predatorSpawnChance = 100.0f - preySpawnChance;
 
         // create animal and wildlife event containers
         animalsHolder = new GameObject("Animals");
@@ -97,7 +76,7 @@ public class SpawnManager : MonoBehaviour
     // Return if the object is still within distance of player as set by despawnRange
     bool AnimalInRange(GameObject animal)
     {
-        return Vector3.Distance(playerTransform.position, animal.transform.position) < despawnRange;
+        return Vector3.Distance(playerTransform.position, animal.transform.position) < spawnSettings.despawnRange;
     }
 
     // Return if the WildlifeEvent is still within distance of player as set by despawnRange
@@ -109,7 +88,7 @@ public class SpawnManager : MonoBehaviour
     // Return whether less than the maximum number of animals are spawned
     bool CanAddAnimal()
     {
-        return worldAnimals.Count < maxSpawns;
+        return worldAnimals.Count < spawnSettings.maxSpawns;
     }
 
     // Return whether less than the maximum number of events are spawned
@@ -127,10 +106,11 @@ public class SpawnManager : MonoBehaviour
     }
 
     // returns the array of animals to spawn from
-    // uses preySpawnChance and a random number generator to determine which array to return
-    GameObject[] GetSpawnSource()
+    // uses noise at the location
+    GameObject[] GetSpawnSource(Vector3 location)
     {
-        return Random.Range(0.0f, 100.0f) <= preySpawnChance ? commonPrey : commonPredators;
+        // uses the noise at the spawnpoint to figure out what to place
+        return creatureTypeNoise.GetNoiseAtPoint(location.x, location.z) <= spawnSettings.preySpawnChance ? commonPrey : commonPredators;
     }
 
     // return the array of events to spawn
@@ -173,7 +153,7 @@ public class SpawnManager : MonoBehaviour
 
         // add animal to the list associated with its chunk
         worldAnimals[animalChunkPos].Add(animal);
-        totalSpawns++;
+        spawnSettings.totalSpawns++;
     }
 
     // removes the animal from the dictionary of world animals
@@ -185,7 +165,7 @@ public class SpawnManager : MonoBehaviour
         {
             // add animal to the list associated with its chunk
             worldAnimals[animalChunkPos].Remove(animal);
-            totalSpawns--;
+            spawnSettings.totalSpawns--;
         } else
         {
             // do nothing if animal is somehow not on a chunk
@@ -219,8 +199,9 @@ public class SpawnManager : MonoBehaviour
         // add animal to the chunk at its current position
         AddToAnimals(animal);
     }
+
     // Spawn a random animal gameobject into the game world, returns the object spawned
-    GameObject SpawnRandomAnimalFromSource(Vector3 location, GameObject[] source)
+    GameObject SpawnRandomAnimalFromSource(Vector3 center, GameObject[] source)
     {
         GameObject newSpawn;
 
@@ -229,7 +210,7 @@ public class SpawnManager : MonoBehaviour
         else Debug.Log("Spawning from other source.");
 
         // spawn random animal from source at location
-        newSpawn = Instantiate(source[Random.Range(0, source.Length)], location, Quaternion.identity, animalsHolder.transform);
+        newSpawn = Instantiate(source[Random.Range(0, source.Length)], center, Quaternion.identity, animalsHolder.transform);
 
         if (newSpawn == null) Debug.Log("Issue while spawning animal");
         else
@@ -241,7 +222,7 @@ public class SpawnManager : MonoBehaviour
             StartCoroutine(AnimalDespawnTimer(newSpawn));
             Debug.Log($"{newSpawn.name} spawned into the world.");
 
-            Debug.Log($"SPAWNING {newSpawn.name} ON CHUNK AT {GetChunkAtCoords(location.x, location.z).transform.position}");
+            Debug.Log($"SPAWNING {newSpawn.name} ON CHUNK AT {GetChunkAtCoords(center.x, center.z).transform.position}");
         }
 
         return newSpawn;
@@ -288,14 +269,44 @@ public class SpawnManager : MonoBehaviour
 
             heightData = TerrainFunctions.GetTerrainPointData(new Vector2(location.x, location.z));
             // loop if point not on a chunk or if it's too close to player
-        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < minPlayerDistance);
+        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < spawnSettings.minPlayerDistance);
 
 
-        location.y = heightData.height + aboveGroundOffset;
+        location.y = heightData.height + spawnSettings.aboveGroundDistance;
 
         return location;
     }
-    
+
+    GameObject SpawnWithNoise(Vector3 location)
+    {
+        float noiseValue = quantityNoise.GetNoiseAtPoint(location.x, location.z);
+
+        // get quantity to spawn
+        int quantity;
+        if (noiseValue < .10f) quantity = 5;
+        else if (noiseValue < .50f) quantity = 3;
+        else if (noiseValue < .75f) quantity = 2;
+        else quantity = 1;
+
+        // use quantity to determine predator/prey distribution
+        int newSpawns = 0;
+        GameObject[] spawnSource;
+        GameObject newSpawn;
+        Vector3 placeLocation;
+        while (spawnSettings.totalSpawns < spawnSettings.maxSpawns && newSpawns < quantity)
+        {
+            // get the actual location around the spawn center to place animals
+            //placeLocation = GenerateSpawnLocation(location);
+
+            // determine whether to spawn prey or predator
+            //spawnSource = GetSpawnSource(placeLocation);
+
+            //newSpawn = SpawnRandomAnimalFromSource(location, spawnSource);
+        }
+
+        return null;
+    }
+
     // Return a valid spawn location for a new animal
     Vector3 GenerateSpawnLocation()
     {
@@ -305,17 +316,38 @@ public class SpawnManager : MonoBehaviour
         do
         {
             // get a point within the spawn range
-            location.x = Random.Range(playerPos.x - maxPlayerDistance, playerPos.x + maxPlayerDistance);
-            location.z = Random.Range(playerPos.z - maxPlayerDistance, playerPos.z + maxPlayerDistance);
+            location.x = Random.Range(playerPos.x - spawnSettings.maxPlayerDistance, playerPos.x + spawnSettings.maxPlayerDistance);
+            location.z = Random.Range(playerPos.z - spawnSettings.maxPlayerDistance, playerPos.z + spawnSettings.maxPlayerDistance);
 
             heightData = TerrainFunctions.GetTerrainPointData(new Vector2(location.x, location.z));
             // loop if point not on a chunk or if it's too close to player
-        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < minPlayerDistance);
+        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < spawnSettings.minPlayerDistance);
+
+        location.y = heightData.height + spawnSettings.aboveGroundDistance;
+
+        return location;
+    }
+
+    // TODO: Return a valid spawn location for a new animal near center
+    Vector3 GenerateSpawnLocation(Vector3 center, List<(float x, float z)> pointsUsed)
+    {
+        // these ranges will need changed, but for now I just want to spawn stuff near the player
+        Vector3 location = new Vector3(), playerPos = playerTransform.position;
+
+        do
+        {
+            // get a point within the spawn range
+            location.x = Random.Range(playerPos.x - spawnSettings.maxPlayerDistance, playerPos.x + spawnSettings.maxPlayerDistance);
+            location.z = Random.Range(playerPos.z - spawnSettings.maxPlayerDistance, playerPos.z + spawnSettings.maxPlayerDistance);
+
+            heightData = TerrainFunctions.GetTerrainPointData(new Vector2(location.x, location.z));
+            // loop if point not on a chunk or if it's too close to player
+        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < spawnSettings.minPlayerDistance);
 
         // TODO: might add min distance from other animals as well.
 
 
-        location.y = heightData.height + aboveGroundOffset;
+        location.y = heightData.height + spawnSettings.aboveGroundDistance;
 
         return location;
     }
@@ -334,7 +366,7 @@ public class SpawnManager : MonoBehaviour
     {
         do
         { // wait for despawn timer to hit, and then if player is out of range get rid of the animal
-            yield return new WaitForSeconds(despawnDelaySeconds);
+            yield return new WaitForSeconds(spawnSettings.despawnDelaySeconds);
         } while (AnimalInRange(animal));
 
         // remove animal from list, and destroy in game
@@ -349,16 +381,14 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitUntil(PlayerChunksHaveGenerated);
 
         Vector3 spawnLoc;
-        GameObject[] source;
-        while(worldAnimals.Count < maxSpawns)
+        while(worldAnimals.Count < spawnSettings.maxSpawns)
         {
             // get location to place animal
             spawnLoc = GenerateSpawnLocation();
-            // get array to spawn from
-            source = GetSpawnSource(); 
-
+            
             // spawn random animal from selected array and add it to the list of spawned animals
-            AddToAnimals(SpawnRandomAnimalFromSource(spawnLoc, source));
+            //AddToAnimals(SpawnRandomAnimalFromSource(spawnLoc, source));
+            AddToAnimals(SpawnWithNoise(spawnLoc));
         }
     }
 
@@ -368,19 +398,17 @@ public class SpawnManager : MonoBehaviour
         yield return StartCoroutine(SpawnFirstAnimals());
 
         Vector3 spawnLoc;
-        GameObject[] source;
         while (true)
         {
-            yield return new WaitForSeconds(spawnDelaySeconds);
+            yield return new WaitForSeconds(spawnSettings.spawnDelaySeconds);
             yield return new WaitUntil(CanAddAnimal);
 
             // get location to place animal
             spawnLoc = GenerateSpawnLocation();
-            // get array to spawn from
-            source = GetSpawnSource();
 
             // spawn random animal from selected array and add it to the list of spawned animals
-            AddToAnimals(SpawnRandomAnimalFromSource(spawnLoc, source));
+            //AddToAnimals(SpawnRandomAnimalFromSource(spawnLoc, source));
+            AddToAnimals(SpawnWithNoise(spawnLoc));
         }
     }
 
