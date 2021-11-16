@@ -130,14 +130,17 @@ public class CameraRoll : MonoBehaviour
         photo grabP = cRollStorage[indexChosen];
         cRollStorage.RemoveAt(indexChosen);
         string oldFName = grabP.fileName;
-        galleryStorage.gallery.Add(grabP);
-        string newFName = galleryStorage.ReceivePhoto(indexChosen, grabP);
-        grabP.fileName = newFName;
-        grabP.inStorage = 1;
+        
+        
+        photo newPhoto = galleryStorage.ReceivePhoto(indexChosen, grabP);
+        
+        //User has moved on to scale selection now
+        
+        //PROBLEM ISSUE HERE
         print("crForward-oldFName: " + oldFName);
-        print("crForward-newFName: " + grabP.fileName);
+        print("crForward-newFName: " + newPhoto.fileName);
         //handle files
-        StartCoroutine(TransferFiles(oldFName, newFName));
+        StartCoroutine(TransferFiles(oldFName, newPhoto.fileName));
 
         // update 
         //crUI.UpdateCR(indexChosen, null);
@@ -165,38 +168,65 @@ public class CameraRoll : MonoBehaviour
     private IEnumerator ReformatCR(int removedIndex)
     {
         yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
         string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
         DirectoryInfo info = new DirectoryInfo(pathNoFile);
         FileInfo[] fileInfo = info.GetFiles();
         int index = 0;
-        foreach (FileInfo f in fileInfo)
+        if(cRollStorage.Count != 0)
         {
-            if (!f.Name.Contains("meta"))
+            int numFiles = fileInfo.Length;
+            print("Files Detected: " + numFiles);
+            for(int i = 0; i < numFiles; i++)
             {
-
-                char oldName = f.Name[0];
-                if (index >= removedIndex)
+                FileInfo f = fileInfo[i];
+                if (!f.Name.Contains("meta"))
                 {
-                    print("old name: " + oldName + ".png");
-                    print("new name: " + index + ".png");
-                    string oldFPath = pathNoFile + oldName + ".png";
-                    string newFPath = pathNoFile + index + ".png";
-                    FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
-                    yield return new WaitForEndOfFrame();
 
-                    
-                    crUI.UpdateCR(index, cRollStorage[index].captureData);
-                    photo grab = cRollStorage[index];
-                    grab.fileName = newFPath;
-                    yield return new WaitForEndOfFrame();
+                    char oldName = f.Name[0];
+                    if (index >= removedIndex)
+                    {
+                        print("old name: " + oldName + ".png");
+                        print("new name: " + index + ".png");
+                        string oldFPath = pathNoFile + oldName + ".png";
+                        string newFPath = pathNoFile + index + ".png";
+                        FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                        yield return new WaitForEndOfFrame();
+                        photo grab = cRollStorage[index];
+                        photo newPhoto = new photo
+                        {
+                            fileName = newFPath,
+                            inView = grab.inView,
+                            captureData = grab.captureData
+                        };
+                        cRollStorage.RemoveAt(index);
+                        cRollStorage.Insert(index, newPhoto);
+                        crUI.UpdateCR(index, cRollStorage[index].captureData);
+                        
+                        grab.fileName = newFPath;
+                        yield return new WaitForEndOfFrame();
 
-                    FileUtil.DeleteFileOrDirectory(oldFPath);
-                    yield return new WaitForEndOfFrame();
+                        print("Deleting old file: " + oldFPath);
+                        bool result = FileUtil.DeleteFileOrDirectory(oldFPath);
+                        if (result)
+                        {
+                            print("Deleted file!");
+                        } else
+                        {
+                            print("Failed to delete file. Trying again after wait.");
+                            yield return new WaitForEndOfFrame();
+                            FileUtil.DeleteFileOrDirectory(oldFPath);
+                        }
+                        yield return new WaitForEndOfFrame();
+                        AssetDatabase.Refresh();
+                    }
+                    index++;
                 }
-                index++;
             }
+            print("Files Used: " + index);
         }
+       
 
         print("Updating final camera roll slot after shift.");
 

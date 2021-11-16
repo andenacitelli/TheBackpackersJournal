@@ -52,12 +52,16 @@ public class GalleryStorage : MonoBehaviour
         cameraRollUI.OpenCRStorage();
     }
 
-    public string ReceivePhoto(int crIndex, photo grab)
+    public photo ReceivePhoto(int crIndex, photo grab)
     {
         //crIndex is the moved camera roll index - in case it's needed
         Debug.Log("Recieved Photo in gallery storage");
-        
-        lastIndex = gallery.IndexOf(grab);
+
+        lastIndex = gallery.Count;
+        if(lastIndex < 0)
+        {
+            lastIndex = 0;
+        }
         galleryUIstart.SetActive(false);
         
         //calculate score?
@@ -65,7 +69,16 @@ public class GalleryStorage : MonoBehaviour
         galleryUIscale.SetActive(true);
 
         string newFName = Application.persistentDataPath + "/PhotoStorage/" + cameraRoll.profileName + "/GalleryRoll/" + lastIndex + ".png";
-        return newFName;
+
+        photo newPhoto = new photo
+        {
+            captureData = grab.captureData,
+            inView = grab.inView,
+            fileName = newFName
+        };
+        gallery.Insert(lastIndex, newPhoto);
+        newPhoto.inStorage = 1;
+        return newPhoto;
     }
 
     public void IncreaseScale()
