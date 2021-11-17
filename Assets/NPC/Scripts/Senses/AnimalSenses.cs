@@ -71,6 +71,7 @@ public class AnimalSenses : MonoBehaviour
             // verify creatures in sphere
             foreach (var seen in seenInRadius)
             {
+                // TODO: fix the null reference issue after destroyed
                 Transform seenTransform = seen.transform;
                 Vector3 dirToSeen = (seenTransform.position - transform.position).normalized;
                 Creature seenCreature;

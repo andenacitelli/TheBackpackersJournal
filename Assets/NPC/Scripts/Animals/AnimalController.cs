@@ -5,7 +5,7 @@ using Assets.WorldGen;
 
 public class AnimalController : MonoBehaviour
 {
-    [SerializeField] private bool inEvent = false;
+    //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
     [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
@@ -18,7 +18,7 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
-    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 50.0f;
+//    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 50.0f;
     [SerializeField] public Bounds territory;
 
 
