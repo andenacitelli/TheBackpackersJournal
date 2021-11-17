@@ -44,7 +44,54 @@ public class GalleryStorage : MonoBehaviour
 
     public void LoadGRoll(Save s)
     {
+        string profileName = s.playerName;
+        gallery = new List<photo>();
+        if (profileName != "")
+        {
+            string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/GalleryRoll/";
+            DirectoryInfo info = new DirectoryInfo(pathNoFile);
+            /*if (!info.Exists)
+            {
+                info.Create();
+            }*/
+            FileInfo[] fileInfo = info.GetFiles();
+            int index = 0;
+            photo[] loadArray = s.gallRoll;
+            foreach (FileInfo f in fileInfo)
+            {
+                if (!f.Name.Contains("meta"))
+                {
+                    photo grabPhoto = loadArray[index];
+                    string path = "/PhotoStorage/" + profileName + "/GalleryRoll/" + index;
+                    string absolutePath = pathNoFile + f.Name;
+                    Texture2D t2D = new Texture2D(Screen.width, Screen.height);
 
+                    byte[] data = File.ReadAllBytes(absolutePath);
+                    ImageConversion.LoadImage(t2D, data);
+                    t2D.Apply();
+
+                    photo newPhoto = new photo
+                    {
+                        captureData = t2D,
+                        fileName = absolutePath,
+                        inView = grabPhoto.inView,
+                        inStorage = 1,
+                        wallX = grabPhoto.wallX,
+                        wallY = grabPhoto.wallY,
+                        wallZ = grabPhoto.wallZ,
+                        wallName = grabPhoto.wallName,
+                        scaleX = grabPhoto.scaleX,
+                        scaleY = grabPhoto.scaleY
+
+                    };
+                    gallery.Insert(index, newPhoto);
+
+                    index++;
+                }
+
+
+            }
+        }
     }
     public void StartGalleryStorage()
     {
@@ -104,6 +151,11 @@ public class GalleryStorage : MonoBehaviour
         editingStorageOn = true;
         StartCoroutine(storageEditingMode());
         ExitGalleryStorage();
+    }
+
+    public void ManageGallery()
+    {
+        print("Manage Gallery started");
     }
 
     public void FinishStoragePlace(GameObject frame, Vector3 storePoint)
