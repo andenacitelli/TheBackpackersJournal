@@ -41,6 +41,11 @@ public class GalleryStorage : MonoBehaviour
         isOn = false;
         scaleModifier = -1;
     }
+
+    public void LoadGRoll(Save s)
+    {
+
+    }
     public void StartGalleryStorage()
     {
         galleryStorageUI.SetActive(true);
@@ -60,6 +65,7 @@ public class GalleryStorage : MonoBehaviour
         lastIndex = gallery.Count;
         if(lastIndex < 0)
         {
+            // first gallery placement
             lastIndex = 0;
         }
         galleryUIstart.SetActive(false);
@@ -100,20 +106,37 @@ public class GalleryStorage : MonoBehaviour
         ExitGalleryStorage();
     }
 
-    public void FinishStoragePlace(GameObject frame)
+    public void FinishStoragePlace(GameObject frame, Vector3 storePoint)
     {
         Image display = frame.GetComponentInChildren<Image>();
-        Vector3 framePos = frame.transform.parent.position;
-        //get photo from gallerystorage here
+        string newWallName = frame.transform.parent.gameObject.name;
         photo grabP = gallery[lastIndex];
-        grabP.wallX = framePos.x;
-        grabP.wallY = framePos.y;
-        grabP.wallZ = framePos.z;
+        gallery.Remove(grabP);
+        float newXScale = frame.transform.localScale.x;
+        float newYScale = frame.transform.localScale.y;
+        //Create new photo bc I cant write to existing structs
+        photo newPhoto = new photo
+        {
+            fileName = grabP.fileName,
+            captureData = grabP.captureData,
+            inView = grabP.inView,
+            inStorage = 1,
+            wallX = storePoint.x,
+            wallY = storePoint.y,
+            wallZ = storePoint.z,
+            wallName = newWallName,
+            scaleX = newXScale,
+            scaleY = newYScale
+        };
+        
+        //replace where the grabbed photo was
+        gallery.Insert(lastIndex, newPhoto);
         Sprite newS = Sprite.Create(grabP.captureData, new Rect(0.0f, 0.0f, grabP.captureData.width, grabP.captureData.height), new Vector2(0.0f, 0.0f), display.pixelsPerUnit);
         display.sprite = newS;
         Color holdColor = new Color(255f, 255f, 255f);
         display.color = holdColor;
         editingStorageOn = false;
+        isOn = false;
     }
 
     public void ExitGalleryStorage()
@@ -157,7 +180,6 @@ public class GalleryStorage : MonoBehaviour
     public async void WriteFile(string fileName, Texture2D data)
     {
         byte[] rawData = data.EncodeToPNG();
-        string pName = PlayerPrefs.GetString("profileName");
 
         
         using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))

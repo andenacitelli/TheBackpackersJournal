@@ -23,9 +23,16 @@ public struct photo
 
     public int inStorage;
     public string wallName;
+    [XmlElement("coordX")]
     public float wallX;
+    [XmlElement("coordY")]
     public float wallY;
+    [XmlElement("coordZ")]
     public float wallZ;
+    [XmlElement("wallScaleX")]
+    public float scaleX;
+    [XmlElement("wallScaleY")]
+    public float scaleY;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -156,10 +163,12 @@ public class CameraRoll : MonoBehaviour
 
     private IEnumerator TransferFiles(string oldFName, string newFName)
     {
-        FileUtil.CopyFileOrDirectory(oldFName, newFName);
+        //FileUtil.CopyFileOrDirectory(oldFName, newFName);
+        File.Copy(oldFName, newFName);
         yield return new WaitForEndOfFrame();
 
-        FileUtil.DeleteFileOrDirectory(oldFName);
+        //FileUtil.DeleteFileOrDirectory(oldFName);
+        File.Delete(oldFName);
         yield return new WaitForEndOfFrame();
 
     }
@@ -191,7 +200,8 @@ public class CameraRoll : MonoBehaviour
                         print("new name: " + index + ".png");
                         string oldFPath = pathNoFile + oldName + ".png";
                         string newFPath = pathNoFile + index + ".png";
-                        FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                        //FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                        File.Copy(oldFPath, newFPath);
                         yield return new WaitForEndOfFrame();
                         photo grab = cRollStorage[index];
                         photo newPhoto = new photo
@@ -208,8 +218,9 @@ public class CameraRoll : MonoBehaviour
                         yield return new WaitForEndOfFrame();
 
                         print("Deleting old file: " + oldFPath);
-                        bool result = FileUtil.DeleteFileOrDirectory(oldFPath);
-                        if (result)
+                        //bool result = FileUtil.DeleteFileOrDirectory(oldFPath);
+                        File.Delete(oldFPath);
+                        /*if (result)
                         {
                             print("Deleted file!");
                         } else
@@ -217,9 +228,9 @@ public class CameraRoll : MonoBehaviour
                             print("Failed to delete file. Trying again after wait.");
                             yield return new WaitForEndOfFrame();
                             FileUtil.DeleteFileOrDirectory(oldFPath);
-                        }
+                        }*/
                         yield return new WaitForEndOfFrame();
-                        AssetDatabase.Refresh();
+                        //AssetDatabase.Refresh();
                     }
                     index++;
                 }

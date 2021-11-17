@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
         {
             AssignSaveOnStart(newSave);
             cr.LoadCRoll(newSave);
+            storage.LoadGRoll(newSave);
         }
         
         polC = cameraC.GetComponent<PolaroidController>();

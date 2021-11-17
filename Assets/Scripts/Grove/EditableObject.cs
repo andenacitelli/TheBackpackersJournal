@@ -28,11 +28,11 @@ public class EditableObject : MonoBehaviour
         Vector3 storePoint = frame.transform.position;
         //probably dont need
         frame.transform.position = storePoint;
-
+        
         transform.InverseTransformPoint(storePoint);
         frame.transform.parent = transform;
         storedOnThisWall.Add(frame, storePoint);
-        gallery.FinishStoragePlace(frame);
+        gallery.FinishStoragePlace(frame, storePoint);
     }
 
     public bool CanPlaceHere(GameObject frame)
