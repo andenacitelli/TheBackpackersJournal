@@ -29,10 +29,10 @@ public struct photo
     public float wallY;
     [XmlElement("coordZ")]
     public float wallZ;
-    [XmlElement("wallScaleX")]
-    public float scaleX;
-    [XmlElement("wallScaleY")]
-    public float scaleY;
+    [XmlElement("frameScale")]
+    public Vector3 scale;
+    [XmlElement("frameRot")]
+    public Quaternion q;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing

@@ -62,4 +62,14 @@ public class EditableObject : MonoBehaviour
 
         return overlapDetect;
     }
+
+    public void LoadFrame(GameObject newFrame, Vector3 storeCoords)
+    {
+        newFrame.transform.localPosition = storeCoords;
+        Vector3 worldCoords = transform.TransformVector(storeCoords);
+        Vector3 ptOnBound = validPlacement.ClosestPoint(worldCoords);
+        storedOnThisWall.Add(newFrame, worldCoords);
+        //newFrame.transform.LookAt(ptOnBound.normalized);
+        //gallery.FinishStoragePlace(newFrame, storeCoords);
+    }
 }

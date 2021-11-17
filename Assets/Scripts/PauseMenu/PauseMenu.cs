@@ -154,7 +154,7 @@ public class PauseMenu : MonoBehaviour
             print("profileName pref set to: " + s);
             PlayerPrefs.SetString("profileName", s);
             Save save = createSaveGameObject(s);
-            XmlDocument xmlDoc = new XmlDocument();
+            //XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
             string dataPath = Application.persistentDataPath + "/XMLSaves/";
             DirectoryInfo xmlSaveInfo = new DirectoryInfo(dataPath);

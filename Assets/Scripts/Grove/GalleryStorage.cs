@@ -15,6 +15,9 @@ public class GalleryStorage : MonoBehaviour
     public GameObject polaroidCamera;
     public GameObject galleryUIstart;
     public GameObject galleryUIscale;
+    public GameObject framePrefab;
+    [SerializeField]
+    public List<EditableObject> wallList;
     public bool isOn { get; set; }
     public bool editingStorageOn { get; set; }
     public int scaleModifier { get; set; }
@@ -25,12 +28,16 @@ public class GalleryStorage : MonoBehaviour
     public List<photo> gallery; 
     public photo lastPhotoPtr;
     private GalleryScaleUI rescale;
+    
     private int lastIndex;
 
 
     private void Awake()
     {
-        gallery = new List<photo>();
+        if(gallery == null)
+        {
+            gallery = new List<photo>();
+        }
     }
     private void Start()
     {
@@ -80,18 +87,51 @@ public class GalleryStorage : MonoBehaviour
                         wallY = grabPhoto.wallY,
                         wallZ = grabPhoto.wallZ,
                         wallName = grabPhoto.wallName,
-                        scaleX = grabPhoto.scaleX,
-                        scaleY = grabPhoto.scaleY
+                        scale = grabPhoto.scale,
+                        q = grabPhoto.q
 
                     };
+
                     gallery.Insert(index, newPhoto);
 
+                    foreach(EditableObject wall in wallList)
+                    {
+                        if(wall.wallName == newPhoto.wallName)
+                        {
+                            //lastIndex = index;
+                            Vector3 frameScale = newPhoto.scale;
+                            Vector3 framePos = new Vector3(newPhoto.wallX, newPhoto.wallY, newPhoto.wallZ);
+                            Quaternion q = grabPhoto.q;
+                            StartCoroutine(LoadFrame(wall, framePos, frameScale, t2D, q));
+                            break;
+                        }
+                    }
+                    
                     index++;
                 }
 
 
             }
         }
+    }
+
+    public IEnumerator LoadFrame(EditableObject wall, Vector3 framePos, Vector3 frameScale, Texture2D pic, Quaternion q)
+    {
+        GameObject newFrame = Instantiate(framePrefab, wall.transform);
+        yield return new WaitForEndOfFrame();
+        Image display = newFrame.GetComponentInChildren<Image>();
+        yield return new WaitForEndOfFrame();
+        //print(newPhoto.captureData.width);
+        Sprite newS = Sprite.Create(pic, new Rect(0.0f, 0.0f, pic.width, pic.height), new Vector2(0.0f, 0.0f), display.pixelsPerUnit);
+        yield return new WaitForEndOfFrame();
+        display.sprite = newS;
+        Color holdColor = new Color(255f, 255f, 255f);
+        display.color = holdColor;
+
+        newFrame.transform.localScale = frameScale;
+        newFrame.transform.rotation = q;
+        wall.LoadFrame(newFrame, framePos);
+        yield return new WaitForEndOfFrame();
     }
     public void StartGalleryStorage()
     {
@@ -107,10 +147,11 @@ public class GalleryStorage : MonoBehaviour
     public photo ReceivePhoto(int crIndex, photo grab)
     {
         //crIndex is the moved camera roll index - in case it's needed
-        Debug.Log("Recieved Photo in gallery storage");
+        
 
         lastIndex = gallery.Count;
-        if(lastIndex < 0)
+        Debug.Log("Recieved Photo in gallery storage - current count: " + lastIndex);
+        if (lastIndex < 0)
         {
             // first gallery placement
             lastIndex = 0;
@@ -147,6 +188,7 @@ public class GalleryStorage : MonoBehaviour
     {
         //Scale is an int where 0 = 25%, 1 = 50%, 2 = 80%, 3 = 100%, 4 = 120%, 5 = 150% (of original size)
         int chosenScale = rescale.currentSizeIndex;
+        rescale.ResetRect();
         scaleModifier = chosenScale;
         editingStorageOn = true;
         StartCoroutine(storageEditingMode());
@@ -164,8 +206,10 @@ public class GalleryStorage : MonoBehaviour
         string newWallName = frame.transform.parent.gameObject.name;
         photo grabP = gallery[lastIndex];
         gallery.Remove(grabP);
-        float newXScale = frame.transform.localScale.x;
-        float newYScale = frame.transform.localScale.y;
+        Vector3 newScale = frame.transform.localScale;
+        Vector3 localStore = frame.transform.localPosition;
+        Quaternion newQ = frame.transform.rotation;
+        Vector3 euler = frame.transform.localEulerAngles;
         //Create new photo bc I cant write to existing structs
         photo newPhoto = new photo
         {
@@ -173,12 +217,12 @@ public class GalleryStorage : MonoBehaviour
             captureData = grabP.captureData,
             inView = grabP.inView,
             inStorage = 1,
-            wallX = storePoint.x,
-            wallY = storePoint.y,
-            wallZ = storePoint.z,
+            wallX = localStore.x,
+            wallY = localStore.y,
+            wallZ = localStore.z,
             wallName = newWallName,
-            scaleX = newXScale,
-            scaleY = newYScale
+            scale = newScale,
+            q = newQ
         };
         
         //replace where the grabbed photo was
@@ -189,6 +233,7 @@ public class GalleryStorage : MonoBehaviour
         display.color = holdColor;
         editingStorageOn = false;
         isOn = false;
+        scaleModifier = 3;
     }
 
     public void ExitGalleryStorage()
