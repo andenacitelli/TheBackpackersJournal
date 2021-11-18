@@ -42,7 +42,7 @@ public class Horse : PreyController
         {
             yield return new WaitUntil(IsFleeing);
             AnimalPlaySound("run");
-            yield return null;
+            while (IsFleeing()) yield return null;
         }
     }
 

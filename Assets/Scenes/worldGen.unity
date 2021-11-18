@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.17379376, g: 0.20892765, b: 0.25182813, a: 1}
+  m_IndirectSpecularColor: {r: 0.17379464, g: 0.20892873, b: 0.2518292, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 318097874}
   - component: {fileID: 318097872}
   m_Layer: 0
-  m_Name: Spawn Manager
+  m_Name: SpawnManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -153,12 +153,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c92361393e0b8243a86335436047d99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  commonPrey:
+  availablePrey:
   - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
-  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
   - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
+  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
   - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
-  commonPredators:
+  availablePredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
 --- !u!4 &318097873
 Transform:
@@ -201,7 +201,7 @@ MonoBehaviour:
   maxPlayerDistance: 200
   aboveGroundDistance: 1
   maxSpawnCenterDistance: 10
-  minAnimalDistance: 0.5
+  minAnimalDistance: 1
   despawnRange: 60
   despawnDelaySeconds: 20
 --- !u!1 &521344237 stripped

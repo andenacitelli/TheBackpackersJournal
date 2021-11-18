@@ -19,7 +19,8 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
-//    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 50.0f;
+
+    // TODO: remove territory. instead have roaming points use chunk area
     [SerializeField] public Bounds territory;
 
 
@@ -81,7 +82,7 @@ public class AnimalController : MonoBehaviour
     }
 
     // Animal behavior
-    void Start()
+    void Awake()
     {
         currentSpeed = WalkSpeed;
 
@@ -92,11 +93,14 @@ public class AnimalController : MonoBehaviour
 
         audioManager = FindObjectOfType<AudioManager>();
         audioSource = GetComponent<AudioSource>();
+    }
 
+    // call to start the animal doing its thing after placing in world
+    public void LetsGetGoing()
+    {
         Initialize();
         StartCoroutine(AnimalBehavior());
     }
-
     // returns true when within tolerance distance of destination
     bool AtTarget()
     {
@@ -123,8 +127,9 @@ public class AnimalController : MonoBehaviour
     //
     protected void AnimalPlaySound(string shorthand)
     {
-        audioManager.Assign3DSource(audioSource, TrueSoundName(shorthand));
-        audioManager.Play(name);
+        string soundName = TrueSoundName(shorthand);
+        audioManager.Assign3DSource(audioSource, soundName);
+        audioManager.Play(soundName);
     }
 
     protected virtual IEnumerator TriggeredSounds() { yield return null; }

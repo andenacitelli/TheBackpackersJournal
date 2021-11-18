@@ -68,7 +68,7 @@ public class Deer : PreyController
         {
             yield return new WaitUntil(IsFleeing);
             AnimalPlaySound("bleat");
-            yield return null;
+            while (IsFleeing()) yield return null;
         }
     }
 

@@ -1150,7 +1150,8 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
   animTransitionTime: 1
-  audioManagerNames: []
+  audioManagerNames:
+  - RabbitDead
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   eatTime: 5

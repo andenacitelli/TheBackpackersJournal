@@ -22,7 +22,7 @@ public class SpawnManager : MonoBehaviour
     // containers to keep animals and events organized from everything else
     GameObject animalsHolder;
 
-    void Start()
+    void Awake()
     {
         spawnSettings = GetComponent<SpawnSettings>();
 
@@ -30,14 +30,19 @@ public class SpawnManager : MonoBehaviour
         creatureTypeNoise = gameObject.AddComponent<Noise>();
         creatureTypeNoise.scale = 200.0f; // hopefully less change around a small area so you're more likely to spawn groups of the same kind
 
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         // create animal and wildlife event containers
         animalsHolder = new GameObject("Animals");
         animalsHolder.transform.SetParent(transform, true);
         //eventsHolder = new GameObject("Events");
         //eventsHolder.transform.SetParent(transform, true);
+    }
 
+    // start the spawning coroutines and store reference to the player
+    public void BeginSpawning(Transform playerTransform)
+    {
+        Debug.Log("Spawning started");
+        this.playerTransform = playerTransform;
 
         // begin spawning animals and wildlife events into the world
         StartCoroutine(AnimalSpawner());
@@ -235,6 +240,12 @@ public class SpawnManager : MonoBehaviour
             if (newSpawn == null) Debug.Log("GameObject not placed in world. spawn Failed");
             else
             {
+                // set movement bounds and start animal behavior
+                AnimalController animal = newSpawn.GetComponent<PreyController>();
+                if (animal == null) animal = newSpawn.GetComponent<PredatorController>();
+                animal.territory = new Bounds(GetChunkCoordinates(newSpawn.transform.position.x, newSpawn.transform.position.z), new Vector3(ChunkGen.size, 10.0f, ChunkGen.size));
+                animal.LetsGetGoing();
+
                 // fix the name
                 CleanName(newSpawn);
 
@@ -322,6 +333,7 @@ public class SpawnManager : MonoBehaviour
         while (AnimalInRange(animal.transform.position))
         {
             yield return null;
+            if (animal == null) yield break;
         }
         Debug.Log($"{animal.name} too far away. Despawning.");
         // remove animal from list, and destroy in game

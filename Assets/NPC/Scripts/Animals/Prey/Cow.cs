@@ -39,6 +39,17 @@ public class Cow : PreyController
         GetNewRoamingDestination();
 
     }
+
+    protected override IEnumerator PlayFleeSound()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(IsFleeing);
+            AnimalPlaySound("run");
+            while (IsFleeing()) yield return null;
+        }
+    }
+
     // changes the sound that the cow makes to a random
     private string ChangeMoo()
     {
