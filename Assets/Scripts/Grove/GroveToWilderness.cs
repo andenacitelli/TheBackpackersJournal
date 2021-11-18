@@ -61,6 +61,15 @@ public class GroveToWilderness : MonoBehaviour
         Vector3 currPos = player.transform.position;
         player.transform.position = new Vector3(currPos.x, currPos.y + 50f, currPos.z);
 
+        // tell spawn manager to begin spawning
+        GameObject spawnerGO = GameObject.Find("SpawnManager");
+        SpawnManager spawnM = spawnerGO.GetComponent<SpawnManager>();
+        spawnM.BeginSpawning(player.transform);
+
+        // disable the worldgen player
+        GameObject worldGenPlayer = GameObject.Find("WorldGenPlayer");
+        worldGenPlayer.SetActive(false);
+
         //This would be the spot for a loading screen or something
         // Pass up to GameManager
         groveVisual.SetActive(false);

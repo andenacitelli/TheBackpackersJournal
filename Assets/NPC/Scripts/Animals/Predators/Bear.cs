@@ -12,8 +12,12 @@ public class Bear : PredatorController
     protected override void Initialize()
     {
         base.Initialize();
-        //audioManager.Assign3DSource(audioSource, soundNames[0]);
+        sounds.Add("growl", 0);
+        sounds.Add("growl1", 1);
+        sounds.Add("snarl", 2);
+        sounds.Add("roar", 3);
     }
+
     protected override IEnumerator ActionAtTarget()
     {
         yield return StartCoroutine(base.ActionAtTarget());
@@ -24,6 +28,37 @@ public class Bear : PredatorController
 
         // get a new wander target, and restart hunt detection
         GetNewRoamingDestination();
+    }
+
+    protected override IEnumerator AttackBehavior()
+    {
+        int randChoice = Random.Range(0, 3);
+        switch (randChoice)
+        {
+            case 0: // bite
+                Animations.SetTrigger("bite attack");
+                break;
+            case 1: // paw
+                Animations.SetTrigger("paw attack");
+                break;
+            case 2: // paws
+                Animations.SetTrigger("paws attack");
+                break;
+        }
+
+        AnimalPlaySound("snarl");
+
+        // tell prey it's been hit
+        yield return StartCoroutine(AffectPrey());
+
+        // end the timer because no longer hunting
+        StopCoroutine(HuntTimer());
+
+        // eat the kill for the set time
+        AnimalPlaySound("growl1");
+        yield return StartCoroutine(WaitOnAnimationState("Eat"));
+
+        yield return new WaitForSeconds(eatTime);
     }
 
     protected override IEnumerator IdleBehavior()
@@ -46,40 +81,6 @@ public class Bear : PredatorController
                 break;
         }
     }
-    
-    protected override IEnumerator AttackBehavior()
-    {
-        int randChoice = Random.Range(0, 3);
-        switch (randChoice)
-        {
-            case 0: // bite
-                Animations.SetTrigger("bite attack");
-                break;
-            case 1: // paw
-                Animations.SetTrigger("paw attack");
-                break;
-            case 2: // paws
-                Animations.SetTrigger("paws attack");
-                break;
-        }
-
-        PlaySound(soundNames[0]);
-
-        // start target's death sequence
-        PreyController prey = huntingTarget.gameObject.GetComponent<PreyController>();
-        if (prey != null)
-        {
-            prey.StopAllCoroutines();
-            // wait until the target has finished its death animation
-            yield return StartCoroutine(prey.Attacked());
-        }
-
-        // end the timer because no longer hunting
-        StopCoroutine(HuntTimer());
-        // eat the kill for the set time
-        while (!AnimationStateMatchesName("Eat")) yield return null;
-        yield return new WaitForSeconds(eatTime);
-    }
 
     // stand actions when idling
     private IEnumerator IdleStand()
@@ -87,13 +88,13 @@ public class Bear : PredatorController
         Animations.SetTrigger("stand");
 
         // wait until the transition to standing finishes
-        while (!AnimationStateMatchesName("Standing")) yield return null;
+        yield return StartCoroutine(WaitOnAnimationState("Standing"));
 
         // 75% chance to scratch, 25% to roar
         if (Random.Range(0.0f, 100.0f) < 25.0f)
         {
             Animations.SetTrigger("roar");
-            PlaySound(soundNames[0]);
+            AnimalPlaySound("roar");
         }
         else Animations.SetTrigger("scratch");
 
@@ -106,10 +107,10 @@ public class Bear : PredatorController
     {
         // trigger transition and play sound
         Animations.SetTrigger("roar");
-        PlaySound(soundNames[0]);
+        AnimalPlaySound("roar");
 
         // wait until the animation starts and finishes
-        while (!AnimationStateMatchesName("Roaring")) yield return null;
+        yield return StartCoroutine(WaitOnAnimationState("Roaring"));
         yield return new WaitUntil(IsIdling);
     }    
 
@@ -118,9 +119,9 @@ public class Bear : PredatorController
     {
         // trigger transition
         Animations.SetTrigger("smell");
-        
+
         // wait animation to start
-        while (!AnimationStateMatchesName("Smelling")) yield return null;
+        yield return StartCoroutine(WaitOnAnimationState("Smelling"));
 
         // select action to take
         int randChoice = Random.Range(0, 3);
@@ -128,14 +129,15 @@ public class Bear : PredatorController
         {
             case 0: // drink
                 Animations.SetTrigger("drink");
-                while (!AnimationStateMatchesName("Drinking")) yield return null;
+                yield return StartCoroutine(WaitOnAnimationState("Drinking"));
                 Animations.ResetTrigger("drink");
-                while (!AnimationStateMatchesName("Smelling")) yield return null;
+                yield return StartCoroutine(WaitOnAnimationState("Smelling"));
                 break;
             case 1: // dig
                 Animations.SetTrigger("dig");
-                while (!AnimationStateMatchesName("Digging")) yield return null;
-                while (!AnimationStateMatchesName("Smelling")) yield return null;
+                yield return StartCoroutine(WaitOnAnimationState("Digging"));
+                AnimalPlaySound("growl");
+                yield return StartCoroutine(WaitOnAnimationState("Smelling"));
                 break;
             case 2: // sit
                 // just yield for a frame, it sits after by default anyway
@@ -145,19 +147,20 @@ public class Bear : PredatorController
 
         // exit smelling state and move to sitting
         Animations.SetTrigger("sit");
-        while (!AnimationStateMatchesName("Sitting Look")) yield return null;
+        yield return StartCoroutine(WaitOnAnimationState("Sitting Look"));
 
         // 50% chance to sleep, 50% to get back up
         if (Random.Range(0.0f, 100.0f) < 50.0f) Animations.SetTrigger("stand");
         else
         {
             Animations.SetTrigger("sleep");
-            while (!AnimationStateMatchesName("Sleeping")) yield return null;
+            yield return StartCoroutine(WaitOnAnimationState("Sleeping"));
             // sleep for the set duration
             yield return new WaitForSeconds(sleepTime);
             Animations.SetTrigger("wake");
         }
 
+        AnimalPlaySound("growl");
         // wait until transitions finish
         yield return new WaitUntil(IsIdling);
 

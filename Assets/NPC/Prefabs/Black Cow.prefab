@@ -529,8 +529,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244760467543844}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 19}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4427839542157034}
@@ -569,7 +569,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.9
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 90
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -583,7 +583,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1244760467543844}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.8
   m_Height: 3
   m_Direction: 2
@@ -613,7 +613,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 672d9c98942920a4881aec18d81fa5e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inEvent: 0
   canFly: 0
   movementSpeed: 0.5
   dashSpeed: 1
@@ -622,13 +621,18 @@ MonoBehaviour:
   newTargetDelay: 0.5
   currentSpeed: 0
   newLocationMinDistance: 5
-  newLocationMaxDistance: 50
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
   animTransitionTime: 0.5
-  soundNames:
-  - moosephStalin
+  audioManagerNames:
+  - CowDead
+  - CowFlee
+  - CowMoo
+  - 2Cow2Moo
+  - TokyCowMoo
+  - CowAndMoo
+  - Moo5
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   eatTime: 3

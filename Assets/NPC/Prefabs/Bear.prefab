@@ -193,7 +193,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.9
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 90
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -237,7 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acd393c74f7e9064f914a940fd44705b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inEvent: 0
   canFly: 0
   movementSpeed: 1
   dashSpeed: 5.5
@@ -246,14 +245,16 @@ MonoBehaviour:
   newTargetDelay: 2
   currentSpeed: 0
   newLocationMinDistance: 3
-  newLocationMaxDistance: 50
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
   animTransitionTime: 0.5
-  huntTimeout: 5
-  soundNames:
+  audioManagerNames:
+  - BearGrowl
+  - BearGrowlAlt
+  - BearSnarl
   - BearRoar
+  huntTimeout: 5
   sleepTime: 10
   eatTime: 5
 --- !u!114 &6231814617072822572
@@ -289,7 +290,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
