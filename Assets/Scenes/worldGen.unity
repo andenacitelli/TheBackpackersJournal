@@ -202,8 +202,7 @@ MonoBehaviour:
   aboveGroundDistance: 1
   maxSpawnCenterDistance: 10
   minAnimalDistance: 1
-  despawnRange: 60
-  despawnDelaySeconds: 20
+  despawnDelaySeconds: 120
 --- !u!1 &521344237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2731847667364621170, guid: 58d784a71e1628e42880c15717248e3e, type: 3}

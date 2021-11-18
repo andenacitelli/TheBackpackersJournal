@@ -28,7 +28,6 @@ public class SpawnSettings : MonoBehaviour
 
 
     [Header("Despawning")]
-    public float despawnRange = 60.0f;
     public float despawnDelaySeconds = 120.0f;
 
 }
