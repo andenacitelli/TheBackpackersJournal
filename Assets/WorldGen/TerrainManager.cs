@@ -32,7 +32,7 @@ public class TerrainManager : MonoBehaviour
 
         // Initialize noise functions used by World Generation
         heightNoise = gameObject.AddComponent<Noise>(); // Heightmap
-        heightNoise.scale = 130;
+        heightNoise.scale = 170;
         colorRandomizationNoise = gameObject.AddComponent<Noise>(); // Used to tweak vertex colors a bit to give us a more tesselated look
         colorRandomizationNoise.scale = 50;
         heightFuzzingNoise = gameObject.AddComponent<Noise>(); // Used to make biome height boundaries a little more fuzzy to avoid the discrete layers look
