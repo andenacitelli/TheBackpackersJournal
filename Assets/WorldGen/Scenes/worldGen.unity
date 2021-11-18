@@ -625,6 +625,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldGenPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 2731847666348560378, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560380, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_Enabled
       value: 1
