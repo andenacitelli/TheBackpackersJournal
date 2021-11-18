@@ -139,7 +139,7 @@ MonoBehaviour:
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}
   coords: {x: 0, y: 0}
-  heightMultiplier: 120
+  heightMultiplier: 100
   heightCurve:
     serializedVersion: 2
     m_Curve:
