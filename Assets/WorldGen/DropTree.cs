@@ -42,6 +42,7 @@ public class DropTree : MonoBehaviour
     static private List<(int, int)> touchedChunks;
     static private Noise treeNoise;
     static private Noise mushroomNoise;
+    static private Noise grassNoise;
     static private List<Random> plantRandoms;
     static private Random chunkRand;
     static private (int, int) gridCount;
@@ -60,6 +61,7 @@ public class DropTree : MonoBehaviour
     {
         treeNoise = gameObject.AddComponent<Noise>();
         mushroomNoise = gameObject.AddComponent<Noise>();
+        grassNoise = gameObject.AddComponent<Noise>();
         currentChunks = TerrainManager.getChunksCords();
         currentChunks = new List<(int int1, int int2)>();
         toDoChunks = currentChunks;
@@ -160,7 +162,7 @@ public class DropTree : MonoBehaviour
                     if (tempX % 2 == 0f && tempZ % 2 == 0f)
                     {
                         //GenerateTree
-                        if (treeNoise.GetNoiseAtPoint(tempX, tempZ) > 0.65)
+                        if (treeNoise.GetNoiseAtPoint(tempX, tempZ) > 0.7)
                         {
                             if (chunkRand.Next(1, 10) < 5)
                             {
@@ -209,7 +211,8 @@ public class DropTree : MonoBehaviour
                         }
                     }
                     //Generate Grass flower, bush
-                    if (chunkRand.Next(1, 10) < 5)
+
+                    if (grassNoise.GetNoiseAtPoint(tempX, tempZ) > 0.6)
                     {
                         float xFix = (float)chunkRand.NextDouble() - 0.5f;
                         float ZFix = (float)chunkRand.NextDouble() - 0.5f;
@@ -221,7 +224,7 @@ public class DropTree : MonoBehaviour
                         {
                             GameObject prefab = grassPrefabs[plantRandoms[0].Next(0, 39)];
                             float tempRand = (float)chunkRand.NextDouble();
-                            if (tempRand < 0.03)
+                            if (tempRand < 0.01)
                             {
                                 prefab = bushPrefabs[plantRandoms[2].Next(0, 9)];
                             }

@@ -364,8 +364,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainManager: {fileID: 1240365348}
-  GRID_TO_GENERATE_PER_FRAME: 30
-  PLANTS_TO_REMOVE_PER_FRAME: 20
+  GRID_TO_GENERATE_PER_FRAME: 50
+  PLANTS_TO_REMOVE_PER_FRAME: 30
   bushPrefabs:
   - {fileID: 2893395393452431180, guid: eb5315309f00eec4093af8242188a068, type: 3}
   - {fileID: 2933728277987024746, guid: 6026277679f7b5d46a270ed64fb453e6, type: 3}
@@ -637,7 +637,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560380, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: moveSpeed
-      value: 40
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2731847666348560382, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_Enabled
