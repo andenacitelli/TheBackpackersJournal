@@ -19,9 +19,11 @@ public class Deer : PreyController
             maxSleepDuration = minSleepDuration * 2;
         }
 
-        sounds.Add("sound", 0);
+        sounds.Add("dead", 0);
         sounds.Add("bleat", 1);
+        sounds.Add("grunt", 2);
     }
+
     protected override IEnumerator IdleBehavior()
     {
         // start idle animation
@@ -60,6 +62,16 @@ public class Deer : PreyController
 
     }
 
+    protected override IEnumerator PlayFleeSound()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(IsFleeing);
+            AnimalPlaySound("bleat");
+            yield return null;
+        }
+    }
+
     IEnumerator IdleEat()
     {
         // start eating and make a sound
@@ -89,7 +101,7 @@ public class Deer : PreyController
         yield return new WaitForSeconds(Random.Range(minSleepDuration, maxSleepDuration));
 
         // wake back up and stand
-        AnimalPlaySound("sound");
+        AnimalPlaySound("grunt");
         Animations.SetTrigger("wake");
         yield return new WaitUntil(IsIdling);
     }
@@ -99,13 +111,5 @@ public class Deer : PreyController
         Animations.SetTrigger("look left");
         yield return StartCoroutine(WaitOnAnimationState("Looking Left"));
         yield return new WaitUntil(IsIdling);
-    }
-
-    // changes the sound that the cow makes to a random
-    private string ChangeSound()
-    {
-        string newSound = audioManagerNames[Random.Range(0, audioManagerNames.Length)];
-        //audioManager.Assign3DSource(audioSource, newSound);
-        return newSound;
     }
 }

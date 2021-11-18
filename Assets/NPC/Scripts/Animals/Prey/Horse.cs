@@ -9,7 +9,10 @@ public class Horse : PreyController
     protected override void Initialize()
     {
         base.Initialize();
-        //audioManager.Assign3DSource(audioSource, soundNames[0]);
+        sounds.Add("dead", 0);
+        sounds.Add("run", 1);
+        sounds.Add("grunt", 2);
+        sounds.Add("sound", 3);
     }
     protected override IEnumerator IdleBehavior()
     {
@@ -32,11 +35,19 @@ public class Horse : PreyController
         GetNewRoamingDestination();
 
     }
-    // changes the sound that the cow makes to a random
+
+    protected override IEnumerator PlayFleeSound()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(IsFleeing);
+            AnimalPlaySound("run");
+            yield return null;
+        }
+    }
+
     private string ChangeSound()
     {
-        string newSound = audioManagerNames[Random.Range(0, audioManagerNames.Length)];
-        //audioManager.Assign3DSource(audioSource, newMoo);
-        return newSound;
+        return Random.Range(0.0f, 1.0f)<.5?"sound":"grunt";
     }
 }

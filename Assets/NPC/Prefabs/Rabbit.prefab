@@ -1054,7 +1054,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6523815731795233445}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.050214, y: 0, z: -4.507646}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6523815730159171104}
@@ -1094,7 +1094,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 0.285
   m_Radius: 0.1
-  m_SlopeLimit: 45
+  m_SlopeLimit: 90
   m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -1138,7 +1138,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d64c0c8ae927c4ba1eeb2d485b4389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inEvent: 0
   canFly: 0
   movementSpeed: 1
   dashSpeed: 7
@@ -1147,13 +1146,11 @@ MonoBehaviour:
   newTargetDelay: 1.5
   currentSpeed: 0
   newLocationMinDistance: 5
-  newLocationMaxDistance: 10
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 0.5, z: 25}
   animTransitionTime: 1
-  soundNames:
-  - peterCottontail
+  audioManagerNames: []
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   eatTime: 5

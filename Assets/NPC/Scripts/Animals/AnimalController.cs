@@ -7,6 +7,7 @@ public class AnimalController : MonoBehaviour
 {
     //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
+    bool isMoving = false;
     [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
     [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
@@ -126,9 +127,12 @@ public class AnimalController : MonoBehaviour
         audioManager.Play(name);
     }
 
+    protected virtual IEnumerator TriggeredSounds() { yield return null; }
+
     // Carry out all of the animal's functions
     IEnumerator AnimalBehavior()
     {
+        StartCoroutine(TriggeredSounds());
         GetNewRoamingDestination();
         while (true)
         {
@@ -142,7 +146,7 @@ public class AnimalController : MonoBehaviour
     {
         // start moving animations
         Animations.CrossFade("Walk", animTransitionTime);
-
+        isMoving = true;
         while (!AtTarget())
         {
             // adjust target to be in territory
@@ -159,6 +163,7 @@ public class AnimalController : MonoBehaviour
             controller.Move(moveDirection * Time.deltaTime);
             yield return null;
         }
+        isMoving = false;
     }
 
     // very possibly going to get rid of this, makes it so that any animal can't leave the bounds given by maxX, maxY, maxZ

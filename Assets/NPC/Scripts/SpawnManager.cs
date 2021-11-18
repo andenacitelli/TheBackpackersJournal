@@ -6,8 +6,8 @@ using Assets.WorldGen;
 public class SpawnManager : MonoBehaviour
 {
     [Header("Animals to Spawn")]
-    [SerializeField] GameObject[] commonPrey;
-    [SerializeField] GameObject[] commonPredators;
+    [SerializeField] GameObject[] availablePrey;
+    [SerializeField] GameObject[] availablePredators;
 
     [Header("Animal Spawning")]
     // (chunk coordinates, List<animals on the chunk>)
@@ -54,9 +54,14 @@ public class SpawnManager : MonoBehaviour
     }
 
     // Return if the object is still within distance of player as set by despawnRange
-    bool AnimalInRange(GameObject animal)
+    bool AnimalInRange(Vector3 animalPos)
     {
-        return Vector3.Distance(playerTransform.position, animal.transform.position) < spawnSettings.despawnRange;
+        Vector2 animalPos2D = new Vector2(animalPos.x, animalPos.z);
+        Vector2 playerPos2D = new Vector2(playerTransform.position.x, playerTransform.position.z);
+
+        return Vector2.Distance(animalPos2D, playerPos2D) < TerrainManager.generateRadius * ChunkGen.size;
+
+        // return Vector3.Distance(playerTransform.position, animalPos) < spawnSettings.despawnRange;
     }
 
     // Return whether less than the maximum number of animals are spawned
@@ -86,7 +91,7 @@ public class SpawnManager : MonoBehaviour
     GameObject[] GetSpawnSource(Vector3 location)
     {
         // uses the noise at the spawnpoint to figure out what to place
-        return creatureTypeNoise.GetNoiseAtPoint(location.x, location.z) <= spawnSettings.preySpawnChance ? commonPrey : commonPredators;
+        return creatureTypeNoise.GetNoiseAtPoint(location.x, location.z) <= spawnSettings.preySpawnChance ? availablePrey : availablePredators;
     }
 
     // Clean up clone object's name by removing the '(Clone)' to help with photo ID
@@ -173,34 +178,6 @@ public class SpawnManager : MonoBehaviour
 
     }
 
-    // Spawn a single animal gameobject into the game world, returns the object spawned
-    GameObject SpawnRandomAnimalFromSource(Vector3 center, GameObject[] source)
-    {
-        GameObject newSpawn;
-
-        //if (source == commonPrey) Debug.Log("Spawning a prey");
-        //else if (source == commonPredators) Debug.Log("Spawning a predator");
-        //else Debug.Log("Spawning from other source.");
-
-        // spawn random animal from source at location
-        newSpawn = Instantiate(source[Random.Range(0, source.Length)], center, Quaternion.identity, animalsHolder.transform);
-
-        if (newSpawn == null) Debug.Log("Issue while spawning animal");
-        else
-        {
-            // adjust the name
-            CleanName(newSpawn);
-
-            // start despawn timer
-            StartCoroutine(AnimalDespawnTimer(newSpawn));
-            Debug.Log($"{newSpawn.name} spawned into the world.");
-
-            Debug.Log($"SPAWNING {newSpawn.name} ON CHUNK AT {GetChunkCoordinates(center.x, center.z)}");
-        }
-
-        return newSpawn;
-    }
-
     GameObject NoiseSpawn(Vector3 spawnPoint)
     {
         // use quantity to determine predator/prey distribution
@@ -262,7 +239,7 @@ public class SpawnManager : MonoBehaviour
                 CleanName(newSpawn);
 
                 // start despawn timer
-                StartCoroutine(AnimalDespawnTimer(newSpawn));
+                StartCoroutine(AnimalDespawner(newSpawn));
                 //Debug.Log($"SPAWNING {newSpawn.name} ON CHUNK AT {GetChunkCoordinates(spawnPoint.x, spawnPoint.z)}");
 
                 // add to world animals
@@ -340,13 +317,13 @@ public class SpawnManager : MonoBehaviour
     }
 
     // Despawn animal after despawn conditions are met
-    IEnumerator AnimalDespawnTimer(GameObject animal)
+    IEnumerator AnimalDespawner(GameObject animal)
     {
-        do
-        { // wait for despawn timer to hit, and then if player is out of range get rid of the animal
-            yield return new WaitForSeconds(spawnSettings.despawnDelaySeconds);
-        } while (AnimalInRange(animal));
-
+        while (AnimalInRange(animal.transform.position))
+        {
+            yield return null;
+        }
+        Debug.Log($"{animal.name} too far away. Despawning.");
         // remove animal from list, and destroy in game
         RemoveFromAnimals(animal, true);
     }

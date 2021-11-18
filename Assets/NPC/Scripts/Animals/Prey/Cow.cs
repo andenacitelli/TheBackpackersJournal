@@ -10,7 +10,13 @@ public class Cow : PreyController
     protected override void Initialize()
     {
         base.Initialize();
-        //audioManager.Assign3DSource(audioSource, soundNames[0]);
+        sounds.Add("dead", 0);
+        sounds.Add("run", 1);
+        sounds.Add("moo", 2);
+        sounds.Add("moopocalypse", 3);
+        sounds.Add("mootastrophe", 4);
+        sounds.Add("moofoundland", 5);
+        sounds.Add("moose", 6);
     }
     protected override IEnumerator IdleBehavior()
     {
@@ -36,8 +42,20 @@ public class Cow : PreyController
     // changes the sound that the cow makes to a random
     private string ChangeMoo()
     {
-        string newMoo = audioManagerNames[Random.Range(0, audioManagerNames.Length)];
-        //audioManager.Assign3DSource(audioSource, newMoo);
-        return newMoo;
+        switch (Random.Range(2, 7))
+        {
+            case 2:
+                return "moo";
+            case 3:
+                return "moopocalypse";
+            case 4:
+                return "mootastrophe";
+            case 5:
+                return "moofoundland";
+            case 6:
+                return "moose";
+            default:
+                return "moo";
+        }
     }
 }
