@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Xml.Serialization;
 using System.IO;
+using TMPro;
 
 public class GalleryStorage : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GalleryStorage : MonoBehaviour
     public GameObject galleryUIstart;
     public GameObject galleryUIscale;
     public GameObject framePrefab;
+    public GameObject frameInfo;
+    public TextMeshProUGUI frameInView;
     [SerializeField]
     public List<EditableObject> wallList;
     public bool isOn { get; set; }
@@ -72,11 +75,11 @@ public class GalleryStorage : MonoBehaviour
                     string path = "/PhotoStorage/" + profileName + "/GalleryRoll/" + index;
                     string absolutePath = pathNoFile + f.Name;
                     Texture2D t2D = new Texture2D(Screen.width, Screen.height);
-
+                    
                     byte[] data = File.ReadAllBytes(absolutePath);
                     ImageConversion.LoadImage(t2D, data);
                     t2D.Apply();
-
+                    
                     photo newPhoto = new photo
                     {
                         captureData = t2D,
@@ -102,7 +105,7 @@ public class GalleryStorage : MonoBehaviour
                             Vector3 frameScale = newPhoto.scale;
                             Vector3 framePos = new Vector3(newPhoto.wallX, newPhoto.wallY, newPhoto.wallZ);
                             Quaternion q = grabPhoto.q;
-                            StartCoroutine(LoadFrame(wall, framePos, frameScale, t2D, q));
+                            StartCoroutine(LoadFrame(wall, framePos, frameScale, t2D, q, index));
                             break;
                         }
                     }
@@ -115,9 +118,10 @@ public class GalleryStorage : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadFrame(EditableObject wall, Vector3 framePos, Vector3 frameScale, Texture2D pic, Quaternion q)
+    public IEnumerator LoadFrame(EditableObject wall, Vector3 framePos, Vector3 frameScale, Texture2D pic, Quaternion q, int index)
     {
         GameObject newFrame = Instantiate(framePrefab, wall.transform);
+        newFrame.name = "frame" + index;
         yield return new WaitForEndOfFrame();
         Image display = newFrame.GetComponentInChildren<Image>();
         yield return new WaitForEndOfFrame();
@@ -142,6 +146,39 @@ public class GalleryStorage : MonoBehaviour
     public void StartCRtoStorageConvert()
     {
         cameraRollUI.OpenCRStorage();
+    }
+
+    public void FrameDetailsOpen(GameObject selectedFrame)
+    {
+        string frameName = selectedFrame.transform.parent.name;
+        char charIndex = frameName[frameName.Length - 1];
+        int index = charIndex - '0';
+        photo grabPhoto = gallery[index];
+        string[] inPic = grabPhoto.inView;
+        string inViewInfo = "";
+        for(int i = 0; i < inPic.Length; i++)
+        {
+            print(inPic[i]);
+            if(i != inPic.Length - 1)
+            {
+                inViewInfo += inPic[i] + ", ";
+            } else
+            {
+                inViewInfo += inPic[i];
+            }
+            
+        }
+        frameInView.text = inViewInfo;
+        galleryUIstart.SetActive(false);
+        frameInfo.SetActive(true);
+        galleryStorageUI.SetActive(true);
+    }
+
+    public void FrameDetailsClose()
+    {
+        galleryUIstart.SetActive(true);
+        frameInfo.SetActive(false);
+        galleryStorageUI.SetActive(false);
     }
 
     public photo ReceivePhoto(int crIndex, photo grab)
@@ -203,6 +240,7 @@ public class GalleryStorage : MonoBehaviour
     public void FinishStoragePlace(GameObject frame, Vector3 storePoint)
     {
         Image display = frame.GetComponentInChildren<Image>();
+        frame.name = "frame" + lastIndex;
         string newWallName = frame.transform.parent.gameObject.name;
         photo grabP = gallery[lastIndex];
         gallery.Remove(grabP);

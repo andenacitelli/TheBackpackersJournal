@@ -16,6 +16,7 @@ public class PauseMenu : MonoBehaviour
     public GameObject groveReturnPrompt;
     public GameObject groveReturn;
     public GalleryStorage storage;
+    public GameObject journalGUI;
 
     private string input;
     private ReturnToGrove rTG;
@@ -95,6 +96,18 @@ public class PauseMenu : MonoBehaviour
                 Pause();
                 DetermineReturnPrompt();
         }      
+    }
+
+    public void OpenJournal()
+    {
+        pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        journalGUI.SetActive(true);
+    }
+
+    public void CloseJournal()
+    {
+        journalGUI.SetActive(false);
     }
 
     private void DetermineReturnPrompt()

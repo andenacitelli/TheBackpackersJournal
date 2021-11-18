@@ -16,7 +16,7 @@ public struct photo
     public Texture2D captureData;
 
     public string fileName;
-    [XmlArray("ObjsInPhoto"), XmlArrayItem("Object")]
+    //[XmlArray("ObjsInPhoto"), XmlArrayItem("Object")]
     public string[] inView;
 
     public string nullValTest;
