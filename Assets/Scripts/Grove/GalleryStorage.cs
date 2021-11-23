@@ -33,6 +33,8 @@ public class GalleryStorage : MonoBehaviour
     private GalleryScaleUI rescale;
     
     private int lastIndex;
+    private int frameIndex;
+    private GameObject currFrame;
 
 
     private void Awake()
@@ -150,9 +152,13 @@ public class GalleryStorage : MonoBehaviour
 
     public void FrameDetailsOpen(GameObject selectedFrame)
     {
+        isOn = true;
         string frameName = selectedFrame.transform.parent.name;
         char charIndex = frameName[frameName.Length - 1];
         int index = charIndex - '0';
+        print("frame index set as: " + index);
+        frameIndex = index;
+        currFrame = selectedFrame;
         photo grabPhoto = gallery[index];
         string[] inPic = grabPhoto.inView;
         string inViewInfo = "";
@@ -174,8 +180,134 @@ public class GalleryStorage : MonoBehaviour
         galleryStorageUI.SetActive(true);
     }
 
+    public void FrameDetailDelete()
+    {
+        
+        gallery.RemoveAt(frameIndex);
+
+        foreach(EditableObject wall in wallList)
+        {
+            bool result = wall.DictChange(frameIndex);
+            if (result)
+            {
+                print("removed frame from wall");
+                break;
+            } 
+        }
+        Destroy(currFrame.transform.parent.gameObject);
+        StartCoroutine(GalleryDelete());
+        
+        FrameDetailsClose();
+
+        //Clean-up
+        StartCoroutine(ReformatGR(frameIndex));
+    }
+
+    private IEnumerator GalleryDelete()
+    {
+        string filePath = Application.persistentDataPath + "/PhotoStorage/" + cameraRoll.profileName + "/GalleryRoll/" + frameIndex + ".png";
+        File.Delete(filePath);
+        yield return new WaitForEndOfFrame();
+
+        
+    }
+
+    private IEnumerator ReformatGR(int removedIndex)
+    {
+        print("REMOVED GALLERY INDEX: " + removedIndex);
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + cameraRoll.profileName + "/GalleryRoll/";
+        DirectoryInfo info = new DirectoryInfo(pathNoFile);
+        FileInfo[] fileInfo = info.GetFiles();
+        int index = 0;
+        if (gallery.Count != 0)
+        {
+            int numFiles = fileInfo.Length;
+            print("Files Detected: " + numFiles);
+            for (int i = 0; i < numFiles; i++)
+            {
+                FileInfo f = fileInfo[i];
+                if (!f.Name.Contains("meta"))
+                {
+
+                    char oldName = f.Name[0];
+                    if (index >= removedIndex)
+                    {
+                        print("old name: " + oldName + ".png");
+                        print("new name: " + index + ".png");
+                        string oldFPath = pathNoFile + oldName + ".png";
+                        string newFPath = pathNoFile + index + ".png";
+                        //FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                        File.Copy(oldFPath, newFPath);
+                        yield return new WaitForEndOfFrame();
+                        photo grab = gallery[index];
+                        photo newPhoto = new photo
+                        {
+                            fileName = newFPath,
+                            inView = grab.inView,
+                            captureData = grab.captureData,
+                            inStorage = grab.inStorage,
+                            scale = grab.scale,
+                            wallName = grab.wallName,
+                            q = grab.q,
+                            wallX = grab.wallX,
+                            wallY = grab.wallY,
+                            wallZ = grab.wallZ
+                        };
+                        gallery.RemoveAt(index);
+                        gallery.Insert(index, newPhoto);
+
+                        //Physical frames need names changed too
+                        string oldFrame = "frame" + oldName;
+                        print("Old Frame name: " + oldFrame);
+                        string newFrame = "frame" + index;
+                        print("New Frame name: " + newFrame);
+                        GameObject frame = GameObject.Find(oldFrame);
+                        yield return new WaitForEndOfFrame();
+                        frame.name = newFrame;
+                        /*
+                        foreach (EditableObject wall in wallList)
+                        {
+                            if(wall.wallName == newPhoto.wallName)
+                            {
+                                
+                                break;
+                            }
+                        }
+                        */
+                        grab.fileName = newFPath;
+                        yield return new WaitForEndOfFrame();
+
+                        print("Deleting old file: " + oldFPath);
+                        //bool result = FileUtil.DeleteFileOrDirectory(oldFPath);
+                        File.Delete(oldFPath);
+                        /*if (result)
+                        {
+                            print("Deleted file!");
+                        } else
+                        {
+                            print("Failed to delete file. Trying again after wait.");
+                            yield return new WaitForEndOfFrame();
+                            FileUtil.DeleteFileOrDirectory(oldFPath);
+                        }*/
+                        yield return new WaitForEndOfFrame();
+                        //AssetDatabase.Refresh();
+                    }
+                    index++;
+                }
+            }
+            print("Files Used: " + index);
+        }
+
+        yield return new WaitForEndOfFrame();
+
+    }
+
     public void FrameDetailsClose()
     {
+        isOn = false;
         galleryUIstart.SetActive(true);
         frameInfo.SetActive(false);
         galleryStorageUI.SetActive(false);

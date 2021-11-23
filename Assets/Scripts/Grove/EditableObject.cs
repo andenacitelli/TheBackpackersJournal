@@ -72,4 +72,30 @@ public class EditableObject : MonoBehaviour
         //newFrame.transform.LookAt(ptOnBound.normalized);
         //gallery.FinishStoragePlace(newFrame, storeCoords);
     }
+
+    public bool DictChange(int removedIndex)
+    {
+        GameObject retHold = null;
+        bool found = false;
+        foreach(KeyValuePair<GameObject,Vector3> grabPair in storedOnThisWall)
+        {
+
+            if(grabPair.Key.name.Contains("" + removedIndex))
+            {
+                retHold = grabPair.Key;
+                found = true;
+                break;
+            }
+        }
+        if(retHold != null)
+        {
+            storedOnThisWall.Remove(retHold);
+        } else
+        {
+            print("frame not saved in searched wall");
+        }
+        
+        return found;
+    }
 }
+
