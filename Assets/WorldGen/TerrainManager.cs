@@ -17,6 +17,7 @@ public class TerrainManager : MonoBehaviour
     public GameObject TreeRockDropper;
 
     public static Noise heightNoise; // Used for heightmap values
+    public static Noise moistureNoise; // Used for moisture values in order to pick biomes
     public static Noise colorRandomizationNoise; // Used to randomize vertex colors a little bit
     public static Noise heightFuzzingNoise; // Used to semi-randomly alter biome height cutoffs so it's less jarring when we get a shift
 
@@ -37,6 +38,8 @@ public class TerrainManager : MonoBehaviour
         colorRandomizationNoise.scale = 50;
         heightFuzzingNoise = gameObject.AddComponent<Noise>(); // Used to make biome height boundaries a little more fuzzy to avoid the discrete layers look
         heightFuzzingNoise.scale = 50;
+        moistureNoise = gameObject.AddComponent<Noise>();
+        moistureNoise.scale = 400; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
 
         GenerateChunks();
 

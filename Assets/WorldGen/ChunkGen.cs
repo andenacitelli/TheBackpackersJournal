@@ -8,9 +8,10 @@ using Assets.WorldGen;
 
 // Selectively shade chunks 
 [System.Serializable]
-public class TerrainType {
-    public float start;
-    public float end;
+public class Biome {
+    public string name; // Mostly just makes things more readable from the editor
+    public float lowMoisture, highMoisture;
+    public float lowHeight, highHeight; 
     public Color color;
     public float randomizationFactor;
 }
@@ -29,7 +30,7 @@ public class ChunkGen : MonoBehaviour
 
     // Edit different "biomes" from the editor 
     [SerializeField]
-    private TerrainType[] terrainTypes;
+    private Biome[] biomes;
 
     [SerializeField]
     private MeshRenderer meshRenderer;
@@ -60,7 +61,7 @@ public class ChunkGen : MonoBehaviour
      * - Do something likely more complicated with async/awake where I wait for a chunk to finish generation before doing another
      * */
 
-    // Need to generate the chunk immediately on initialization, otherwise the parallelism-type stuff with connective tissue gets really complicated
+    // Need to generate the chunk immediately on initialization, otherwise the parallelism-biome stuff with connective tissue gets really complicated
     private void Start()
     {
         // Rounding necessary otherwise, for example, chunk (1, 0) at real coords (40, 0) would get set as (0, 0) if floating precision 
@@ -235,34 +236,37 @@ public class ChunkGen : MonoBehaviour
             const float HEIGHT_BLEND_AMPLITUDE = 20; // Amount (in meters) up or down we want boundaries to be able to change. World ranges from like [0, 70] meters
             float fuzzAmount = fuzzingNoise * HEIGHT_BLEND_AMPLITUDE / this.heightMultiplier;
 
-            // 2. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
-            float heightPostFuzz = point.y + fuzzAmount; 
-            TerrainType type = ChooseTerrainType(heightPostFuzz);
-            float percentageAlongBiome = (heightPostFuzz - type.start) / (type.end - type.start);
+            // 2. Get moisture value at that point 
+            float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z); 
 
-            // 2a. Blend color towards the biome below this (if this isn't already the bottom)
+            // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
+            float heightPostFuzz = point.y + fuzzAmount; 
+            Biome biome = ChooseBiome(heightPostFuzz, moisture);
+            float percentageAlongBiome = (heightPostFuzz - biome.lowHeight) / (biome.highHeight - biome.lowHeight);
+
+            // 3a. Blend color towards the biome below this (if this isn't already the bottom)
             // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
-            Color baseColor = type.color;
-            if (percentageAlongBiome <= .25f && type != terrainTypes[0])
+            Color baseColor = biome.color;
+            if (percentageAlongBiome <= .25f && biome != biomes[0])
             {
                 float height = heightPostFuzz;
-                while (ChooseTerrainType(height) == type) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
+                while (ChooseBiome(height, moisture) == biome) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
                 float percentAlongBottom = (.25f - percentageAlongBiome) / .25f;
-                Color colorDiff = ChooseTerrainType(height).color - baseColor;
+                Color colorDiff = ChooseBiome(height, moisture).color - baseColor;
                 baseColor += percentAlongBottom * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
             }
 
-            // 2b. Blend color towards the biome above this (if this isn't already the top)
-            else if (percentageAlongBiome >= .75f && type != terrainTypes[terrainTypes.Length - 1])
+            // 3b. Blend color towards the biome above this (if this isn't already the top)
+            else if (percentageAlongBiome >= .75f && biome != biomes[biomes.Length - 1])
             {
                 float height = heightPostFuzz;
-                while (ChooseTerrainType(height) == type) height += .001f;
+                while (ChooseBiome(height, moisture) == biome) height += .001f;
                 float percentAlongTop = (percentageAlongBiome - .75f) / .25f;
-                Color colorDiff = ChooseTerrainType(height).color - baseColor;
+                Color colorDiff = ChooseBiome(height, moisture).color - baseColor;
                 baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
             }
 
-            // 3. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
+            // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
             const float perlin_weight = .35f; 
             baseColor = new Color(
@@ -270,9 +274,9 @@ public class ChunkGen : MonoBehaviour
                 Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
 
-            // 4. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
+            // 5. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
             const float random_weight = .06f;
-            float randomizationFactor = type.randomizationFactor;
+            float randomizationFactor = biome.randomizationFactor;
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
                 Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
@@ -306,24 +310,22 @@ public class ChunkGen : MonoBehaviour
     private AnimationCurve heightCurve;
 
     // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
-    TerrainType ChooseTerrainType(float height)
+    Biome ChooseBiome(float height, float moisture)
     {
-        foreach (TerrainType terrainType in terrainTypes)
+        foreach (Biome biome in biomes)
         {
-            // Triggers on the first one where we qualify the condition
-            // For instance, we have water below .3, then lowlands below like .5, so if I feed in .4, it won't get in
-            // here for water but it will get in here for lowlands 
-            if (height <= terrainType.end)
+            if (height >= biome.lowHeight && height < biome.highHeight && 
+                moisture >= biome.lowMoisture && moisture < biome.highMoisture)
             {
-                return terrainType;
+                return biome;
             }
         }
 
-        // If we didn't hit one, choose the highest one 
-        return terrainTypes[terrainTypes.Length - 1]; 
+        // If we didn't hit one, print an error message and assign the last biome as a default
+        Debug.LogError(string.Format("Height {0} and Moisture {1} did not fit into a biome's description.", height, moisture)); 
+        return biomes[biomes.Length - 1]; 
     }
 
-    // TODO: More straightforward, connotative to make this a Set instead of a List (which implies order means something) 
     public HashSet<Vertex> GetBoundaryVertices()
     {
         List<Osub> boundarySubsegments = GetBoundaryEdges();
