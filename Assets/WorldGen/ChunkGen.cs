@@ -243,31 +243,7 @@ public class ChunkGen : MonoBehaviour
             // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
             float heightPostFuzz = point.y + fuzzAmount; 
             Biome biome = ChooseBiome(heightPostFuzz, moisture);
-            float percentageAlongBiome = (heightPostFuzz - biome.lowHeight) / (biome.highHeight - biome.lowHeight);
             Color baseColor = biome.color;
-
-            /* 
-            // 3a. Blend color towards the biome below this (if this isn't already the bottom)
-            // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
-            if (percentageAlongBiome <= .25f && biome != biomes[0])
-            {
-                float height = heightPostFuzz;
-                while (ChooseBiome(height, moisture) == biome) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
-                float percentAlongBottom = (.25f - percentageAlongBiome) / .25f;
-                Color colorDiff = ChooseBiome(height, moisture).color - baseColor;
-                baseColor += percentAlongBottom * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
-            }
-
-            // 3b. Blend color towards the biome above this (if this isn't already the top)
-            else if (percentageAlongBiome >= .75f && biome != biomes[biomes.Length - 1])
-            {
-                float height = heightPostFuzz;
-                while (ChooseBiome(height, moisture) == biome) height += .001f;
-                float percentAlongTop = (percentageAlongBiome - .75f) / .25f;
-                Color colorDiff = ChooseBiome(height, moisture).color - baseColor;
-                baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
-            }
-            */
 
             // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;

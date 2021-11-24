@@ -42,7 +42,6 @@ public class TerrainManager : MonoBehaviour
         moistureNoise.scale = 500; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
 
         GenerateChunks();
-
     }
 
     private void OnDisable()
@@ -85,7 +84,7 @@ public class TerrainManager : MonoBehaviour
         // If this were FixedUpdate, we'd run into an issue where we could only hit a certain render distance
         // However, because this is Update, update should get called more frequently on a more powerful computer and thus
         // world generation can scale to higher chunk distances
-        const byte CHUNKS_TO_GENERATE_PER_FRAME = 3;
+        const byte CHUNKS_TO_GENERATE_PER_FRAME = 1;
         int chunksGeneratedThisFrame = 0;
 
         // While the easiest implementation iterates through things minimum x/z to maximum x/z, 
@@ -159,7 +158,7 @@ public class TerrainManager : MonoBehaviour
 
         // Get a list of chunks to remove; we can't actually remove them yet, as you can't modify a dictionary during iterations 
         List<Vector2Int> keysToRemove = new List<Vector2Int>();
-        const int CHUNKS_TO_CULL_PER_FRAME = 5;
+        const int CHUNKS_TO_CULL_PER_FRAME = 1;
         int chunksCulled = 0;
         foreach (KeyValuePair<Vector2Int, GameObject> chunkPair in chunks)
         {
