@@ -241,7 +241,7 @@ public class ChunkGen : MonoBehaviour
             float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z); 
 
             // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
-            float heightPostFuzz = point.y + fuzzAmount; 
+            float heightPostFuzz = Mathf.Clamp(point.y + fuzzAmount, 0, 1); 
             Biome biome = ChooseBiome(heightPostFuzz, moisture);
             Color baseColor = biome.color;
 
