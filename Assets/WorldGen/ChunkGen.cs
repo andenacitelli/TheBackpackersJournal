@@ -207,6 +207,7 @@ public class ChunkGen : MonoBehaviour
 
     // Takes the provided mesh, sets heights, and applies colors 
     // Modifies the input mesh in-place to avoid some costly array reassignments
+    // TODO: Need to split this up way more into functions (or, even better, a separate file) - it's kind of a god function
     private void UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
         Vector3[] meshVertices = mesh.vertices;        
@@ -243,10 +244,11 @@ public class ChunkGen : MonoBehaviour
             float heightPostFuzz = point.y + fuzzAmount; 
             Biome biome = ChooseBiome(heightPostFuzz, moisture);
             float percentageAlongBiome = (heightPostFuzz - biome.lowHeight) / (biome.highHeight - biome.lowHeight);
+            Color baseColor = biome.color;
 
+            /* 
             // 3a. Blend color towards the biome below this (if this isn't already the bottom)
             // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
-            Color baseColor = biome.color;
             if (percentageAlongBiome <= .25f && biome != biomes[0])
             {
                 float height = heightPostFuzz;
@@ -265,6 +267,7 @@ public class ChunkGen : MonoBehaviour
                 Color colorDiff = ChooseBiome(height, moisture).color - baseColor;
                 baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
             }
+            */
 
             // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
@@ -286,11 +289,48 @@ public class ChunkGen : MonoBehaviour
         }
 
         Color[] colors = new Color[meshVertices.Length];
+
+        // We average each point between the base colors of all the surrounding points; we cache each value to avoid calculating it more than once
+        Dictionary<Vector3, Color> cachedColors = new Dictionary<Vector3, Color>();
         for (int i = 0; i < meshVertices.Length; i += 3)
         {
             Vector3 averagePoint = (meshVertices[i] + meshVertices[i + 1] + meshVertices[i + 2]) / 3;
-            averagePoint.y /= this.heightMultiplier;    
-            Color color = ChooseColor(transform.position + averagePoint); // Need to turn it into a world space point when we feed it into noise
+            averagePoint.y /= this.heightMultiplier;
+
+            List<Color> surroundingColors = new List<Color>(); // Cache colors within this chunk to avoid repeat point lookups 
+            const int SAMPLING_RADIUS = 16; // Outer distance we want to sample color values from 
+            const int SAMPLING_LENGTH = 8; // Distance between points we sample; if radius is 8 and length is 2 it will sample from [-8, -6, ..., 6, 8]
+            float minx = transform.position.x + averagePoint.x - SAMPLING_RADIUS, maxx = transform.position.x + averagePoint.x + SAMPLING_RADIUS;
+            float minz = transform.position.z + averagePoint.z - SAMPLING_RADIUS, maxz = transform.position.z + averagePoint.z + SAMPLING_RADIUS;
+            for (float x = minx; x <= maxx; x += SAMPLING_LENGTH)
+            {
+                for (float z = minz; z <= maxz; z += SAMPLING_LENGTH)
+                {
+                    Vector3 point = new Vector3(x, averagePoint.y, z); 
+                    Color subpointColor = ChooseColor(point);
+                    if (cachedColors.ContainsKey(point)) surroundingColors.Add(cachedColors[point]); // Used cached value if possible
+                    else // Otherwise, calculate and add to cache 
+                    {
+                        cachedColors.Add(point, subpointColor);
+                        surroundingColors.Add(subpointColor); 
+                    }
+                }
+            }
+
+            // Get average color of list of colors 
+            Color averageColors(List<Color> colors)
+            {
+                float r = 0, g = 0, b = 0; 
+                foreach (Color color in colors)
+                {
+                    r += color.r;
+                    g += color.g;
+                    b += color.b; 
+                }
+                return new Color(r / colors.Count, g / colors.Count, b / colors.Count);
+            }
+
+            Color color = averageColors(surroundingColors); 
             colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
 

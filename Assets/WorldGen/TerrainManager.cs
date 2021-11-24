@@ -39,7 +39,7 @@ public class TerrainManager : MonoBehaviour
         heightFuzzingNoise = gameObject.AddComponent<Noise>(); // Used to make biome height boundaries a little more fuzzy to avoid the discrete layers look
         heightFuzzingNoise.scale = 50;
         moistureNoise = gameObject.AddComponent<Noise>();
-        moistureNoise.scale = 400; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
+        moistureNoise.scale = 500; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
 
         GenerateChunks();
 
