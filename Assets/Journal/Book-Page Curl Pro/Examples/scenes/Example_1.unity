@@ -887,14 +887,14 @@ MonoBehaviour:
   LeftPageTransform: {fileID: 562972787}
   RightPageTransform: {fileID: 686667540}
   interactable: 1
-  enableShadowEffect: 1
-  hasTransparentPages: 1
+  enableShadowEffect: 0
+  hasTransparentPages: 0
   currentPaper: 6
   papers:
   - Front: {fileID: 121603182}
     Back: {fileID: 228876596}
-  - Front: {fileID: 1774698332}
-    Back: {fileID: 898138184}
+  - Front: {fileID: 3211990262174907040, guid: 2cd2cdd0c4637cb46bf57b40ecadb539, type: 3}
+    Back: {fileID: 3211990262174907040, guid: 2cd2cdd0c4637cb46bf57b40ecadb539, type: 3}
   - Front: {fileID: 38718294}
     Back: {fileID: 7813097}
   - Front: {fileID: 1581896226}
