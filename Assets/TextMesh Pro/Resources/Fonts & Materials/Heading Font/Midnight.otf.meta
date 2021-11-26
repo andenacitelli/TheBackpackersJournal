@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 9c24863d7949e294bb274bf26c3f183f
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Midnight
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: a373185865ed0ed4e86a1f6c996dd95b, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
