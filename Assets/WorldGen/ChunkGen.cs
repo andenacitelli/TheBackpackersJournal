@@ -92,7 +92,7 @@ public class ChunkGen : MonoBehaviour
         return output;
     }
 
-    public void GenerateChunk()
+    public IEnumerator GenerateChunk()
     {
         // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
@@ -143,6 +143,9 @@ public class ChunkGen : MonoBehaviour
 
         mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
 
+        print("Triangulated values for a chunk this frame.");
+        yield return null; 
+
         Mesh actualMesh = GenerateMesh(mesh);
         gameObject.GetComponent<MeshFilter>().mesh = actualMesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = actualMesh;
@@ -151,8 +154,24 @@ public class ChunkGen : MonoBehaviour
         float offsetX = transform.position.x, offsetZ = transform.position.z;
 
         List<float> noiseValues = TerrainManager.heightNoise.GenerateNoiseMap(tempVertices, offsetX, offsetZ);
+
+        print("Generated mesh and noise values for a chunk this frame.");
+        yield return null; 
+
         UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues);
+        print("Updated vertex heights and colors for a chunk this frame.");
+        yield return null; 
+
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
+        this.gameObject.layer = LayerMask.NameToLayer("Terrain");
+
+        // Transfer this between chunk dictionaries, as it's done generating  
+        TerrainManager.chunks.Add(this.coords, this.gameObject);
+        TerrainManager.generatingChunks.Remove(this.coords);
+
+        // Signifies to TerrainManager.Update() that it can start generating another chunk
+        TerrainManager.generatingAChunk = false;
+        print("Set the mesh and indicated another chunk can be generated next frame this frame.");
     }
 
     // Generates a Mesh object from the provided TriangleNet.Mesh object
