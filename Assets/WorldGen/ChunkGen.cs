@@ -104,6 +104,9 @@ public class ChunkGen : MonoBehaviour
         cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
         vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
 
+        print("Calculated grid of points to use for a chunk.");
+        yield return null; 
+
         /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
         int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
         int NUM_POINTS = Mathf.RoundToInt(Random.Range(.9f * NUM_POINTS_BASELINE, 1.1f * NUM_POINTS_BASELINE));
@@ -158,9 +161,7 @@ public class ChunkGen : MonoBehaviour
         print("Generated mesh and noise values for a chunk this frame.");
         yield return null; 
 
-        UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues);
-        print("Updated vertex heights and colors for a chunk this frame.");
-        yield return null; 
+        yield return StartCoroutine(UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues));
 
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
         this.gameObject.layer = LayerMask.NameToLayer("Terrain");
@@ -227,7 +228,7 @@ public class ChunkGen : MonoBehaviour
     // Takes the provided mesh, sets heights, and applies colors 
     // Modifies the input mesh in-place to avoid some costly array reassignments
     // TODO: Need to split this up way more into functions (or, even better, a separate file) - it's kind of a god function
-    private void UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
+    private IEnumerator UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
         Vector3[] meshVertices = mesh.vertices;        
 
@@ -245,6 +246,9 @@ public class ChunkGen : MonoBehaviour
             float height = Mathf.Clamp(heightmap[i], 0, 1); // Clamp necessary because the heightCurve can't handle the *very* occasional points Perlin noise generates outside of [0, 1]
             meshVertices[i] = new Vector3(vertex.x, this.heightCurve.Evaluate(height) * this.heightMultiplier, vertex.z);
         }
+
+        print("Scaled height values Perlin => World Space for a chunk this frame.");
+        yield return null; 
 
         // Given coordinates of the center point of a triangle, returns the color that triangle should be
         // belowColor, belowThreshold: Color of the biome below this, and the threshold at which the chosen layer becomes that layer.
@@ -329,11 +333,16 @@ public class ChunkGen : MonoBehaviour
             colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
 
+        print("Calculated all the colors for a chunk this frame.");
+        yield return null; 
+
         // Update actual mesh properties; basically "apply" the heights to the mesh 
         mesh.vertices = meshVertices;
         mesh.colors = colors;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+        print("Actually applied vertices/colors to a chunk this frame.");
+        yield return null; 
     }
 
     // How "vertical" we want our map to be. Lower values will result in less extreme highs and lows and will generally make slopes smoother.
