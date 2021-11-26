@@ -109,7 +109,7 @@ namespace Assets.WorldGen
             foreach(Vector2 point in points)
             {
                 int randomCloudIndex = (int) Random.Range(0, 4); // Truncates to get to random [0, 3] integer
-                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform);
+                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform.GetChild(1));
                 newCloud.transform.position = new Vector3(point.x, Random.Range(cloudHeightLowerBound, cloudHeightUpperBound), point.y);
                 newCloud.transform.rotation = Random.rotation;
                 clouds.Add(newCloud);
@@ -130,7 +130,9 @@ namespace Assets.WorldGen
                 timeSinceLastCloud = 0;
                 int randomCloudIndex = (int)Random.Range(0, 4); // Truncates to get to random [0, 3] integer
                 print("randomCloudIndex: " + randomCloudIndex);
-                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform);
+
+                // 0th child is for chunks, 1st child is for Clouds; Purely an organizational difference 
+                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform.GetChild(1));
                 newCloud.transform.position = new Vector3(genBounds.min.x, Random.Range(cloudHeightLowerBound, cloudHeightUpperBound), Random.Range(genBounds.min.z, genBounds.max.z)); 
                 clouds.Add(newCloud);
             }
