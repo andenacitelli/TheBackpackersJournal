@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0.99999905, b: 0.99999905, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2418,6 +2418,55 @@ MonoBehaviour:
   - group: {fileID: 0}
     name: Moo5
     clip: {fileID: 8300000, guid: fee3b2d6c58966446a3bcbbc1c707234, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfHowl
+    clip: {fileID: 8300000, guid: 6365e5ec8bc89784d9f3ca5104b6fb48, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfHowl1
+    clip: {fileID: 8300000, guid: 830844770cd29f94b85b348df9613585, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfSingleBark
+    clip: {fileID: 8300000, guid: 4171d716fe998d24ea1f6b328c4b07f6, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfDoubleBark
+    clip: {fileID: 8300000, guid: d77bb27324ccd3d40a77ec7e23a2a3ed, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfSingleBark1
+    clip: {fileID: 8300000, guid: 52dbfe4d39ddc7c41b9eb47a6c9e9ab8, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfDoubleBark1
+    clip: {fileID: 8300000, guid: b0d144d37a87d5c41a5db7135ccc9f3d, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: WolfSingleBark2
+    clip: {fileID: 8300000, guid: fd973710d7ca25b4f8222966e482b1fc, type: 3}
     volume: 0.75
     pitch: 1
     loop: 0
