@@ -58,15 +58,13 @@ public class SpawnManager : MonoBehaviour
         return TerrainFunctions.GetTerrainPointData(new Vector2(playerTransform.position.x, playerTransform.position.z)).isHit;
     }
 
-    // Return if the object is still within distance of player as set by despawnRange
+    // Return if the object is still on an active chunk
     bool AnimalInRange(Vector3 animalPos)
     {
         Vector2 animalPos2D = new Vector2(animalPos.x, animalPos.z);
         Vector2 playerPos2D = new Vector2(playerTransform.position.x, playerTransform.position.z);
 
         return Vector2.Distance(animalPos2D, playerPos2D) < TerrainManager.generateRadius * ChunkGen.size;
-
-        // return Vector3.Distance(playerTransform.position, animalPos) < spawnSettings.despawnRange;
     }
 
     // Return whether less than the maximum number of animals are spawned
@@ -213,11 +211,13 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnAnimalsWithNoise(Vector3 spawnCenter)
     {
         float noiseValue = quantityNoise.GetNoiseAtPoint(spawnCenter.x, spawnCenter.z);
+        float multiS = spawnSettings.multiSpawnChance, tripleS = multiS + spawnSettings.tripleSpawnChance, doubleS = tripleS + spawnSettings.doubleSpawnChance;
+
         // get quantity to spawn
         int quantity;
-        if (noiseValue < .10f) quantity = 5;
-        else if (noiseValue < .50f) quantity = 3;
-        else if (noiseValue < .75f) quantity = 2;
+        if (noiseValue < multiS) quantity = 5;
+        else if (noiseValue < tripleS) quantity = 3;
+        else if (noiseValue < doubleS) quantity = 2;
         else quantity = 1;
 
 
