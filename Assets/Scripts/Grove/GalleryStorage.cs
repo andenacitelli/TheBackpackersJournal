@@ -19,6 +19,7 @@ public class GalleryStorage : MonoBehaviour
     public GameObject framePrefab;
     public GameObject frameInfo;
     public TextMeshProUGUI frameInView;
+    public JournalOptionsGUI jOptions;
     [SerializeField]
     public List<EditableObject> wallList;
     public bool isOn { get; set; }
@@ -160,6 +161,8 @@ public class GalleryStorage : MonoBehaviour
         frameIndex = index;
         currFrame = selectedFrame;
         photo grabPhoto = gallery[index];
+
+        // Update in-view state
         string[] inPic = grabPhoto.inView;
         string inViewInfo = "";
         for(int i = 0; i < inPic.Length; i++)
@@ -175,9 +178,33 @@ public class GalleryStorage : MonoBehaviour
             
         }
         frameInView.text = inViewInfo;
+
         galleryUIstart.SetActive(false);
         frameInfo.SetActive(true);
         galleryStorageUI.SetActive(true);
+    }
+
+    public void FrameDetailToJournal()
+    {
+        photo grabPhoto = gallery[frameIndex];
+        
+        //Selection screen will use top 3 entries within inView
+        // This is with the assumption that the ImageScanner will
+        // order inView based on pixel prominence (amount of hits)
+
+        if(grabPhoto.inView.Length == 0)
+        {
+            // No page to submit to!
+        }
+        else
+        {
+            // activate selection gui
+
+            jOptions.PreloadOptions(grabPhoto.inView);
+            jOptions.gameObject.SetActive(true);
+        }
+
+
     }
 
     public void FrameDetailDelete()

@@ -6,7 +6,7 @@ using UnityEngine;
 public class JournalRoll : MonoBehaviour
 {
     private BookPro book;
-
+    List<photo> photos;
     List<PageController> pages;
 
     private void Awake()

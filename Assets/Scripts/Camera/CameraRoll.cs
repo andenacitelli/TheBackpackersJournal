@@ -33,6 +33,9 @@ public struct photo
     public Vector3 scale;
     [XmlElement("frameRot")]
     public Quaternion q;
+
+    public string pageName;
+    public int totalScore;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
