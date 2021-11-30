@@ -41,6 +41,7 @@ public class PreyController : AnimalController
         yield return null;
     }
 
+    // all prey have a "dead" sound
     protected IEnumerator PlayDeathSound()
     {
         yield return new WaitUntil(IsAttacked);

@@ -124,7 +124,7 @@ public class AnimalController : MonoBehaviour
         return audioManagerNames[sounds[shorthand]];
     }
 
-    //
+    // play given sound from animal
     protected void AnimalPlaySound(string shorthand)
     {
         string soundName = TrueSoundName(shorthand);

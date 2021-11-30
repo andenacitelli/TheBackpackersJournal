@@ -19,7 +19,7 @@ public class Deer : PreyController
             maxSleepDuration = minSleepDuration * 2;
         }
 
-        sounds.Add("dead", 0);
+        sounds.Add("dead", 0); 
         sounds.Add("bleat", 1);
         sounds.Add("grunt", 2);
     }

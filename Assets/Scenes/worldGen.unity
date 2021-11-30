@@ -158,8 +158,10 @@ MonoBehaviour:
   - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
   - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
   - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
+  - {fileID: 9215208602991251238, guid: 3547dafc8aa9dda43b48b32ce916f43c, type: 3}
   availablePredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
+  - {fileID: 1674863437055274, guid: 009bfdcbf43056e4baacce4494b47114, type: 3}
 --- !u!4 &318097873
 Transform:
   m_ObjectHideFlags: 0
@@ -190,8 +192,8 @@ MonoBehaviour:
   totalSpawns: 0
   minSpawnDelaySeconds: 5
   maxSpawnDelaySeconds: 60
-  preySpawnChance: 0.5
-  predSpawnChance: 0.5
+  preySpawnChance: 0.65
+  predSpawnChance: 0.35
   singleSpawnChance: 0.25
   doubleSpawnChance: 0.25
   tripleSpawnChance: 0.4
