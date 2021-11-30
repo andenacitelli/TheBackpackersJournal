@@ -12,13 +12,13 @@ public class Wolf : PredatorController
     protected override void Initialize()
     {
         base.Initialize();
-        sounds.Add("digBark", 0); // dig
-        sounds.Add("standDouble", 0); // stand
-        sounds.Add("attackDouble", 0); // attack
-        sounds.Add("standSingle", 1); // stand
-        sounds.Add("attackSingle", 1); // attack
-        sounds.Add("idleHowl", 3); // howl
-        sounds.Add("attackHowl", 3); // howl
+        sounds.Add("digBark", 0);
+        sounds.Add("standDouble", 1);
+        sounds.Add("attackDouble", 2);
+        sounds.Add("standSingle", 3);
+        sounds.Add("attackSingle", 4);
+        sounds.Add("idleHowl", 5);
+        sounds.Add("attackHowl", 6);
     }
 
     protected override IEnumerator ActionAtTarget()
