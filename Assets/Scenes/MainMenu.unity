@@ -2583,6 +2583,27 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: FoxDead
+    clip: {fileID: 8300000, guid: 1a9066e76b01d814597c0be1e62ad0ec, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: FoxNoise
+    clip: {fileID: 8300000, guid: 561387eaa1ae02242aab1fc51b8057be, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: FoxMulti
+    clip: {fileID: 8300000, guid: dea7d401acf8a234abdc153b492a1f77, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:

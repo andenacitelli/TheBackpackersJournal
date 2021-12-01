@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // todo fix sounds
-public class Raccoon : PreyController
+public class Fox : PreyController
 {
     [SerializeField] private float sleepTime = 10.0f;
     [SerializeField] private float maxSitTime = 20.0f;
@@ -12,11 +12,8 @@ public class Raccoon : PreyController
     {
         base.Initialize();
         sounds.Add("dead", 0);
-        sounds.Add("angry", 1);
-        sounds.Add("chitter", 2);
-        sounds.Add("eating", 3);
-        sounds.Add("tired", 4);
-        sounds.Add("small", 5);
+        sounds.Add("noise", 1);
+        sounds.Add("eating", 2);
     }
 
     protected override IEnumerator IdleBehavior()
@@ -26,9 +23,7 @@ public class Raccoon : PreyController
         yield return new WaitUntil(IsIdling);
 
         float randChoice = Random.Range(0.0f, 100.0f);
-        if (randChoice < 25.0f) yield return StartCoroutine(IdleSit());
-        else if (randChoice < 50.0f) yield return StartCoroutine(IdleSneak());
-        else if (randChoice < 75.0f) yield return StartCoroutine(IdleStand());
+        if (randChoice < 50.0f) yield return StartCoroutine(IdleSit());
         else yield return StartCoroutine(IdleActions());
     }
 
@@ -37,7 +32,7 @@ public class Raccoon : PreyController
         while (true)
         {
             yield return new WaitUntil(IsFleeing);
-            AnimalPlaySound("chitter");
+            AnimalPlaySound("noise");
             while (IsFleeing()) yield return null;
         }
     }
@@ -57,34 +52,27 @@ public class Raccoon : PreyController
             yield return StartCoroutine(WaitOnAnimationState("Smelling"));
 
             // dig first or just eat
-            if (randChoice < 7.5f) Animations.SetTrigger("eat");
-            else Animations.SetTrigger("dig");
+            if (randChoice < 7.5f)
+            { // eat
+                Animations.SetTrigger("eat");
+                yield return StartCoroutine(WaitOnAnimationState("Eating"));
+                AnimalPlaySound("eating");
+            }
+            else
+            { // dig
+                Animations.SetTrigger("dig");
+                yield return StartCoroutine(WaitOnAnimationState("Digging"));
 
-            yield return StartCoroutine(WaitOnAnimationState("Eating"));
-            AnimalPlaySound("eating");
+                randChoice = Random.Range(0, 3);
+                if (randChoice < 2) Animations.SetTrigger("pick"); // pick up
+                else
+                { // eat
+                    Animations.SetTrigger("eat");
+                    yield return StartCoroutine(WaitOnAnimationState("Eating"));
+                    AnimalPlaySound("eating");
+                }
+            }
         }
-
-        yield return new WaitUntil(IsIdling);
-    }
-
-    // sneak actions when idling
-    private IEnumerator IdleSneak()
-    {
-        Animations.SetTrigger("sneak");
-        AnimalPlaySound("angry");
-
-        yield return new WaitUntil(IsIdling);
-    }
-
-    // standing actions when idling
-    private IEnumerator IdleStand()
-    {
-        Animations.SetTrigger("stand");
-        yield return StartCoroutine(WaitOnAnimationState("Standing"));
-        Animations.SetTrigger("look");
-        AnimalPlaySound("small");
-        yield return StartCoroutine(WaitOnAnimationState("Standing"));
-        Animations.SetTrigger("sit");
 
         yield return new WaitUntil(IsIdling);
     }
@@ -125,20 +113,19 @@ public class Raccoon : PreyController
         else
         { // lay down and sleep
             Animations.SetTrigger("sleep");
+
             yield return StartCoroutine(WaitOnAnimationState("Sleep Lay"));
-            
+            yield return new WaitForSeconds(Random.Range(maxSitTime / 2, maxSitTime));
+
             Animations.SetTrigger("sleep");
             yield return StartCoroutine(WaitOnAnimationState("Sleeping"));
+            
             yield return new WaitForSeconds(sleepTime);
-
-            Animations.SetTrigger("lay");
-            yield return StartCoroutine(WaitOnAnimationState("Sleep Lay"));
-
             Animations.SetTrigger("sit");
         }
 
         // wait for laying animations to start sitting up
         yield return StartCoroutine(WaitOnAnimationState("Lie to Seat"));
-        AnimalPlaySound("tired");
+        AnimalPlaySound("noise");
     }
 }
