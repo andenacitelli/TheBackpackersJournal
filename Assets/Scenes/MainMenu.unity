@@ -2506,6 +2506,20 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: CougarRoar
+    clip: {fileID: 8300000, guid: 73a9600530c8cb240b3d3c2734e254c7, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: CougarAttack
+    clip: {fileID: 8300000, guid: 09da6db1432957f45b949ce49d1c8815, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tiger : PredatorController
+public class Cougar : PredatorController
 {
     [SerializeField] private float sleepTime = 30.0f;
     [SerializeField] private float eatTime = 5.0f;
@@ -14,6 +14,11 @@ public class Tiger : PredatorController
     {
         base.Initialize();
         sounds.Add("roar", 0);
+        sounds.Add("attack roar", 1);
+
+        // 10% chance of it having spots
+        Transform spots = transform.GetChild(0).GetChild(1);
+        if (Random.Range(0.0f, 10.0f) < 1.0f) spots.gameObject.SetActive(true);
     }
 
     protected override IEnumerator ActionAtTarget()
@@ -30,17 +35,17 @@ public class Tiger : PredatorController
 
     protected override IEnumerator AttackBehavior()
     {
-        AnimalPlaySound("roar");
-        yield return new WaitForSeconds(1.0f);
+        AnimalPlaySound("attack roar");
+        yield return new WaitForSeconds(2.5f);
 
         int randChoice = Random.Range(0, 3);
         switch (randChoice)
         {
             case 0: // bite right
-                Animations.SetTrigger("biteRight");
+                Animations.SetTrigger("bite attack");
                 break;
-            case 1: // bite left
-                Animations.SetTrigger("biteLeft");
+            case 1: // paw left
+                Animations.SetTrigger("paw attack");
                 break;
             case 2: // claws
                 Animations.SetTrigger("paws attack");
