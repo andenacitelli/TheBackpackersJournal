@@ -1092,6 +1092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7643044630229044140}
   - component: {fileID: 142800380626335040}
+  - component: {fileID: 30687795608592787}
   m_Layer: 20
   m_Name: Moose
   m_TagString: Untagged
@@ -1199,6 +1200,24 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.76506704, y: -0.00037172437, z: -0.36404663}
     m_Extent: {x: 1.2285061, y: 0.39407885, z: 0.8544802}
   m_DirtyAABB: 0
+--- !u!114 &30687795608592787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745534622073493400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: e014f5da4a0192742aad2edc47ef6438, type: 2}
+  - {fileID: 2100000, guid: 32ce22051c3673243a5bc673566eb483, type: 2}
+  - {fileID: 2100000, guid: 8e7a90d411d553b41b9d161df5d00619, type: 2}
+  - {fileID: 2100000, guid: 370287690078a3c4b8b17edfbdd831e2, type: 2}
+  animalMeshRenderer: {fileID: 142800380626335040}
 --- !u!1 &6751573899676248556
 GameObject:
   m_ObjectHideFlags: 0

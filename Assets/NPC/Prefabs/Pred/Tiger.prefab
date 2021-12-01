@@ -1050,6 +1050,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5327961017140096710}
   - component: {fileID: 3838536834780097592}
+  - component: {fileID: 8134753749065094168}
   m_Layer: 0
   m_Name: Tiger
   m_TagString: Untagged
@@ -1157,6 +1158,23 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.28829944, y: 0.00018562376, z: -0.23932494}
     m_Extent: {x: 1.4563614, y: 0.4255287, z: 0.6462499}
   m_DirtyAABB: 0
+--- !u!114 &8134753749065094168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7909571738825145700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: aaa3cabeec623db4ba5f18aa591b4f54, type: 2}
+  - {fileID: 2100000, guid: ba662bcea71f6454faa6d7b199135f6f, type: 2}
+  - {fileID: 2100000, guid: d9685b5649ae5e44c8b91cbe18d21928, type: 2}
+  animalMeshRenderer: {fileID: 3838536834780097592}
 --- !u!1 &7991871930894155803
 GameObject:
   m_ObjectHideFlags: 0

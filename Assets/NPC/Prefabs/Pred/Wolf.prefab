@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4098697858529638}
   - component: {fileID: 137349725361734756}
+  - component: {fileID: 3464497807861753078}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Untagged
@@ -118,6 +119,24 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.10259217, y: 0.17480719, z: 0.00037892908}
     m_Extent: {x: 0.49709725, y: 0.9434315, z: 0.21380034}
   m_DirtyAABB: 0
+--- !u!114 &3464497807861753078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329293972675672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 9e53f96e4237bfe4eb2ceae2a9a73f8b, type: 2}
+  - {fileID: 2100000, guid: 30b0178a1e3c4a74192a846f88785afa, type: 2}
+  - {fileID: 2100000, guid: 5199a3ed91250cb4b8fff2c00648fcf3, type: 2}
+  - {fileID: 2100000, guid: 33046e0d242a2dc45927441b8d786b6a, type: 2}
+  animalMeshRenderer: {fileID: 137349725361734756}
 --- !u!1 &1674863437055274
 GameObject:
   m_ObjectHideFlags: 0

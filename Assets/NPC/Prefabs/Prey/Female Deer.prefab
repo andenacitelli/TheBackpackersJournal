@@ -1907,6 +1907,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6452663497340752213}
   - component: {fileID: 6370889407751712873}
+  - component: {fileID: 7081753473244532423}
   m_Layer: 20
   m_Name: Deer
   m_TagString: Untagged
@@ -2023,6 +2024,25 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.68718755, y: -0.0035926998, z: -0.2837016}
     m_Extent: {x: 1.2332932, y: 0.38663965, z: 0.9505512}
   m_DirtyAABB: 0
+--- !u!114 &7081753473244532423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6451226109094021631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 796847d5def7e16428c31bce5ba73cb7, type: 2}
+  - {fileID: 2100000, guid: cb1c711c202960445bae9a95898af664, type: 2}
+  - {fileID: 2100000, guid: bb7fbfd4ee80788489322fb27868db30, type: 2}
+  - {fileID: 2100000, guid: 02c91d4f6bae9f349894b134fa7c354f, type: 2}
+  - {fileID: 2100000, guid: 1176a9601dad74845be64fa1045ab2c4, type: 2}
+  animalMeshRenderer: {fileID: 6370889407751712873}
 --- !u!1 &6451239305249873043
 GameObject:
   m_ObjectHideFlags: 0

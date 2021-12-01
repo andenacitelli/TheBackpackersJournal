@@ -994,6 +994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7966853650048296450}
   - component: {fileID: 4040302307360091405}
+  - component: {fileID: 7330718599055882640}
   m_Layer: 20
   m_Name: Cougar
   m_TagString: Untagged
@@ -1106,6 +1107,24 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.19478989, y: 0.0013519824, z: -0.20763229}
     m_Extent: {x: 1.317391, y: 0.35517713, z: 0.57672286}
   m_DirtyAABB: 0
+--- !u!114 &7330718599055882640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5600561510312541496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 4670d037e01754e44b19e9809d7cb0de, type: 2}
+  - {fileID: 2100000, guid: 43befa2f203cbc54db5a03705f9f72e8, type: 2}
+  - {fileID: 2100000, guid: c38a152216f8e2a4bbb80c3cd59889b7, type: 2}
+  - {fileID: 2100000, guid: f38b060f17e785f42af2a666269e1194, type: 2}
+  animalMeshRenderer: {fileID: 4040302307360091405}
 --- !u!1 &5657541474028627353
 GameObject:
   m_ObjectHideFlags: 0

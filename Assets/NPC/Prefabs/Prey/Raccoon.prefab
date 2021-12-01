@@ -473,6 +473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2094632611743799067}
   - component: {fileID: 2795044820624770295}
+  - component: {fileID: 4002020799493304451}
   m_Layer: 0
   m_Name: Raccoon Poly Art
   m_TagString: Untagged
@@ -603,6 +604,21 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.083979785, y: -0.0014833063, z: -0.056237012}
     m_Extent: {x: 0.5515741, y: 0.16659726, z: 0.2675741}
   m_DirtyAABB: 0
+--- !u!114 &4002020799493304451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2632043459153218393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 5d03a470aacc00a4abf1c7b9c83fa8da, type: 2}
+  animalMeshRenderer: {fileID: 2795044820624770295}
 --- !u!1 &2632162410371198849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1590,7 +1606,6 @@ MonoBehaviour:
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   sleepTime: 10
-  maxFlexTime: 5
   maxSitTime: 20
 --- !u!1 &6834333833071445146
 GameObject:

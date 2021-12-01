@@ -663,6 +663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 806940883452369449}
   - component: {fileID: 777943947503383355}
+  - component: {fileID: 3302646869362003384}
   m_Layer: 20
   m_Name: Bear
   m_TagString: Untagged
@@ -768,6 +769,26 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.8962843, y: -0.003001392, z: -0.35881022}
     m_Extent: {x: 1.2976077, y: 0.57607204, z: 0.8440311}
   m_DirtyAABB: 0
+--- !u!114 &3302646869362003384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803675421739095387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: d4448d1ee406ac644b9fba65400f9e04, type: 2}
+  - {fileID: 2100000, guid: 5e3a4f1c289af254789bcdcc5e8d7cc4, type: 2}
+  - {fileID: 2100000, guid: 29efec1afb1fe6140ac1f88ade33195e, type: 2}
+  - {fileID: 2100000, guid: c6f8feae096dda34fadc8c436d268c6e, type: 2}
+  - {fileID: 2100000, guid: 4d62e544ebbb6344b8489f982516c270, type: 2}
+  - {fileID: 2100000, guid: c2cbd43ee41604f41b2d446e817ec536, type: 2}
+  animalMeshRenderer: {fileID: 777943947503383355}
 --- !u!1 &803685947672939185
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,6 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6523815730159171104}
   - component: {fileID: 6523815730159171111}
+  - component: {fileID: 3172332180466063890}
   m_Layer: 20
   m_Name: RabbitPolyArt
   m_TagString: Untagged
@@ -160,6 +161,27 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.01903312, y: 0.13141924, z: 0.00006778538}
     m_Extent: {x: 0.28127587, y: 0.3118353, z: 0.13993268}
   m_DirtyAABB: 0
+--- !u!114 &3172332180466063890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523815730159171105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 551dc3600b2f9d844b70556def40a86e, type: 2}
+  - {fileID: 2100000, guid: 6ad5c1e796a01de40bdaec17d307fec4, type: 2}
+  - {fileID: 2100000, guid: 25ce8ee64d8236042868f4bf48bc8b16, type: 2}
+  - {fileID: 2100000, guid: 7471661f14556f349a18180cf656adf7, type: 2}
+  - {fileID: 2100000, guid: d7ae3e0224cd7e9428a9b4e71623267f, type: 2}
+  - {fileID: 2100000, guid: c10d726f2617d124d8f3b21788f86ae1, type: 2}
+  - {fileID: 2100000, guid: d57784a6ef7831d43aa9a63fc6150df8, type: 2}
+  animalMeshRenderer: {fileID: 6523815730159171111}
 --- !u!1 &6523815730188650025
 GameObject:
   m_ObjectHideFlags: 0
