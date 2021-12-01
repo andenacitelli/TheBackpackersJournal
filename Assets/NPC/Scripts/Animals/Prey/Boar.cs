@@ -65,7 +65,6 @@ public class Boar : PreyController
 
         currentSpeed = WalkSpeed;
         GetNewRoamingDestination();
-
     }
 
     protected override IEnumerator PlayFleeSound()

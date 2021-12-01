@@ -448,7 +448,7 @@ Animator:
   m_GameObject: {fileID: 3878713476359342226}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9f271cac34f8a384fbd96577f2846b24, type: 3}
-  m_Controller: {fileID: 9100000, guid: 6521f39ae95d30b4b9343a0adbac170d, type: 2}
+  m_Controller: {fileID: 9100000, guid: db0ec5fdbe519194da76b7bae721a2d2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -635,6 +635,7 @@ MonoBehaviour:
   huntTimeout: 5
   sleepTime: 30
   eatTime: 5
+  maxSitTime: 20
   layTime: 10
 --- !u!1 &4260390090895084344
 GameObject:

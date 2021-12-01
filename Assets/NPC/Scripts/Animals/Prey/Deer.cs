@@ -10,6 +10,8 @@ public class Deer : PreyController
     [SerializeField] private float maxSleepDelay = 30.0f;
     [SerializeField] private float minSleepDuration = 10.0f;
     [SerializeField] private float maxSleepDuration = 90.0f;
+    [SerializeField] private Transform head;
+    [SerializeField] private GameObject spots;
 
     protected override void Initialize()
     {
@@ -22,6 +24,16 @@ public class Deer : PreyController
         sounds.Add("dead", 0); 
         sounds.Add("bleat", 1);
         sounds.Add("grunt", 2);
+
+        // potentially add spots
+        if (Random.Range(0, 4) < 1) spots.SetActive(true);
+
+        // add antlers if male
+        if (gameObject.name.Contains("Male"))
+        {
+            Transform antlers = head.GetChild(Random.Range(0, 5));
+            antlers.gameObject.SetActive(true);
+        }
     }
 
     protected override IEnumerator IdleBehavior()

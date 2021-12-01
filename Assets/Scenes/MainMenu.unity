@@ -2520,6 +2520,27 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: MooseGrunt
+    clip: {fileID: 8300000, guid: 72960526e67e67a489c3d5db8ae0a0c2, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: MooseGruntLong
+    clip: {fileID: 8300000, guid: 7fb33ea73d802dc44b6f637074c0a015, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: MooseDead
+    clip: {fileID: 8300000, guid: f289928de430eb741abfe5afbf28384b, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:

@@ -144,7 +144,6 @@ public class PreyController : AnimalController
         currentSpeed = 0;
         isAttacked = true;
         Animations.CrossFade("Death", animTransitionTime);
-        AnimalPlaySound("dead");
         yield return new WaitForSeconds(Animations.GetCurrentAnimatorStateInfo(0).normalizedTime); // finish death animation
         Destroy(gameObject); // remove from game
     }

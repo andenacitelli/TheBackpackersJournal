@@ -264,7 +264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2363140562724926097
 Transform:
   m_ObjectHideFlags: 0
@@ -672,6 +672,8 @@ MonoBehaviour:
   maxSleepDelay: 30
   minSleepDuration: 10
   maxSleepDuration: 90
+  head: {fileID: 6966335380248432084}
+  spots: {fileID: 4021273464481305814}
 --- !u!114 &1654279794708903903
 MonoBehaviour:
   m_ObjectHideFlags: 0
