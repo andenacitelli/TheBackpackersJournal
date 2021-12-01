@@ -2604,6 +2604,13 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: RabbitDead
+    clip: {fileID: 8300000, guid: dea7d401acf8a234abdc153b492a1f77, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:
