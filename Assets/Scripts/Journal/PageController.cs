@@ -36,4 +36,9 @@ public class PageController : MonoBehaviour
         //print(pageTitle + " page was initialized correctly");
     }
     
+
+    public void UpdateImage(Texture2D t2d)
+    {
+        pagePhoto.sprite = Sprite.Create(t2d, new Rect(0.0f, 0.0f, t2d.width, t2d.height), new Vector2(0.0f, 0.0f), pagePhoto.pixelsPerUnit);
+    }
 }

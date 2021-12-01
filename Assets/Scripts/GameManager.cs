@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [Header("Game")]
     public GalleryStorage storage;
     public PauseMenu pMenu;
+    public JournalRoll journal;
 
     [Header("UI")]
     public Canvas uiCanvas;
@@ -59,6 +60,8 @@ public class GameManager : MonoBehaviour
             AssignSaveOnStart(newSave);
             cr.LoadCRoll(newSave);
             storage.LoadGRoll(newSave);
+            //journal.LoadJRoll(newSave);
+            print("GameManager Load - Awake");
         }
         
         polC = cameraC.GetComponent<PolaroidController>();

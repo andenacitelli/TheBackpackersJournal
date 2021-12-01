@@ -20,13 +20,14 @@ public class GalleryStorage : MonoBehaviour
     public GameObject frameInfo;
     public TextMeshProUGUI frameInView;
     public JournalOptionsGUI jOptions;
+    public JournalRoll journal;
     [SerializeField]
     public List<EditableObject> wallList;
     public bool isOn { get; set; }
     public bool editingStorageOn { get; set; }
     public int scaleModifier { get; set; }
     private bool distanceWarned = false;
-    private CameraRoll cameraRoll;
+    public CameraRoll cameraRoll;
     private CameraRollMenu cameraRollUI;
 
     public List<photo> gallery; 
@@ -89,6 +90,7 @@ public class GalleryStorage : MonoBehaviour
                         fileName = absolutePath,
                         inView = grabPhoto.inView,
                         inStorage = 1,
+                        totalScore = grabPhoto.totalScore,
                         wallX = grabPhoto.wallX,
                         wallY = grabPhoto.wallY,
                         wallZ = grabPhoto.wallZ,
@@ -184,25 +186,44 @@ public class GalleryStorage : MonoBehaviour
         galleryStorageUI.SetActive(true);
     }
 
+
+    public void ForwardToJournal(string pageChoice)
+    {
+        
+        photo grabPhoto = gallery[frameIndex];
+        journal.RecievePhoto(grabPhoto, pageChoice);
+        FrameJournalSelectExit();
+    }
+
+    public void FrameJournalSelectExit()
+    {
+        jOptions.gameObject.SetActive(false);
+        
+        galleryStorageUI.SetActive(false);
+        frameInfo.SetActive(false);
+        galleryUIstart.SetActive(true);
+    }
+
     public void FrameDetailToJournal()
     {
         photo grabPhoto = gallery[frameIndex];
-        
+
         //Selection screen will use top 3 entries within inView
         // This is with the assumption that the ImageScanner will
         // order inView based on pixel prominence (amount of hits)
-
-        if(grabPhoto.inView.Length == 0)
+        jOptions.PreloadOptions(grabPhoto.inView);
+        jOptions.gameObject.SetActive(true);
+        
+        /*if (grabPhoto.inView.Length == 0)
         {
-            // No page to submit to!
+          
         }
         else
         {
             // activate selection gui
 
-            jOptions.PreloadOptions(grabPhoto.inView);
-            jOptions.gameObject.SetActive(true);
-        }
+            
+        }*/
 
 
     }
@@ -276,6 +297,7 @@ public class GalleryStorage : MonoBehaviour
                             inView = grab.inView,
                             captureData = grab.captureData,
                             inStorage = grab.inStorage,
+                            totalScore = grab.totalScore,
                             scale = grab.scale,
                             wallName = grab.wallName,
                             q = grab.q,
@@ -364,6 +386,7 @@ public class GalleryStorage : MonoBehaviour
         {
             captureData = grab.captureData,
             inView = grab.inView,
+            totalScore = grab.totalScore,
             fileName = newFName
         };
         gallery.Insert(lastIndex, newPhoto);
@@ -414,6 +437,7 @@ public class GalleryStorage : MonoBehaviour
             captureData = grabP.captureData,
             inView = grabP.inView,
             inStorage = 1,
+            totalScore = grabP.totalScore,
             wallX = localStore.x,
             wallY = localStore.y,
             wallZ = localStore.z,

@@ -117,12 +117,13 @@ public class CameraRoll : MonoBehaviour
                     byte[] data = File.ReadAllBytes(absolutePath);
                     ImageConversion.LoadImage(t2D, data);
                     t2D.Apply();
-
+                    // APPLY total score here
                     photo grabPhoto = new photo
                     {
                         captureData = t2D,
                         fileName = absolutePath,
-                        inView = loadArray[index].inView
+                        inView = loadArray[index].inView,
+                        totalScore = loadArray[index].totalScore
                     };
                     SaveBuffer(index, grabPhoto, true);
                     index++;
@@ -211,7 +212,8 @@ public class CameraRoll : MonoBehaviour
                         {
                             fileName = newFPath,
                             inView = grab.inView,
-                            captureData = grab.captureData
+                            captureData = grab.captureData,
+                            totalScore = grab.totalScore
                         };
                         cRollStorage.RemoveAt(index);
                         cRollStorage.Insert(index, newPhoto);
@@ -253,9 +255,11 @@ public class CameraRoll : MonoBehaviour
     {
         Debug.Log("Recieved Photo");
         currView = imageScan.ScanFrame();
+        // pass currview to scanner rank to get totalScore
         Texture2D newTex = new Texture2D(Screen.width, Screen.height);
         newTex.LoadRawTextureData(rawData);
         newTex.Apply();
+        //TODO: Apply totalscore HERE
         buffer = new photo
         {
             inView = currView.ToArray(),

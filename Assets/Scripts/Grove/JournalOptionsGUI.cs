@@ -50,7 +50,8 @@ public class JournalOptionsGUI : MonoBehaviour
         string chosenText = option1Text.text;
         if (!chosenText.Contains("No Option"))
         {
-            print("UserChoice: " + chosenText);
+            gallery.ForwardToJournal(chosenText);
+            //print("UserChoice: " + chosenText);
             CleanupText();
         }
     }
@@ -60,6 +61,7 @@ public class JournalOptionsGUI : MonoBehaviour
         string chosenText = option2Text.text;
         if (!chosenText.Contains("No Option"))
         {
+            gallery.ForwardToJournal(chosenText);
             print("UserChoice: " + chosenText);
             CleanupText();
         }
@@ -71,10 +73,17 @@ public class JournalOptionsGUI : MonoBehaviour
         string chosenText = option3Text.text;
         if (!chosenText.Contains("No Option"))
         {
-            print("UserChoice: " + chosenText);
+            gallery.ForwardToJournal(chosenText);
+            //print("UserChoice: " + chosenText);
             CleanupText();
             
         }
+    }
+
+    public void ExitButton()
+    {
+        CleanupText();
+        gallery.FrameJournalSelectExit();
     }
 
     private void CleanupText()

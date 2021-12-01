@@ -17,12 +17,14 @@ public class PauseMenu : MonoBehaviour
     public GameObject groveReturn;
     public GalleryStorage storage;
     public GameObject journalGUI;
+    public JournalRoll journalRoll;
 
     private string input;
     private ReturnToGrove rTG;
     private bool autoSaveThisFrame;
     private bool roamLastFrame;
     private bool storageLastFrame;
+    
     
 
     private void Awake()
@@ -148,11 +150,13 @@ public class PauseMenu : MonoBehaviour
             {
                 // No load was ran, because player has no data.
                 cr.cRollStorage = new List<photo>();
+                journalRoll.photos = new List<photo>();
             } else
             {
                 // Check to be sure target directory exists
                 DirectoryInfo crInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/CameraRoll/");
                 DirectoryInfo grInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/GalleryRoll/");
+                DirectoryInfo jrInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/JournalRoll/");
                 // probably will need to add business here for the journal
                 if (!crInfo.Exists)
                 {
@@ -161,6 +165,10 @@ public class PauseMenu : MonoBehaviour
                 if (!grInfo.Exists)
                 {
                     grInfo.Create();
+                }
+                if (!jrInfo.Exists)
+                {
+                    jrInfo.Create();
                 }
             }
 
@@ -196,6 +204,11 @@ public class PauseMenu : MonoBehaviour
             {
                 storage.WriteFile(p.fileName, p.captureData);
             }
+
+            foreach(photo p in save.jRoll)
+            {
+                journalRoll.WriteFile(p.fileName, p.captureData);
+            }
         }
 
         
@@ -225,12 +238,13 @@ public class PauseMenu : MonoBehaviour
         //save.cameraRollPaths = crPaths;
         save.crTest = cr.cRollStorage.ToArray();
         save.gallRoll = storage.gallery.ToArray();
-        print("saved gallRoll:");
+        save.jRoll = journalRoll.photos.ToArray();
+        /*print("saved gallRoll:");
         foreach(photo p in save.gallRoll)
         {
             print(p.fileName);
         }
-        print("---------------------");
+        print("---------------------");*/
         save.GamePercentage = 0;
         return save;
 
