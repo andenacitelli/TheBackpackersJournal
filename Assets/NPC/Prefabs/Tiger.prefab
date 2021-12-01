@@ -413,9 +413,8 @@ GameObject:
   - component: {fileID: 1173972973283843438}
   - component: {fileID: 4843508759580017446}
   - component: {fileID: 5073814319953273007}
-  - component: {fileID: 1398625216396582813}
-  - component: {fileID: 6689788776504206467}
   - component: {fileID: 6950932704816761999}
+  - component: {fileID: 710461203771835745}
   m_Layer: 7
   m_Name: Tiger
   m_TagString: Animal
@@ -488,7 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  creatureType: 1
+  creatureType: 2
 --- !u!114 &5073814319953273007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,59 +510,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   hearingRadius: 15.2
---- !u!114 &1398625216396582813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3878713476359342226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 615d844db484ffb4e9fe4f2fb07c3456, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 0
-  dashSpeed: 0
-  turnSpeed: 0.5
-  targetTolerance: 3
-  newTargetDelay: 0.5
-  currentSpeed: 0
-  newLocationMinDistance: 5
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  animTransitionTime: 0.5
-  audioManagerNames: []
-  huntTimeout: 5
---- !u!114 &6689788776504206467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3878713476359342226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 887dba758f21e0142aa968d9ae3dc186, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 0
-  dashSpeed: 0
-  turnSpeed: 0.5
-  targetTolerance: 3
-  newTargetDelay: 0.5
-  currentSpeed: 0
-  newLocationMinDistance: 5
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  animTransitionTime: 0.5
-  audioManagerNames: []
-  threatFleeTimeout: 2
-  threatRefreshDelay: 2
 --- !u!82 &6950932704816761999
 AudioSource:
   m_ObjectHideFlags: 0
@@ -660,6 +606,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &710461203771835745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878713476359342226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c50e2004dd18f1e4e8da804a2c027235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canFly: 0
+  movementSpeed: 1.5
+  dashSpeed: 3
+  turnSpeed: 0.5
+  targetTolerance: 3
+  newTargetDelay: 0.5
+  currentSpeed: 0
+  newLocationMinDistance: 5
+  territory:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  animTransitionTime: 0.5
+  audioManagerNames:
+  - TigerRoar
+  huntTimeout: 5
+  sleepTime: 30
+  eatTime: 5
+  layTime: 10
 --- !u!1 &4260390090895084344
 GameObject:
   m_ObjectHideFlags: 0

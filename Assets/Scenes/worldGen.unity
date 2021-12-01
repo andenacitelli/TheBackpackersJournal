@@ -163,6 +163,7 @@ MonoBehaviour:
   availablePredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
   - {fileID: 1674863437055274, guid: 009bfdcbf43056e4baacce4494b47114, type: 3}
+  - {fileID: 3878713476359342226, guid: 7719737b857c90e47b91d1d2422ce30a, type: 3}
 --- !u!4 &318097873
 Transform:
   m_ObjectHideFlags: 0

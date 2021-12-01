@@ -2499,6 +2499,13 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: TigerRoar
+    clip: {fileID: 8300000, guid: 937c1fc7f80c13a499d57ac7488255d3, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:
