@@ -157,6 +157,7 @@ MonoBehaviour:
   - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
   - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
   - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
+  - {fileID: 1837017738195904814, guid: 8079fbb2cbdf2704caffc979585b58e4, type: 3}
   - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   - {fileID: 9215208602991251238, guid: 3547dafc8aa9dda43b48b32ce916f43c, type: 3}
   availablePredators:
