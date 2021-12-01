@@ -62,7 +62,7 @@ public class JournalOptionsGUI : MonoBehaviour
         if (!chosenText.Contains("No Option"))
         {
             gallery.ForwardToJournal(chosenText);
-            print("UserChoice: " + chosenText);
+            //print("UserChoice: " + chosenText);
             CleanupText();
         }
         

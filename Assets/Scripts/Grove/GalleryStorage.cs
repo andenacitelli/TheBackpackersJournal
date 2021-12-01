@@ -192,11 +192,13 @@ public class GalleryStorage : MonoBehaviour
         
         photo grabPhoto = gallery[frameIndex];
         journal.RecievePhoto(grabPhoto, pageChoice);
-        FrameJournalSelectExit();
+        //FrameJournalSelectExit();
     }
 
     public void FrameJournalSelectExit()
     {
+        
+        isOn = false;
         jOptions.gameObject.SetActive(false);
         
         galleryStorageUI.SetActive(false);

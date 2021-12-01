@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16215773, g: 0.18875146, b: 0.21098639, a: 1}
+  m_IndirectSpecularColor: {r: 0.16215807, g: 0.18875188, b: 0.21098675, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5558,6 +5558,7 @@ GameObject:
   - component: {fileID: 247811146}
   - component: {fileID: 247811145}
   - component: {fileID: 247811144}
+  - component: {fileID: 247811149}
   m_Layer: 5
   m_Name: Page15
   m_TagString: Untagged
@@ -5650,6 +5651,19 @@ RectTransform:
   m_AnchoredPosition: {x: -2342.7808, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.00000008009374, y: -0.00000007264316}
+--- !u!114 &247811149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247811143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b1ef33dcc7fdb64cb5694580705ad53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pageTitle: 
 --- !u!1 &253249095
 GameObject:
   m_ObjectHideFlags: 0
@@ -16003,7 +16017,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &708281697
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16017,7 +16031,7 @@ RectTransform:
   m_Children:
   - {fileID: 504413417}
   m_Father: {fileID: 912476364}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -21642,8 +21656,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2044285167}
   - {fileID: 708281697}
+  - {fileID: 2044285167}
   - {fileID: 1680181469}
   - {fileID: 1319744309}
   - {fileID: 831072024}
@@ -39183,6 +39197,7 @@ GameObject:
   - component: {fileID: 1733680791}
   - component: {fileID: 1733680790}
   - component: {fileID: 1733680789}
+  - component: {fileID: 1733680794}
   m_Layer: 5
   m_Name: Page16
   m_TagString: Untagged
@@ -39275,6 +39290,19 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000043624706, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.00000008009374, y: -0.00000007264316}
+--- !u!114 &1733680794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733680788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b1ef33dcc7fdb64cb5694580705ad53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pageTitle: 
 --- !u!1001 &1734086269
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41086,8 +41114,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a99f275a3b9e5b842b50b3df18c64f30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gallery: {fileID: 0}
+  gallery: {fileID: 1697035929}
   pageNum: 0
+  saveFromGM:
+    playerName: 
+    GamePercentage: 0
+    playerPositionX: 0
+    playerPositionY: 0
+    playerPositionZ: 0
 --- !u!1001 &1819079960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46167,7 +46201,7 @@ RectTransform:
   m_Children:
   - {fileID: 222136049}
   m_Father: {fileID: 912476364}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

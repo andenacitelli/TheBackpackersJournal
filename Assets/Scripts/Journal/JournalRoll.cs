@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class JournalRoll : MonoBehaviour
 {
@@ -12,17 +13,30 @@ public class JournalRoll : MonoBehaviour
     List<PageController> pages;
 
     public int pageNum;
+    public Save saveFromGM;
+    private string profileName;
 
     private void Awake()
     {
-        print("JournalRoll-Awake");
+        
         if(pages == null)
         {
+            print("JournalRoll- create pages");
             pages = new List<PageController>();
+            
+        }
+        if(photos == null)
+        {
+            photos = new List<photo>();
         }
         
         book = GetComponent<BookPro>();
 
+       
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
         foreach (Paper page in book.papers)
         {
             if (page.Back.TryGetComponent(out PageController pageCont))
@@ -35,12 +49,7 @@ public class JournalRoll : MonoBehaviour
                 pages.Add(pageCont2);
             }
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        
+        LoadJRoll(saveFromGM);
         //prolly load here
         /* Debug print for pages
         foreach(PageController pCont in pages)
@@ -53,8 +62,8 @@ public class JournalRoll : MonoBehaviour
 
     public void LoadJRoll(Save s)
     {
-        print("ProfileNAME: " + s.playerName);
-        string profileName = s.playerName;
+        //print("ProfileNAME: " + s.playerName);
+        profileName = s.playerName;
         photos = new List<photo>();
         if (profileName != "")
         {
@@ -80,6 +89,7 @@ public class JournalRoll : MonoBehaviour
                     byte[] data = File.ReadAllBytes(absolutePath);
                     ImageConversion.LoadImage(t2D, data);
                     t2D.Apply();
+                    //yield return new WaitForEndOfFrame();
 
                     photo grabPhoto = new photo
                     {
@@ -88,7 +98,7 @@ public class JournalRoll : MonoBehaviour
                         inView = loadArray[index].inView,
                         totalScore = loadArray[index].totalScore
                     };
-                    RecievePhoto(loadArray[index], fName);
+                    RecievePhoto(grabPhoto, fName, 1);
                     index++;
                 }
 
@@ -104,18 +114,26 @@ public class JournalRoll : MonoBehaviour
     public void RecievePhoto(photo grabPhoto, string pageChoice, int loadOption=0)
     {
         // Not loading
-        if(loadOption == 0)
-        {
-            
-            PageController pCont = QueryPage(pageChoice);
-            print("Applying to journal page: " + pCont);
-            string fileName = Application.persistentDataPath + "/PhotoStorage/" + gallery.cameraRoll.profileName + "/JournalRoll/" + pageChoice + ".png";
-            SavePhotoToPageList(grabPhoto, fileName, pageChoice, pCont);
-        }
-        else
-        {
 
+
+        PageController pCont = QueryPage(pageChoice);
+        
+        //print("Applying to journal page: " + pCont);
+        string fileName = Application.persistentDataPath + "/PhotoStorage/" + gallery.cameraRoll.profileName + "/JournalRoll/" + pCont.pageTitle + ".png";
+        if (loadOption == 0)
+        {
+            //ISSUE HERE
+            print("Overwriting...");
+            //overwrite check, we aren't loading
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
         }
+
+        SavePhotoToPageList(grabPhoto, fileName, pageChoice, pCont);
+        gallery.FrameJournalSelectExit();
+        
         
     }
 
@@ -130,7 +148,7 @@ public class JournalRoll : MonoBehaviour
             inView = grabPhoto.inView,
             inStorage = 0,
             totalScore = grabPhoto.totalScore,
-            pageName = pChoice
+            pageName = pCont.pageTitle
         };
 
         photos.Add(newPhoto);
@@ -158,15 +176,13 @@ public class JournalRoll : MonoBehaviour
     {
         byte[] rawData = data.EncodeToPNG();
 
-
+        
         using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
         {
             fs.Seek(0, SeekOrigin.End);
             await fs.WriteAsync(rawData, 0, rawData.Length);
         }
-
-
-
+        
         print("File Written.");
 
     }

@@ -146,11 +146,16 @@ public class PauseMenu : MonoBehaviour
     {
         if (s != "")
         {
+            if(journalRoll.photos == null)
+            {
+                journalRoll.photos = new List<photo>();
+            }
+
             if (cr.cRollStorage == null)
             {
                 // No load was ran, because player has no data.
                 cr.cRollStorage = new List<photo>();
-                journalRoll.photos = new List<photo>();
+                
             } else
             {
                 // Check to be sure target directory exists

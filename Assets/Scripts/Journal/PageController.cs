@@ -11,7 +11,7 @@ public class PageController : MonoBehaviour
     TextMeshProUGUI titleText;
     TextMeshProUGUI scoringText;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         int pageChildCount = transform.childCount;
         for(int i = 0; i < pageChildCount; i++)
@@ -39,6 +39,7 @@ public class PageController : MonoBehaviour
 
     public void UpdateImage(Texture2D t2d)
     {
+        pagePhoto.color = new Color(pagePhoto.color.r, pagePhoto.color.g, pagePhoto.color.b, 1);
         pagePhoto.sprite = Sprite.Create(t2d, new Rect(0.0f, 0.0f, t2d.width, t2d.height), new Vector2(0.0f, 0.0f), pagePhoto.pixelsPerUnit);
     }
 }

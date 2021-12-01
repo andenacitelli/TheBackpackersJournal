@@ -60,8 +60,8 @@ public class GameManager : MonoBehaviour
             AssignSaveOnStart(newSave);
             cr.LoadCRoll(newSave);
             storage.LoadGRoll(newSave);
-            //journal.LoadJRoll(newSave);
-            print("GameManager Load - Awake");
+            print("GameManager Load - Gave save to Journal");
+            journal.saveFromGM = newSave;
         }
         
         polC = cameraC.GetComponent<PolaroidController>();
@@ -70,6 +70,13 @@ public class GameManager : MonoBehaviour
         crMenu = uiCanvas.GetComponent<CameraRollMenu>();
         lastPopUp = "";
         lastEditOn = false;
+    }
+
+    public void Start()
+    {
+        print("GameManager - Start");
+        //journal.LoadJRoll(newSave);
+        // load journal here
     }
     private void OnDisable()
     {
