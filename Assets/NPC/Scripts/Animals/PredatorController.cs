@@ -6,6 +6,7 @@ public class PredatorController : AnimalController
 {
     [Header("Predator Settings")]
     [SerializeField] [Range(0.0f, 60.0f)] float huntTimeout = 5.0f;
+    [SerializeField] [Range(0.0f, 60.0f)] protected float threatRefreshDelay = 2.0f;
 
 
     protected Creature huntingTarget;
@@ -29,6 +30,7 @@ public class PredatorController : AnimalController
     protected override void Initialize()
     {
         StartCoroutine(LocateHuntingTargets());
+        StartCoroutine(LocateThreats());
     }
 
     protected override IEnumerator ActionAtTarget()
@@ -110,19 +112,111 @@ public class PredatorController : AnimalController
             }
 
             // Set hunting target and begin to chase
-            if (foundTarget != null && foundTarget.creatureType != CreatureType)
+            if(foundTarget != null)
             {
-                yield return null;
-                huntingTarget = foundTarget;
-                if (huntingTarget != null)
+                if (foundTarget.creatureType == Creature.CreatureTypes.PREY)
                 {
-                    Debug.Log($"NEW HUNTING TARGET {huntingTarget.name}");
-                    yield return StartCoroutine(HuntTarget());
+                    yield return null;
+                    huntingTarget = foundTarget;
+                    if (huntingTarget != null)
+                    {
+                        Debug.Log($"NEW HUNTING TARGET {huntingTarget.name}");
+                        yield return StartCoroutine(HuntTarget());
+                    }
                 }
             }
         }
     }
-    
+
+    IEnumerator LocateThreats()
+    {
+        while (true)
+        {
+            playerTransform = null;
+            Creature sensedCreature;
+            // check line of sight
+            for (int i = 0; i < Senses.SeenCreatures.Count; i++)
+            {
+                sensedCreature = Senses.SeenCreatures[i];
+                if (sensedCreature.creatureType == Creature.CreatureTypes.PLAYER)
+                {
+                    playerTransform = sensedCreature.transform;
+                    break;
+                }
+                yield return null;
+            }
+            // check hearing
+            for (int i = 0; i < Senses.HeardCreatures.Count; i++)
+            {
+                sensedCreature = Senses.HeardCreatures[i];
+                if (sensedCreature.creatureType == Creature.CreatureTypes.PLAYER)
+                {
+                    playerTransform = sensedCreature.transform;
+                    break;
+                }
+                yield return null;
+            }
+
+            // flee from player
+            if (PlayerInRange)
+            {
+                if(!IsHunting()) StopCoroutine(ActionAtTarget());
+                else yield return StartCoroutine(RunAway());
+            }
+
+            // not constantly updating threat reaction
+            yield return new WaitForSeconds(threatRefreshDelay);
+        }
+    }
+
+    // Run away from the threats
+    IEnumerator RunAway()
+    {
+        // no need to look for prey when running away
+        StopCoroutine(LocateHuntingTargets());
+        huntingTarget = null;
+
+        // start running animation
+        Animations.CrossFade("Run", animTransitionTime);
+        currentSpeed = RunSpeed;
+
+        fleeing = true;
+        StartCoroutine(FleeTimer()); // can only flee for a certain amount of time
+        yield return null;
+
+        while (fleeing)
+        {
+            threatCenter = playerTransform.position;
+            threatCenter.y = transform.position.y;
+
+            Vector3 target = threatCenter - transform.position; // get location away from the threat point
+            targetDestination = transform.position - target;
+            yield return null;
+        }
+
+        // look for prey again
+        StartCoroutine(LocateHuntingTargets());
+    }
+
+    // Control how long to run from a threat
+    IEnumerator FleeTimer()
+    {
+        yield return new WaitForSeconds(huntTimeout);
+        Debug.Log("Ran from player long enough");
+        StopFleeing();
+        yield return StartCoroutine(base.ActionAtTarget());
+    }
+
+    // stop running from threats
+    void StopFleeing()
+    {
+        fleeing = false;
+
+        // stop running animation
+        Animations.CrossFade("Walk", animTransitionTime);
+        currentSpeed = WalkSpeed;
+    }
+
     // Follow current position of the target
     protected virtual IEnumerator HuntTarget()
     {

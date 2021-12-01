@@ -6,13 +6,12 @@ using UnityEngine;
 public class PreyController : AnimalController
 {
     [Header("Prey Settings")]
-    bool fleeing = false;
+    
     bool isAttacked = false;
     [SerializeField] [Range(0.0f, 60.0f)] protected float threatFleeTimeout = 2.0f;
     [SerializeField] [Range(0.0f, 60.0f)] protected float threatRefreshDelay = 2.0f;
     readonly List<Creature> threats = new List<Creature>();
 
-    Vector3 threatCenter; // center point of detected threats to flee
 
     public bool IsAttacked() { return isAttacked; }
 
