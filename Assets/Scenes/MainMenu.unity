@@ -2541,6 +2541,48 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - group: {fileID: 0}
+    name: DeadCoon
+    clip: {fileID: 8300000, guid: 8dfb19d2f7c86c949b2f0c28ae88b6c0, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: AngryCoon
+    clip: {fileID: 8300000, guid: 40e5c035d0266af4e88681f836fa8817, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: ChitterCoon
+    clip: {fileID: 8300000, guid: 8ecd63ff33faf2a419517d58625d8f27, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: EatingCoon
+    clip: {fileID: 8300000, guid: 179256a5a7a078f48b2c28ccd8feb0f7, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: TiredCoon
+    clip: {fileID: 8300000, guid: c356445c796705b4ba5454ffc8bd2c1e, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - group: {fileID: 0}
+    name: SmallCoon
+    clip: {fileID: 8300000, guid: eff3f32c01cd5484ba92185175c08c5b, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
   aSrc: {fileID: 867697153}
 --- !u!4 &867697155
 Transform:

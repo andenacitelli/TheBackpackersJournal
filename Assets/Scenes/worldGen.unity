@@ -161,6 +161,7 @@ MonoBehaviour:
   - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   - {fileID: 9215208602991251238, guid: 3547dafc8aa9dda43b48b32ce916f43c, type: 3}
   - {fileID: 8794440431520965634, guid: cc882cd7058a9644683c448feea778e2, type: 3}
+  - {fileID: 6803568550681999073, guid: 366182f449d625846909ef1ba334a9bd, type: 3}
   availablePredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
   - {fileID: 1674863437055274, guid: 009bfdcbf43056e4baacce4494b47114, type: 3}
