@@ -28,6 +28,11 @@ public class AnimalController : MonoBehaviour
     protected Creature.CreatureTypes creatureType;
     protected Vector3 targetDestination;
     private AnimalSenses senses;
+    protected bool fleeing = false;
+    protected Vector3 threatCenter; // center point of detected threats to flee
+
+    protected Transform playerTransform = null;
+
     private CharacterController controller;
     
     protected Animator anim;
@@ -48,6 +53,7 @@ public class AnimalController : MonoBehaviour
     protected float TargetTolerance { get => targetTolerance; }
     protected float NewTargetDelay { get => newTargetDelay; }
     protected AnimalSenses Senses { get => senses; }
+    public bool PlayerInRange { get => playerTransform != null; }
     protected CharacterController Controller { get => controller; }
     public Creature.CreatureTypes CreatureType { get => creatureType; }
     public Animator Animations { get => anim;  }
@@ -124,7 +130,7 @@ public class AnimalController : MonoBehaviour
         return audioManagerNames[sounds[shorthand]];
     }
 
-    //
+    // play given sound from animal
     protected void AnimalPlaySound(string shorthand)
     {
         string soundName = TrueSoundName(shorthand);

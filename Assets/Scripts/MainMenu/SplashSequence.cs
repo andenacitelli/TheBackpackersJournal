@@ -37,7 +37,7 @@ public class SplashSequence : MonoBehaviour
 
     IEnumerator ToSplashTwo()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         SceneNumber = 1;
         additivePlayer = GameObject.Find("WorldGenPlayer");
         Destroy(PoweredByUnity);
@@ -46,7 +46,7 @@ public class SplashSequence : MonoBehaviour
 
     IEnumerator ToMainMenu()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         additiveCam = additivePlayer.transform.GetChild(0).gameObject;
         Destroy(CreditScreen);
         Destroy(PoweredByUnity);
