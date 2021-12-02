@@ -5273,6 +5273,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  sprintInputEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 879062992}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnSprintInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   lookInputEvent:
     m_PersistentCalls:
       m_Calls:
@@ -20417,7 +20432,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.588, y: 0.22229631}
   m_AnchorMax: {x: 0.732625, y: 0.29900002}
-  m_AnchoredPosition: {x: 0, y: 2.5000381}
+  m_AnchoredPosition: {x: 0, y: 2.5000305}
   m_SizeDelta: {x: -4.4331055, y: -1.2410889}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &867973999
@@ -20827,6 +20842,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  sprintModifier: 2
   horizontalSensitivity: 0.293
   verticalSensitivity: 0.25
   verticalClamp: 65
@@ -41136,6 +41152,7 @@ MonoBehaviour:
     playerPositionX: 0
     playerPositionY: 0
     playerPositionZ: 0
+  overwriteFlag: 0
 --- !u!1001 &1819079960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47182,7 +47199,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.25181252, y: 0.22229631}
   m_AnchorMax: {x: 0.39360416, y: 0.29900002}
-  m_AnchoredPosition: {x: -2, y: 2.5000381}
+  m_AnchoredPosition: {x: -2, y: 2.5000305}
   m_SizeDelta: {x: 1.5668945, y: -1.2410889}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2066330600
