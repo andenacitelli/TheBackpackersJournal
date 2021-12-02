@@ -217,8 +217,9 @@ public class GalleryStorage : MonoBehaviour
     private IEnumerator OverwriteExit()
     {
         
-        yield return new WaitForSeconds(.1f);
-        print("Frame waited, exiting menu to trigger autosave");
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        print("Frames waited, exiting menu to trigger autosave");
         isOn = false;
 
         jOptions.gameObject.SetActive(false);

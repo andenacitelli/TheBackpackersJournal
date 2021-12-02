@@ -120,13 +120,26 @@ public class JournalRoll : MonoBehaviour
         
         //print("Applying to journal page: " + pCont);
         string fileName = Application.persistentDataPath + "/PhotoStorage/" + gallery.cameraRoll.profileName + "/JournalRoll/" + pCont.pageTitle + ".png";
+       
+
         if (loadOption == 0)
         {
             //ISSUE HERE
-            overwriteFlag = true;
+            
             //overwrite check, we aren't loading
             if (File.Exists(fileName))
             {
+                //remove photo from photo list
+                for (int i = 0; i < photos.Count; i++)
+                {
+                    if (photos[i].fileName.Equals(fileName))
+                    {
+                        photos.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                overwriteFlag = true;
                 print("Overwriting...");
                 File.Delete(fileName);
             }
