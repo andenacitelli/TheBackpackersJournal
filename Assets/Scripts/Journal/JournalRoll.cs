@@ -15,6 +15,7 @@ public class JournalRoll : MonoBehaviour
     public int pageNum;
     public Save saveFromGM;
     private string profileName;
+    public bool overwriteFlag;
 
     private void Awake()
     {
@@ -113,7 +114,6 @@ public class JournalRoll : MonoBehaviour
 
     public void RecievePhoto(photo grabPhoto, string pageChoice, int loadOption=0)
     {
-        // Not loading
 
 
         PageController pCont = QueryPage(pageChoice);
@@ -123,10 +123,11 @@ public class JournalRoll : MonoBehaviour
         if (loadOption == 0)
         {
             //ISSUE HERE
-            print("Overwriting...");
+            overwriteFlag = true;
             //overwrite check, we aren't loading
             if (File.Exists(fileName))
             {
+                print("Overwriting...");
                 File.Delete(fileName);
             }
         }
@@ -154,6 +155,7 @@ public class JournalRoll : MonoBehaviour
         photos.Add(newPhoto);
 
         pCont.UpdateImage(grabPhoto.captureData);
+        //update scoring info
     }
 
 

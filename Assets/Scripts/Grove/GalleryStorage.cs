@@ -197,10 +197,31 @@ public class GalleryStorage : MonoBehaviour
 
     public void FrameJournalSelectExit()
     {
+        if (journal.overwriteFlag)
+        {
+            journal.overwriteFlag = false;
+            StartCoroutine(OverwriteExit());
+        }
+        else
+        {
+            isOn = false;
+            jOptions.gameObject.SetActive(false);
+
+            galleryStorageUI.SetActive(false);
+            frameInfo.SetActive(false);
+            galleryUIstart.SetActive(true);
+        }
         
+    }
+
+    private IEnumerator OverwriteExit()
+    {
+        
+        yield return new WaitForSeconds(.1f);
+        print("Frame waited, exiting menu to trigger autosave");
         isOn = false;
+
         jOptions.gameObject.SetActive(false);
-        
         galleryStorageUI.SetActive(false);
         frameInfo.SetActive(false);
         galleryUIstart.SetActive(true);
