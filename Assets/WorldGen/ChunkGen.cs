@@ -8,9 +8,10 @@ using Assets.WorldGen;
 
 // Selectively shade chunks 
 [System.Serializable]
-public class TerrainType {
-    public float start;
-    public float end;
+public class Biome {
+    public string name; // Mostly just makes things more readable from the editor
+    public float lowMoisture, highMoisture;
+    public float lowHeight, highHeight; 
     public Color color;
     public float randomizationFactor;
 }
@@ -29,7 +30,7 @@ public class ChunkGen : MonoBehaviour
 
     // Edit different "biomes" from the editor 
     [SerializeField]
-    private TerrainType[] terrainTypes;
+    private Biome[] biomes;
 
     [SerializeField]
     private MeshRenderer meshRenderer;
@@ -60,7 +61,7 @@ public class ChunkGen : MonoBehaviour
      * - Do something likely more complicated with async/awake where I wait for a chunk to finish generation before doing another
      * */
 
-    // Need to generate the chunk immediately on initialization, otherwise the parallelism-type stuff with connective tissue gets really complicated
+    // Need to generate the chunk immediately on initialization, otherwise the parallelism-biome stuff with connective tissue gets really complicated
     private void Start()
     {
         // Rounding necessary otherwise, for example, chunk (1, 0) at real coords (40, 0) would get set as (0, 0) if floating precision 
@@ -91,7 +92,7 @@ public class ChunkGen : MonoBehaviour
         return output;
     }
 
-    public void GenerateChunk()
+    public IEnumerator GenerateChunk()
     {
         // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
@@ -102,6 +103,9 @@ public class ChunkGen : MonoBehaviour
         cellWidth = Mathf.RoundToInt((bounds.max.x - bounds.min.x) / NUM_COLS);
         cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
         vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+
+        print("Calculated grid of points to use for a chunk.");
+        yield return null; 
 
         /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
         int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
@@ -142,6 +146,9 @@ public class ChunkGen : MonoBehaviour
 
         mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
 
+        print("Triangulated values for a chunk this frame.");
+        yield return null; 
+
         Mesh actualMesh = GenerateMesh(mesh);
         gameObject.GetComponent<MeshFilter>().mesh = actualMesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = actualMesh;
@@ -150,8 +157,22 @@ public class ChunkGen : MonoBehaviour
         float offsetX = transform.position.x, offsetZ = transform.position.z;
 
         List<float> noiseValues = TerrainManager.heightNoise.GenerateNoiseMap(tempVertices, offsetX, offsetZ);
-        UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues);
+
+        print("Generated mesh and noise values for a chunk this frame.");
+        yield return null; 
+
+        yield return StartCoroutine(UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues));
+
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
+        this.gameObject.layer = LayerMask.NameToLayer("Terrain");
+
+        // Transfer this between chunk dictionaries, as it's done generating  
+        TerrainManager.chunks.Add(this.coords, this.gameObject);
+        TerrainManager.generatingChunks.Remove(this.coords);
+
+        // Signifies to TerrainManager.Update() that it can start generating another chunk
+        TerrainManager.generatingAChunk = false;
+        print("Set the mesh and indicated another chunk can be generated next frame this frame.");
     }
 
     // Generates a Mesh object from the provided TriangleNet.Mesh object
@@ -206,7 +227,8 @@ public class ChunkGen : MonoBehaviour
 
     // Takes the provided mesh, sets heights, and applies colors 
     // Modifies the input mesh in-place to avoid some costly array reassignments
-    private void UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
+    // TODO: Need to split this up way more into functions (or, even better, a separate file) - it's kind of a god function
+    private IEnumerator UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
         Vector3[] meshVertices = mesh.vertices;        
 
@@ -225,6 +247,9 @@ public class ChunkGen : MonoBehaviour
             meshVertices[i] = new Vector3(vertex.x, this.heightCurve.Evaluate(height) * this.heightMultiplier, vertex.z);
         }
 
+        print("Scaled height values Perlin => World Space for a chunk this frame.");
+        yield return null; 
+
         // Given coordinates of the center point of a triangle, returns the color that triangle should be
         // belowColor, belowThreshold: Color of the biome below this, and the threshold at which the chosen layer becomes that layer.
         // Used to add a bit of a gradient between height-based biomes 
@@ -235,34 +260,15 @@ public class ChunkGen : MonoBehaviour
             const float HEIGHT_BLEND_AMPLITUDE = 20; // Amount (in meters) up or down we want boundaries to be able to change. World ranges from like [0, 70] meters
             float fuzzAmount = fuzzingNoise * HEIGHT_BLEND_AMPLITUDE / this.heightMultiplier;
 
-            // 2. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
-            float heightPostFuzz = point.y + fuzzAmount; 
-            TerrainType type = ChooseTerrainType(heightPostFuzz);
-            float percentageAlongBiome = (heightPostFuzz - type.start) / (type.end - type.start);
+            // 2. Get moisture value at that point 
+            float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z); 
 
-            // 2a. Blend color towards the biome below this (if this isn't already the bottom)
-            // Top Gradient: Base Color + (Percentage along top level) * Color Difference * .5f
-            Color baseColor = type.color;
-            if (percentageAlongBiome <= .25f && type != terrainTypes[0])
-            {
-                float height = heightPostFuzz;
-                while (ChooseTerrainType(height) == type) height -= .001f; // No f*cking way this is anywhere close to optimal, but it works. Just trying to get the next biome down
-                float percentAlongBottom = (.25f - percentageAlongBiome) / .25f;
-                Color colorDiff = ChooseTerrainType(height).color - baseColor;
-                baseColor += percentAlongBottom * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
-            }
+            // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
+            float heightPostFuzz = Mathf.Clamp(point.y + fuzzAmount, 0, 1); 
+            Biome biome = ChooseBiome(heightPostFuzz, moisture);
+            Color baseColor = biome.color;
 
-            // 2b. Blend color towards the biome above this (if this isn't already the top)
-            else if (percentageAlongBiome >= .75f && type != terrainTypes[terrainTypes.Length - 1])
-            {
-                float height = heightPostFuzz;
-                while (ChooseTerrainType(height) == type) height += .001f;
-                float percentAlongTop = (percentageAlongBiome - .75f) / .25f;
-                Color colorDiff = ChooseTerrainType(height).color - baseColor;
-                baseColor += percentAlongTop * colorDiff * .5f; // (percentage it's along the 20% gradient) * (difference between this color and other color)
-            }
-
-            // 3. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
+            // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
             const float perlin_weight = .35f; 
             baseColor = new Color(
@@ -270,9 +276,9 @@ public class ChunkGen : MonoBehaviour
                 Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
 
-            // 4. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
+            // 5. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
             const float random_weight = .06f;
-            float randomizationFactor = type.randomizationFactor;
+            float randomizationFactor = biome.randomizationFactor;
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
                 Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
@@ -282,19 +288,61 @@ public class ChunkGen : MonoBehaviour
         }
 
         Color[] colors = new Color[meshVertices.Length];
+
+        // We average each point between the base colors of all the surrounding points; we cache each value to avoid calculating it more than once
+        Dictionary<Vector3, Color> cachedColors = new Dictionary<Vector3, Color>();
         for (int i = 0; i < meshVertices.Length; i += 3)
         {
             Vector3 averagePoint = (meshVertices[i] + meshVertices[i + 1] + meshVertices[i + 2]) / 3;
-            averagePoint.y /= this.heightMultiplier;    
-            Color color = ChooseColor(transform.position + averagePoint); // Need to turn it into a world space point when we feed it into noise
+            averagePoint.y /= this.heightMultiplier;
+
+            List<Color> surroundingColors = new List<Color>(); // Cache colors within this chunk to avoid repeat point lookups 
+            const int SAMPLING_RADIUS = 16; // Outer distance we want to sample color values from 
+            const int SAMPLING_LENGTH = 8; // Distance between points we sample; if radius is 8 and length is 2 it will sample from [-8, -6, ..., 6, 8]
+            float minx = transform.position.x + averagePoint.x - SAMPLING_RADIUS, maxx = transform.position.x + averagePoint.x + SAMPLING_RADIUS;
+            float minz = transform.position.z + averagePoint.z - SAMPLING_RADIUS, maxz = transform.position.z + averagePoint.z + SAMPLING_RADIUS;
+            for (float x = minx; x <= maxx; x += SAMPLING_LENGTH)
+            {
+                for (float z = minz; z <= maxz; z += SAMPLING_LENGTH)
+                {
+                    Vector3 point = new Vector3(x, averagePoint.y, z); 
+                    Color subpointColor = ChooseColor(point);
+                    if (cachedColors.ContainsKey(point)) surroundingColors.Add(cachedColors[point]); // Used cached value if possible
+                    else // Otherwise, calculate and add to cache 
+                    {
+                        cachedColors.Add(point, subpointColor);
+                        surroundingColors.Add(subpointColor); 
+                    }
+                }
+            }
+
+            // Get average color of list of colors 
+            Color averageColors(List<Color> colors)
+            {
+                float r = 0, g = 0, b = 0; 
+                foreach (Color color in colors)
+                {
+                    r += color.r;
+                    g += color.g;
+                    b += color.b; 
+                }
+                return new Color(r / colors.Count, g / colors.Count, b / colors.Count);
+            }
+
+            Color color = averageColors(surroundingColors); 
             colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
+
+        print("Calculated all the colors for a chunk this frame.");
+        yield return null; 
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 
         mesh.vertices = meshVertices;
         mesh.colors = colors;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+        print("Actually applied vertices/colors to a chunk this frame.");
+        yield return null; 
     }
 
     // How "vertical" we want our map to be. Lower values will result in less extreme highs and lows and will generally make slopes smoother.
@@ -306,24 +354,22 @@ public class ChunkGen : MonoBehaviour
     private AnimationCurve heightCurve;
 
     // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
-    TerrainType ChooseTerrainType(float height)
+    Biome ChooseBiome(float height, float moisture)
     {
-        foreach (TerrainType terrainType in terrainTypes)
+        foreach (Biome biome in biomes)
         {
-            // Triggers on the first one where we qualify the condition
-            // For instance, we have water below .3, then lowlands below like .5, so if I feed in .4, it won't get in
-            // here for water but it will get in here for lowlands 
-            if (height <= terrainType.end)
+            if (height >= biome.lowHeight && height < biome.highHeight && 
+                moisture >= biome.lowMoisture && moisture < biome.highMoisture)
             {
-                return terrainType;
+                return biome;
             }
         }
 
-        // If we didn't hit one, choose the highest one 
-        return terrainTypes[terrainTypes.Length - 1]; 
+        // If we didn't hit one, print an error message and assign the last biome as a default
+        Debug.LogError(string.Format("Height {0} and Moisture {1} did not fit into a biome's description.", height, moisture)); 
+        return biomes[biomes.Length - 1]; 
     }
 
-    // TODO: More straightforward, connotative to make this a Set instead of a List (which implies order means something) 
     public HashSet<Vertex> GetBoundaryVertices()
     {
         List<Osub> boundarySubsegments = GetBoundaryEdges();

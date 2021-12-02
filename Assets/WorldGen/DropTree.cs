@@ -6,28 +6,7 @@ using Terrain = Assets.WorldGen;
 using System;
 using Random = System.Random;
 
-[System.Serializable]
-public class plantsGroup
-{
-    public int groupType; // which pattern are we following
-    public List<GameObject> gameObjects; //GameObjects in this group
-    public (float, float) rangeX; // boundaries of x of this group
-    public (float, float) rangeZ; // boundaries of z of this group
 
-    public plantsGroup()
-    {
-        gameObjects = new List<GameObject>();        
-    }
-
-    public void removePlantsGroup()
-    {
-        foreach (GameObject gameObject in gameObjects)
-        {
-            UnityEngine.Object.Destroy(gameObject);
-        }
-        
-    }
-}
 
 public class DropTree : MonoBehaviour
 {
@@ -49,13 +28,40 @@ public class DropTree : MonoBehaviour
     public  int GRID_TO_GENERATE_PER_FRAME;
     public int PLANTS_TO_REMOVE_PER_FRAME;
 
+    static private GameObject player;
+    static private Vector3 playerPos;
+    static private (int, int) currentChunk;
+    static private GFG gg;
     public List<GameObject> bushPrefabs;
     public List<GameObject> flowerPrefabs;
     public List<GameObject> grassPrefabs;
     public List<GameObject> mushroomPrefabs;
     public List<GameObject> waterPlantPrefabs;
     public GameObject treePrefab;
-    
+    public List<GameObject> treePrefabs;
+
+    private class GFG : IComparer<(int, int)>
+    {
+        public int distance((int, int) x)
+        {
+            int output;
+            if (Mathf.Abs(x.Item1 - currentChunk.Item1) > Mathf.Abs(x.Item2 - currentChunk.Item2))
+            {
+                output = Mathf.Abs(x.Item1 - currentChunk.Item1);
+            }
+            else
+            {
+                output = Mathf.Abs(x.Item2 - currentChunk.Item2);
+            }
+            return output;
+        }
+
+        public int Compare((int, int) x, (int, int) y)
+        {
+            return distance(x).CompareTo(distance(y));
+
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -68,6 +74,8 @@ public class DropTree : MonoBehaviour
         finishedChunks = new List<(int int1, int int2)>();
         toRemoveChunks = new List<(int int1, int int2)>();
         touchedChunks = new List<(int int1, int int2)>();
+        player = GameObject.Find("Player");
+        gg = new GFG();
     }
 
     private void OnDisable()
@@ -95,6 +103,19 @@ public class DropTree : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+/*        adding a line to refresh git
+*/        player = GameObject.Find("Player");
+        if (player == null)
+        {
+            playerPos = Vector3.zero;
+            currentChunk = (0,0);
+        }
+        else
+        {
+            playerPos = player.transform.position;
+            currentChunk = ((int)((playerPos.x - 40) / 80), (int)((playerPos.z - 40) / 80));
+        }
+        Debug.Log("PLAYERPOS: " + playerPos);
         currentChunks = TerrainManager.getChunksCords();
 
         toDoChunks = new List<(int, int)>();
@@ -105,6 +126,7 @@ public class DropTree : MonoBehaviour
                 toDoChunks.Add(chunk);
             }
         }
+        toDoChunks.Sort(gg);
         GenerateTrees(); // Generate trees in in-range chunks
         toRemoveChunks = new List<(int, int)>();
         foreach ((int, int) chunk in touchedChunks)
@@ -137,6 +159,7 @@ public class DropTree : MonoBehaviour
             int bushSeed = (chunkCord + "bush").GetHashCode();
             int shroomSeed = (chunkCord + "shroom").GetHashCode();
             int waterPlantSeed = (chunkCord + "waterPlant").GetHashCode();
+            int treeSeed = (chunkCord + "tree").GetHashCode();
             //If this is the first time GenerateTrees() is been used to generate plants for chunk:(xCord, yCord), we need to initial a pair in treesD and all the Random generator
             if (!treesD.ContainsKey((xCord, yCord)))
             {
@@ -149,6 +172,7 @@ public class DropTree : MonoBehaviour
                 plantRandoms.Add(new Random(bushSeed));
                 plantRandoms.Add(new Random(shroomSeed));
                 plantRandoms.Add(new Random(waterPlantSeed));
+                plantRandoms.Add(new Random(treeSeed));
                 touchedChunks.Add((xCord,yCord));
             }
 
@@ -173,8 +197,8 @@ public class DropTree : MonoBehaviour
                                 TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(new Vector2(treeX, treeZ));
                                 Vector3 pos = new Vector3(treeX, heightData.height, treeZ);
                                 if (heightData.height >= 30)
-                                {
-                                    GameObject tempTree = Instantiate(treePrefab, pos, Quaternion.identity);
+                                {                                    
+                                    GameObject tempTree = Instantiate(treePrefabs[plantRandoms[5].Next(0, 6)], pos, Quaternion.identity);
                                     tempTree.transform.parent = this.transform;
                                     tempTree.transform.up = heightData.normal;
                                     treesD[(xCord, yCord)].Add(tempTree);
@@ -198,7 +222,7 @@ public class DropTree : MonoBehaviour
                                 Vector3 pos = new Vector3(shroomX, heightData.height, shroomZ);
                                 if (heightData.height >= 30)
                                 {
-                                    GameObject tempTree = Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 32)], pos, Quaternion.identity);
+                                    GameObject tempTree = Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 67)], pos, Quaternion.identity);
                                     tempTree.transform.parent = this.transform;
                                     tempTree.transform.up = heightData.normal;
                                     treesD[(xCord, yCord)].Add(tempTree);
@@ -222,7 +246,7 @@ public class DropTree : MonoBehaviour
                         Vector3 pos = new Vector3(grassX, heightData.height, grassZ);
                         if (heightData.height >= 30)
                         {
-                            GameObject prefab = grassPrefabs[plantRandoms[0].Next(0, 39)];
+                            GameObject prefab = grassPrefabs[plantRandoms[0].Next(0, 51)];
                             float tempRand = (float)chunkRand.NextDouble();
                             if (tempRand < 0.01)
                             {

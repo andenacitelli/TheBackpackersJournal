@@ -110,31 +110,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105}
-  terrainTypes:
-  - start: 0
-    end: 0
-    color: {r: 0, g: 0.12516737, b: 1, a: 1}
+  biomes:
+  - name: beach
+    lowMoisture: 0
+    highMoisture: 1
+    lowHeight: 0
+    highHeight: 0.3
+    color: {r: 0.9339623, g: 0.7560627, b: 0.6467248, a: 0}
     randomizationFactor: 0.05
-  - start: 0
-    end: 0.25
-    color: {r: 0.5800872, g: 0.5849056, b: 0.41660732, a: 1}
+  - name: desert
+    lowMoisture: 0
+    highMoisture: 0.3
+    lowHeight: 0.3
+    highHeight: 0.47
+    color: {r: 0.9433962, g: 0.83554935, b: 0.63545746, a: 1}
     randomizationFactor: 0.05
-  - start: 0.25
-    end: 0.4
-    color: {r: 0.12223364, g: 0.5566038, b: 0.08086506, a: 1}
-    randomizationFactor: 0.5
-  - start: 0.4
-    end: 0.47
-    color: {r: 0.12848811, g: 0.2924528, b: 0.07559627, a: 1}
+  - name: deciduous forest
+    lowMoisture: 0.3
+    highMoisture: 0.47
+    lowHeight: 0.3
+    highHeight: 0.47
+    color: {r: 0, g: 0.6415094, b: 0.17267114, a: 1}
     randomizationFactor: 0.05
-  - start: 0.47
-    end: 0.54
-    color: {r: 0.24528301, g: 0.15852223, b: 0.09140263, a: 1}
-    randomizationFactor: 0.075
-  - start: 0.54
-    end: 1
-    color: {r: 0.9339623, g: 0.8062033, b: 0.8062033, a: 1}
-    randomizationFactor: 0.1
+  - name: wetlands
+    lowMoisture: 0.47
+    highMoisture: 1
+    lowHeight: 0.3
+    highHeight: 0.47
+    color: {r: 0.3301887, g: 0.24782684, b: 0.0978106, a: 1}
+    randomizationFactor: 0.05
+  - name: tundra
+    lowMoisture: 0
+    highMoisture: 0.3
+    lowHeight: 0.47
+    highHeight: 1
+    color: {r: 0.9811321, g: 0.923149, b: 0.8182271, a: 1}
+    randomizationFactor: 0.05
+  - name: coniferous forest
+    lowMoisture: 0.3
+    highMoisture: 0.47
+    lowHeight: 0.47
+    highHeight: 1
+    color: {r: 0.08942683, g: 0.3018868, b: 0.13478497, a: 1}
+    randomizationFactor: 0.05
+  - name: halloween
+    lowMoisture: 0.47
+    highMoisture: 1
+    lowHeight: 0.47
+    highHeight: 1
+    color: {r: 0.31137693, g: 0.10728017, b: 0.38679248, a: 1}
+    randomizationFactor: 0.05
+  - name: mountain
+    lowMoisture: 1
+    highMoisture: 1
+    lowHeight: 1
+    highHeight: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
+    randomizationFactor: 0.05
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}

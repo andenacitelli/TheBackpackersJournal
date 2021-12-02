@@ -17,11 +17,15 @@ public class TerrainManager : MonoBehaviour
     public GameObject TreeRockDropper;
 
     public static Noise heightNoise; // Used for heightmap values
+    public static Noise moistureNoise; // Used for moisture values in order to pick biomes
     public static Noise colorRandomizationNoise; // Used to randomize vertex colors a little bit
     public static Noise heightFuzzingNoise; // Used to semi-randomly alter biome height cutoffs so it's less jarring when we get a shift
 
-    // Holds references to chunks we've generated so that we don't regenerate them 
-    static private Dictionary<Vector2Int, GameObject> chunks = new Dictionary<Vector2Int, GameObject>();
+    // Chunks that have been fully generated
+    static public Dictionary<Vector2Int, GameObject> chunks = new Dictionary<Vector2Int, GameObject>();
+
+    // Chunks that are mid-coroutine - i.e. are generating in steps across several frames
+    static public Dictionary<Vector2Int, GameObject> generatingChunks = new Dictionary<Vector2Int, GameObject>();
 
     private static bool finishedFirstTimeGeneration = false;
     private void Start()
@@ -37,9 +41,10 @@ public class TerrainManager : MonoBehaviour
         colorRandomizationNoise.scale = 50;
         heightFuzzingNoise = gameObject.AddComponent<Noise>(); // Used to make biome height boundaries a little more fuzzy to avoid the discrete layers look
         heightFuzzingNoise.scale = 50;
+        moistureNoise = gameObject.AddComponent<Noise>();
+        moistureNoise.scale = 500; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
 
-        GenerateChunks();
-
+        // GenerateChunks();
     }
 
     private void OnDisable()
@@ -65,35 +70,32 @@ public class TerrainManager : MonoBehaviour
         return currentChunks;
     }
 
-    void Update() 
+    // If nothing is generating, we start a coroutine, then that coroutine switches this back when it's done, 
+    // causing this to start a new coroutine ... ad nauseum
+    public static bool generatingAChunk = false;
+    private int frame = 0; 
+    void Update()
     {
-        GenerateChunks(); // Generate ungenerated, in-range chunks
-        CullChunks(); // Destroy generated, out-of-range chunks 
-    }
+        frame++;
+        print("Frame: " + frame);
+        if (!generatingAChunk)
+        {
+            GenerateNearestChunk(); 
+        }
 
-    void GenerateChunks()
+        // Note that we can't really turn CullChunks() into a coroutine, as we can (and do) already limit it
+        // to one Destroy() call per frame and that's really the smallest atomic unit in that function
+        // (as opposed to ChunkGen.GenerateChunk(), which has like five separate steps we can separate into five frames of work
+        // CullChunks(); // Destroy generated, out-of-range chunks 
+    }
+    
+    void GenerateNearestChunk()
     {
         // Instantiate a tile at the given position
         Vector2Int playerPosChunks = new Vector2Int(
             Mathf.RoundToInt(player.transform.position.x / ChunkGen.size), 
             Mathf.RoundToInt(player.transform.position.z / ChunkGen.size));
-
-        // Generate a fixed amount of frames per UPDATE call
-        // If this were FixedUpdate, we'd run into an issue where we could only hit a certain render distance
-        // However, because this is Update, update should get called more frequently on a more powerful computer and thus
-        // world generation can scale to higher chunk distances
-        const byte CHUNKS_TO_GENERATE_PER_FRAME = 3;
-        int chunksGeneratedThisFrame = 0;
-
-        // While the easiest implementation iterates through things minimum x/z to maximum x/z, 
-        // we want to generate the closest frames (measured by simple euclidian distance) first.
-        // Option 1: Slap every close chunk coord in a list, then take the minimum out each time. This is incredibly unperformant and we can do better.
-        // Option 2: Throw them in a heap or some data structure that lets us take the minimum one out each time.
-        // Option 3: Keep a variable generating a "current radius" that tracks how far out we are.
-        //      We basically generate the chunk right under the player, then all chunks radius 1 away, then all chunks radius 2 away... 
-        // Option 3: Find a way to preserve some of the work across frames.
-        //      Theoretically, the most we should ever recalculate and reorder is
-        //      the frame that a player switches chunks, if not even less frequently.
+        
         Vector2Int currentChunk = new Vector2Int(playerPosChunks.x, playerPosChunks.y);
         int counter = 0;
         for (int currentRadius = 0; currentRadius < generateRadius; currentRadius++)
@@ -102,13 +104,6 @@ public class TerrainManager : MonoBehaviour
             {
                 for (int zIndex = currentChunk.y - currentRadius; zIndex <= currentChunk.y + currentRadius; zIndex++)
                 {
-                    // TODO: Probably possible and more performant to "save" where we were in this loop and only fully reset
-                    // iteration when we switch chunks (maximum theoretical we need) or even less frequently (i.e. 3 chunks)
-                    if (chunksGeneratedThisFrame > CHUNKS_TO_GENERATE_PER_FRAME)
-                    {
-                        return;
-                    }
-
                     // Skip any chunk that's within the square-wise radius but not within the circle-wise radius
                     // TODO: Probably a better spiraling algorithm possible that doesn't require a `continue`, but better things to work on rn
                     if (Vector2Int.Distance(playerPosChunks, new Vector2Int(xIndex, zIndex)) > generateRadius)
@@ -123,24 +118,31 @@ public class TerrainManager : MonoBehaviour
                         // Chunk pos (in chunks)
                         Vector2Int pos = new Vector2Int(xIndex, zIndex);
 
-                        // Only generate chunk if it doesn't already exist 
-                        if (!chunks.ContainsKey(pos))
+                        // Only generate this chunk if it doesn't already exist 
+                        if (!generatingChunks.ContainsKey(pos) && !chunks.ContainsKey(pos))
                         {
+                            generatingAChunk = true;
                             Vector3 chunkPos = new Vector3(xIndex * ChunkGen.size, this.gameObject.transform.position.y, zIndex * ChunkGen.size);
-//                            print("(TM):Initializing chunk at " + chunkPos);
-                            counter++;
-                            GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
-                            tile.GetComponent<ChunkGen>().GenerateChunk();
+                            print("(TM):Initializing chunk at " + chunkPos);
+
+                            // 0th Child is for Chunks; 1st child is for Clouds (this is 100% just for organizational purposes)
+                            GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform.GetChild(0)) as GameObject;
                             tile.SetActive(true);
-                            tile.layer = LayerMask.NameToLayer("Terrain");
-                            chunks[pos] = tile;
-                            chunksGeneratedThisFrame++;
+                            generatingChunks.Add(pos, tile);
+
+                            counter++;
+                            print("Starting coroutine for this chunk: " + chunkPos);
+                            StartCoroutine(tile.GetComponent<ChunkGen>().GenerateChunk());
+                            print("Started the coroutine for this chunk: " + chunkPos);
+                            // Application.Quit();
+                            return;
                         }
                     }
                 }
             }
         }
-        if(counter == 0 && finishedFirstTimeGeneration == false)
+
+        if (counter == 0 && finishedFirstTimeGeneration == false)
         {
             TreeRockDropper.SetActive(true);
         }
@@ -156,7 +158,7 @@ public class TerrainManager : MonoBehaviour
 
         // Get a list of chunks to remove; we can't actually remove them yet, as you can't modify a dictionary during iterations 
         List<Vector2Int> keysToRemove = new List<Vector2Int>();
-        const int CHUNKS_TO_CULL_PER_FRAME = 5;
+        const int CHUNKS_TO_CULL_PER_FRAME = 1;
         int chunksCulled = 0;
         foreach (KeyValuePair<Vector2Int, GameObject> chunkPair in chunks)
         {
