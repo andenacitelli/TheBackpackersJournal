@@ -68,6 +68,7 @@ public class AudioManager : MonoBehaviour
             Debug.Log("AudioSource replaced");
         }
         s.source = newSrc;
+        Debug.Log($"{newSrc.gameObject.name} playing sound.\nAudio source comparison\nPassed: {newSrc}\nUsing: {s.source}");
         s.source.clip = s.clip;
         s.source.outputAudioMixerGroup = s.group;
         s.source.volume = s.volume;

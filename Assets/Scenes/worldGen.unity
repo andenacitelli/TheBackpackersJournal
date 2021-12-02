@@ -205,8 +205,8 @@ MonoBehaviour:
   tripleSpawnChance: 0.4
   multiSpawnChance: 0.1
   sameSpeciesChance: 0.4
-  minPlayerDistance: 20
-  maxPlayerDistance: 200
+  minPlayerDistance: 15
+  maxPlayerDistance: 60
   aboveGroundDistance: 1
   maxSpawnCenterDistance: 10
   minAnimalDistance: 1
