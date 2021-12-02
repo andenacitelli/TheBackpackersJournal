@@ -103,7 +103,8 @@ public class DropTree : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player = GameObject.Find("Player");
+/*        adding a line to refresh git
+*/        player = GameObject.Find("Player");
         if (player == null)
         {
             playerPos = Vector3.zero;
