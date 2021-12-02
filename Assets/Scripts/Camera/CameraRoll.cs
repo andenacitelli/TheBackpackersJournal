@@ -7,12 +7,35 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 using System;
+using System.Xml.Serialization;
+using UnityEditor;
 
 public struct photo
 {
+    [XmlIgnore]
     public Texture2D captureData;
+
     public string fileName;
-    public List<GameObject> inView;
+    //[XmlArray("ObjsInPhoto"), XmlArrayItem("Object")]
+    public string[] inView;
+
+    public string nullValTest;
+
+    public int inStorage;
+    public string wallName;
+    [XmlElement("coordX")]
+    public float wallX;
+    [XmlElement("coordY")]
+    public float wallY;
+    [XmlElement("coordZ")]
+    public float wallZ;
+    [XmlElement("frameScale")]
+    public Vector3 scale;
+    [XmlElement("frameRot")]
+    public Quaternion q;
+
+    public string pageName;
+    public int totalScore;
     // will need more things here - for sure
 }
 //UI Code here is temporary & just for testing
@@ -22,7 +45,7 @@ public class CameraRoll : MonoBehaviour
     private static bool autoPlace = true;
     private bool bufferFilled = false;
     public int capacity = 9;
-    private List<GameObject> currView;
+    private List<string> currView;
     private ImageScanner imageScan;
     private CRUIGallery galleryUI;
     private int internalIndex = 0;
@@ -35,6 +58,7 @@ public class CameraRoll : MonoBehaviour
     private GalleryStorage galleryStorage;
     private static photo buffer;
     private int counter = 0;
+    public string profileName;
 
     #region UItest
     [Header("TestConnections")]
@@ -44,14 +68,13 @@ public class CameraRoll : MonoBehaviour
     private Image uiImage;
     private TextMeshProUGUI uiText;
     #endregion
-    private void Awake()
+    private void Start()
     {
         imageScan = GetComponent<ImageScanner>();
         uiImage = uiTestImage.GetComponent<Image>();
         uiText = uiTestData.GetComponent<TextMeshProUGUI>();
         galleryStorage = galleryStorageGO.GetComponent<GalleryStorage>();
-        
-        LoadCRoll();
+        profileName = PlayerPrefs.GetString("profileName");
         
     }
 
@@ -66,65 +89,180 @@ public class CameraRoll : MonoBehaviour
         counter++;
     }
 
-    private void LoadCRoll() 
+    public void LoadCRoll(Save s) 
     {
+        print("ProfileNAME: " + s.playerName);
+        profileName = s.playerName;
         cRollStorage = new List<photo>();
-        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/";
-        DirectoryInfo info = new DirectoryInfo(pathNoFile);
-        if (!info.Exists)
+        if(profileName != "")
         {
-            info.Create();
-        }
-        FileInfo[] fileInfo = info.GetFiles();
-        int index = 0;
-        foreach (FileInfo f in fileInfo)
-        {
-            if (!f.Name.Contains("meta"))
+            string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
+            DirectoryInfo info = new DirectoryInfo(pathNoFile);
+            /*if (!info.Exists)
             {
-                
-                string path = "/PhotoStorage/" + index;
-                string absolutePath = pathNoFile + f.Name;
-                Texture2D t2D = new Texture2D(Screen.width, Screen.height);
-
-                byte[] data = File.ReadAllBytes(absolutePath);
-                ImageConversion.LoadImage(t2D, data);
-                t2D.Apply();
-
-                photo grabPhoto = new photo
+                info.Create();
+            }*/
+            FileInfo[] fileInfo = info.GetFiles();
+            int index = 0;
+            photo[] loadArray = s.crTest;
+            foreach (FileInfo f in fileInfo)
+            {
+                if (!f.Name.Contains("meta"))
                 {
-                    captureData = t2D,
-                    fileName = absolutePath
-                };
-                SaveBuffer(index, grabPhoto, true);
-                index++;
-            }
-            
 
+                    string path = "/PhotoStorage/" + profileName + "/CameraRoll/" + index;
+                    string absolutePath = pathNoFile + f.Name;
+                    Texture2D t2D = new Texture2D(Screen.width, Screen.height);
+
+                    byte[] data = File.ReadAllBytes(absolutePath);
+                    ImageConversion.LoadImage(t2D, data);
+                    t2D.Apply();
+                    // APPLY total score here
+                    photo grabPhoto = new photo
+                    {
+                        captureData = t2D,
+                        fileName = absolutePath,
+                        inView = loadArray[index].inView,
+                        totalScore = loadArray[index].totalScore
+                    };
+                    SaveBuffer(index, grabPhoto, true);
+                    index++;
+                }
+   
+
+            }
         }
+        
 
     }
 
     public void ForwardPhotoToStorage(int indexChosen)
     {
         photo grabP = cRollStorage[indexChosen];
-        Texture2D tex = grabP.captureData;
-        //crUI.UpdateCR(indexChosen, null);
-        galleryStorage.ReceivePhoto(indexChosen);
+        cRollStorage.RemoveAt(indexChosen);
+        string oldFName = grabP.fileName;
+        
+        
+        photo newPhoto = galleryStorage.ReceivePhoto(indexChosen, grabP);
+        
+        //User has moved on to scale selection now
+        
+        //PROBLEM ISSUE HERE
+        print("crForward-oldFName: " + oldFName);
+        print("crForward-newFName: " + newPhoto.fileName);
+        //handle files
+        StartCoroutine(TransferFiles(oldFName, newPhoto.fileName));
 
-        //TODO: HANDLE FILES
-        //cRollStorage.RemoveAt(indexChosen);
+        // update 
+        //crUI.UpdateCR(indexChosen, null);
+        //int galleryIndex = newFName[newFName.Length - 5];
+        
+        //cRollStorage.Remove(grabP);
+        
+        // Maintain order ~ slide over entries so no empty space
+        StartCoroutine(ReformatCR(indexChosen));
+        
+        
+    }
+
+    private IEnumerator TransferFiles(string oldFName, string newFName)
+    {
+        //FileUtil.CopyFileOrDirectory(oldFName, newFName);
+        File.Copy(oldFName, newFName);
+        yield return new WaitForEndOfFrame();
+
+        //FileUtil.DeleteFileOrDirectory(oldFName);
+        File.Delete(oldFName);
+        yield return new WaitForEndOfFrame();
+
+    }
+
+    // Cleans up changes in index
+    private IEnumerator ReformatCR(int removedIndex)
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        string pathNoFile = Application.persistentDataPath + "/PhotoStorage/" + profileName + "/CameraRoll/";
+        DirectoryInfo info = new DirectoryInfo(pathNoFile);
+        FileInfo[] fileInfo = info.GetFiles();
+        int index = 0;
+        if(cRollStorage.Count != 0)
+        {
+            int numFiles = fileInfo.Length;
+            print("Files Detected: " + numFiles);
+            for(int i = 0; i < numFiles; i++)
+            {
+                FileInfo f = fileInfo[i];
+                if (!f.Name.Contains("meta"))
+                {
+
+                    char oldName = f.Name[0];
+                    if (index >= removedIndex)
+                    {
+                        print("old name: " + oldName + ".png");
+                        print("new name: " + index + ".png");
+                        string oldFPath = pathNoFile + oldName + ".png";
+                        string newFPath = pathNoFile + index + ".png";
+                        //FileUtil.CopyFileOrDirectory(oldFPath, newFPath);
+                        File.Copy(oldFPath, newFPath);
+                        yield return new WaitForEndOfFrame();
+                        photo grab = cRollStorage[index];
+                        photo newPhoto = new photo
+                        {
+                            fileName = newFPath,
+                            inView = grab.inView,
+                            captureData = grab.captureData,
+                            totalScore = grab.totalScore
+                        };
+                        cRollStorage.RemoveAt(index);
+                        cRollStorage.Insert(index, newPhoto);
+                        crUI.UpdateCR(index, cRollStorage[index].captureData);
+                        
+                        grab.fileName = newFPath;
+                        yield return new WaitForEndOfFrame();
+
+                        print("Deleting old file: " + oldFPath);
+                        //bool result = FileUtil.DeleteFileOrDirectory(oldFPath);
+                        File.Delete(oldFPath);
+                        /*if (result)
+                        {
+                            print("Deleted file!");
+                        } else
+                        {
+                            print("Failed to delete file. Trying again after wait.");
+                            yield return new WaitForEndOfFrame();
+                            FileUtil.DeleteFileOrDirectory(oldFPath);
+                        }*/
+                        yield return new WaitForEndOfFrame();
+                        //AssetDatabase.Refresh();
+                    }
+                    index++;
+                }
+            }
+            print("Files Used: " + index);
+        }
+       
+
+        print("Updating final camera roll slot after shift.");
+
+        crUI.UpdateCR(cRollStorage.Count, null);
+        yield return new WaitForEndOfFrame();
+
     }
 
     public void RecievePhoto(byte[] rawData)
     {
         Debug.Log("Recieved Photo");
         currView = imageScan.ScanFrame();
+        // pass currview to scanner rank to get totalScore
         Texture2D newTex = new Texture2D(Screen.width, Screen.height);
         newTex.LoadRawTextureData(rawData);
         newTex.Apply();
+        //TODO: Apply totalscore HERE
         buffer = new photo
         {
-            inView = currView,
+            inView = currView.ToArray(),
             captureData = newTex
         };
         bufferFilled = true;
@@ -210,23 +348,19 @@ public class CameraRoll : MonoBehaviour
     }
     private void SaveBuffer(int crIndex, photo buffPass, bool isLoad)
     {
-        string fileName = Application.persistentDataPath + "/PhotoStorage/" + crIndex + ".png";
-
+        string pName = PlayerPrefs.GetString("profileName");
+        string fileName = Application.persistentDataPath + "/PhotoStorage/" + pName + "/CameraRoll/" + crIndex + ".png";
+        
         buffPass.fileName = fileName;
         crUI.UpdateCR(crIndex, buffPass.captureData);
-        cRollStorage.Insert(crIndex, buffPass);
-
-
-        if (!isLoad)
-        {
-            //WriteFile(fileName);
-        }
-        
+        cRollStorage.Insert(crIndex, buffPass);  
     }
 
     public async void WriteFile(string fileName, Texture2D data)
     {
         byte[] rawData = data.EncodeToPNG();
+        string pName = PlayerPrefs.GetString("profileName");
+        
         using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
         {
             fs.Seek(0, SeekOrigin.End);

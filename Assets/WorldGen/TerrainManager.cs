@@ -26,7 +26,7 @@ public class TerrainManager : MonoBehaviour
     private static bool finishedFirstTimeGeneration = false;
     private void Start()
     {
-        Debug.Log("Start - TerrainManager");
+//        Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
         //player = GameObject.Find("WorldGenPlayer");
 
@@ -127,7 +127,7 @@ public class TerrainManager : MonoBehaviour
                         if (!chunks.ContainsKey(pos))
                         {
                             Vector3 chunkPos = new Vector3(xIndex * ChunkGen.size, this.gameObject.transform.position.y, zIndex * ChunkGen.size);
-                            print("(TM):Initializing chunk at " + chunkPos);
+//                            print("(TM):Initializing chunk at " + chunkPos);
                             counter++;
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform) as GameObject;
                             tile.GetComponent<ChunkGen>().GenerateChunk();

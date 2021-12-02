@@ -35,6 +35,12 @@ public class AnimalSenses : MonoBehaviour
         StartCoroutine(UpdateVisionWithDelay());
     }
 
+    private void Update()
+    {
+        CleanList(seenCreatures);
+        CleanList(heardCreatures);
+    }
+
     // Refresh list of seen creatures
     IEnumerator UpdateHearingWithDelay()
     {
@@ -49,9 +55,10 @@ public class AnimalSenses : MonoBehaviour
             // add all in hearing range to heard
             foreach (var heard in heardInRadius)
             {
-                if (heard.gameObject != transform.gameObject && heard.TryGetComponent<Creature>(out creature))
-                    heardCreatures.Add(creature);
                 yield return null;
+
+                if (heard != null && heard.gameObject != transform.gameObject && heard.TryGetComponent<Creature>(out creature))
+                    heardCreatures.Add(creature);
             }
 
             yield return new WaitForSeconds(detectRate);
@@ -71,25 +78,40 @@ public class AnimalSenses : MonoBehaviour
             // verify creatures in sphere
             foreach (var seen in seenInRadius)
             {
-                Transform seenTransform = seen.transform;
-                Vector3 dirToSeen = (seenTransform.position - transform.position).normalized;
-                Creature seenCreature;
+                yield return null;
 
-                // disregard objects outside of viewing angle
-                if (Vector3.Angle(transform.forward, dirToSeen) < viewingAngle / 2)
+                // TODO: fix the null reference issue after destroyed
+                if (seen != null)
                 {
-                    // distance to detected object
-                    float targetDistance = Vector3.Distance(transform.position, seenTransform.position);
-                    // check distance to creature and verify unobstructed
-                    if (!Physics.Raycast(transform.position, dirToSeen, targetDistance, obstacleMask) && seenTransform.gameObject != transform.gameObject && seenTransform.TryGetComponent<Creature>(out seenCreature))
+                    Transform seenTransform = seen.transform;
+                    Vector3 dirToSeen = (seenTransform.position - transform.position).normalized;
+                    Creature seenCreature;
+
+                    // disregard objects outside of viewing angle
+                    if (Vector3.Angle(transform.forward, dirToSeen) < viewingAngle / 2)
                     {
-                        seenCreatures.Add(seenCreature);
+                        // distance to detected object
+                        float targetDistance = Vector3.Distance(transform.position, seenTransform.position);
+                        // check distance to creature and verify unobstructed
+                        if (!Physics.Raycast(transform.position, dirToSeen, targetDistance, obstacleMask) && seenTransform.gameObject != transform.gameObject && seenTransform.TryGetComponent<Creature>(out seenCreature))
+                        {
+                            seenCreatures.Add(seenCreature);
+                        }
                     }
                 }
-                yield return null;
             }
-
             yield return new WaitForSeconds(detectRate);
+        }
+    }
+
+    // cleans up list by removing null references from objects that got destroyed
+    void CleanList(List<Creature> creatures)
+    {
+        // loop over list backwards searching for and removing null references
+        for (var i = creatures.Count - 1; i > -1; i--)
+        {
+            if (creatures[i] == null)
+                creatures.RemoveAt(i);
         }
     }
 

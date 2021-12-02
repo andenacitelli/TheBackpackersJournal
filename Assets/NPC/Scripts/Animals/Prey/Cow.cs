@@ -10,7 +10,13 @@ public class Cow : PreyController
     protected override void Initialize()
     {
         base.Initialize();
-        //audioManager.Assign3DSource(audioSource, soundNames[0]);
+        sounds.Add("dead", 0);
+        sounds.Add("run", 1);
+        sounds.Add("moo", 2);
+        sounds.Add("moopocalypse", 3);
+        sounds.Add("mootastrophe", 4);
+        sounds.Add("moofoundland", 5);
+        sounds.Add("moose", 6);
     }
     protected override IEnumerator IdleBehavior()
     {
@@ -22,7 +28,7 @@ public class Cow : PreyController
         {
             Animations.SetTrigger("eat");
             while (!AnimationStateMatchesName("Eating")) yield return null;
-            PlaySound(ChangeMoo());
+            AnimalPlaySound(ChangeMoo());
             yield return new WaitForSeconds(eatTime);
             Animations.SetTrigger("idle");
             yield return new WaitUntil(IsIdling);
@@ -33,11 +39,34 @@ public class Cow : PreyController
         GetNewRoamingDestination();
 
     }
+
+    protected override IEnumerator PlayFleeSound()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(IsFleeing);
+            AnimalPlaySound("run");
+            while (IsFleeing()) yield return null;
+        }
+    }
+
     // changes the sound that the cow makes to a random
     private string ChangeMoo()
     {
-        string newMoo = soundNames[Random.Range(0, soundNames.Length)];
-        //audioManager.Assign3DSource(audioSource, newMoo);
-        return newMoo;
+        switch (Random.Range(2, 7))
+        {
+            case 2:
+                return "moo";
+            case 3:
+                return "moopocalypse";
+            case 4:
+                return "mootastrophe";
+            case 5:
+                return "moofoundland";
+            case 6:
+                return "moose";
+            default:
+                return "moo";
+        }
     }
 }

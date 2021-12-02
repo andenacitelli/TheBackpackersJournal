@@ -1,11 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Assets.WorldGen;
 
 public class AnimalController : MonoBehaviour
 {
-    [SerializeField] private bool inEvent = false;
+    //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
+    bool isMoving = false;
     [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
     [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
@@ -17,7 +19,8 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
-    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 50.0f;
+
+    // TODO: remove territory. instead have roaming points use chunk area
     [SerializeField] public Bounds territory;
 
 
@@ -25,6 +28,11 @@ public class AnimalController : MonoBehaviour
     protected Creature.CreatureTypes creatureType;
     protected Vector3 targetDestination;
     private AnimalSenses senses;
+    protected bool fleeing = false;
+    protected Vector3 threatCenter; // center point of detected threats to flee
+
+    protected Transform playerTransform = null;
+
     private CharacterController controller;
     
     protected Animator anim;
@@ -32,7 +40,10 @@ public class AnimalController : MonoBehaviour
 
     protected AudioManager audioManager;
     protected AudioSource audioSource;
-    [SerializeField] protected string[] soundNames;
+    [SerializeField] protected string[] audioManagerNames;
+
+    // key is animal specific shorthand for the sound, value is the index of the 
+    protected readonly Dictionary<string, int> sounds = new Dictionary<string, int>();
 
 
     public bool CanFly { get => canFly; }
@@ -42,6 +53,7 @@ public class AnimalController : MonoBehaviour
     protected float TargetTolerance { get => targetTolerance; }
     protected float NewTargetDelay { get => newTargetDelay; }
     protected AnimalSenses Senses { get => senses; }
+    public bool PlayerInRange { get => playerTransform != null; }
     protected CharacterController Controller { get => controller; }
     public Creature.CreatureTypes CreatureType { get => creatureType; }
     public Animator Animations { get => anim;  }
@@ -51,10 +63,12 @@ public class AnimalController : MonoBehaviour
 
 
     protected virtual void Initialize() { }
+
     protected virtual IEnumerator ActionAtTarget()
     {
         yield return StartCoroutine(IdleBehavior());
     }
+
     protected virtual IEnumerator IdleBehavior()
     {
         // start idle animation
@@ -68,8 +82,13 @@ public class AnimalController : MonoBehaviour
 
     protected virtual IEnumerator AttackBehavior() { yield return null; }
 
+    protected IEnumerator WaitOnAnimationState(string stateName)
+    {
+        while (!AnimationStateMatchesName(stateName)) yield return null;
+    }
+
     // Animal behavior
-    void Start()
+    void Awake()
     {
         currentSpeed = WalkSpeed;
 
@@ -80,16 +99,20 @@ public class AnimalController : MonoBehaviour
 
         audioManager = FindObjectOfType<AudioManager>();
         audioSource = GetComponent<AudioSource>();
+    }
 
+    // call to start the animal doing its thing after placing in world
+    public void LetsGetGoing()
+    {
         Initialize();
         StartCoroutine(AnimalBehavior());
     }
-
     // returns true when within tolerance distance of destination
     bool AtTarget()
     {
         return Vector3.Distance(targetDestination, transform.position) <= targetTolerance;
     }
+
     protected bool IsIdling()
     {
         return AnimationStateMatchesName("Idling");
@@ -101,15 +124,26 @@ public class AnimalController : MonoBehaviour
         return Animations.GetCurrentAnimatorStateInfo(0).IsName(name);
     }
 
-    protected void PlaySound(string name)
+    // uses the shorthand to get the actual sound name and send that to audiomanager
+    private string TrueSoundName(string shorthand)
     {
-        //audioManager.Assign3DSource(audioSource, name);
-        //audioManager.Play(name); 
+        return audioManagerNames[sounds[shorthand]];
     }
+
+    // play given sound from animal
+    protected void AnimalPlaySound(string shorthand)
+    {
+        string soundName = TrueSoundName(shorthand);
+        audioManager.Assign3DSource(audioSource, soundName);
+        audioManager.Play(soundName);
+    }
+
+    protected virtual IEnumerator TriggeredSounds() { yield return null; }
 
     // Carry out all of the animal's functions
     IEnumerator AnimalBehavior()
     {
+        StartCoroutine(TriggeredSounds());
         GetNewRoamingDestination();
         while (true)
         {
@@ -123,7 +157,7 @@ public class AnimalController : MonoBehaviour
     {
         // start moving animations
         Animations.CrossFade("Walk", animTransitionTime);
-
+        isMoving = true;
         while (!AtTarget())
         {
             // adjust target to be in territory
@@ -140,6 +174,7 @@ public class AnimalController : MonoBehaviour
             controller.Move(moveDirection * Time.deltaTime);
             yield return null;
         }
+        isMoving = false;
     }
 
     // very possibly going to get rid of this, makes it so that any animal can't leave the bounds given by maxX, maxY, maxZ

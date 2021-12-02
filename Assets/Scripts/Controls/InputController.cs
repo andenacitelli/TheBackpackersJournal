@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 [Serializable]
 public class MoveInputEvent : UnityEvent<float, float> { }
 [Serializable]
+public class SprintInputEvent : UnityEvent<float> { }
+[Serializable]
 public class LookInputEvent: UnityEvent<float, float> { }
 [Serializable]
 public class RaiseCameraInputEvent : UnityEvent<float> { }
@@ -21,6 +23,8 @@ public class InputController : MonoBehaviour
     Controls controls;
     [Header("Moving")]
     public MoveInputEvent moveInputEvent;
+    [Header("Sprinting")]
+    public SprintInputEvent sprintInputEvent;
     [Header("Looking")]
     public LookInputEvent lookInputEvent;
     [Header("RaiseCamera")]
@@ -42,8 +46,11 @@ public class InputController : MonoBehaviour
 
 
         controls.Gameplay.Move.performed += OnMovePerformed;
+        controls.Gameplay.Sprint.performed += OnSprintPerformed;
+
         // stop moving when key/stick released
         controls.Gameplay.Move.canceled += OnMovePerformed;
+
 
         controls.Gameplay.Look.performed += OnLookPerformed;
         // stop moving camera when key/stick released
@@ -74,6 +81,14 @@ public class InputController : MonoBehaviour
         // invoke event associated with movement with input values
         moveInputEvent.Invoke(moveInput.x, moveInput.y);
     }
+
+    private void OnSprintPerformed(InputAction.CallbackContext context)
+    {
+        float sprintInput = context.ReadValue<float>();
+
+        // invoke event associated with sprint using input value
+        sprintInputEvent.Invoke(sprintInput);
+    }   
 
     private void OnRaiseCameraPerformed(InputAction.CallbackContext context)
     {
