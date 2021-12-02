@@ -1,3 +1,4 @@
+#if (UNITY_EDITOR) 
 using UnityEngine;
 using UnityEditor;
 
@@ -45,3 +46,4 @@ public class AnimalSensesEditor : Editor
         }
     }
 }
+#endif

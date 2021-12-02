@@ -10,6 +10,7 @@ public class InteractableGUI : MonoBehaviour
     public GameObject interactableGO;
     public GameObject editableGO;
     public GameObject framePrefab;
+    public GameObject gallery;
 
     private InteractableObject obj;
     private EditableObject obj2;
@@ -19,8 +20,10 @@ public class InteractableGUI : MonoBehaviour
     private bool fullVisible;
     private bool buttonPressed;
     private bool showSampleCanvas;
+    private bool isFrame;
     private GameObject placeObject;
     private Image display;
+    private GalleryStorage storage;
     public bool cursorOn { get; set; }
     public void Start()
     {
@@ -31,6 +34,7 @@ public class InteractableGUI : MonoBehaviour
         cursor = cursorGO.GetComponent<Image>();
         obj = interactableGO.GetComponent<InteractableObject>();
         obj2 = editableGO.GetComponent<EditableObject>();
+        storage = gallery.GetComponent<GalleryStorage>();
     }
 
     public void ToggleCursor(bool pass, bool editMode, int scaleVal)
@@ -42,8 +46,9 @@ public class InteractableGUI : MonoBehaviour
                 cursorOn = true;
                 if (editMode)
                 {
+                    StopCoroutine(cursorOpacity());
                     placeObject = Instantiate(framePrefab);
-                    print("OptionalScale " + scaleVal);
+                    //print("OptionalScale " + scaleVal);
                     Vector3 scale = DetermineScale(scaleVal);
                     placeObject.transform.localScale = scale;
                     display = placeObject.GetComponentInChildren<Image>();
@@ -65,17 +70,25 @@ public class InteractableGUI : MonoBehaviour
     //When user engages Interact action
     public void OnUserInteract(float val)
     {
-        if (fullVisible && !buttonPressed)
+        if (fullVisible && (isFrame || !buttonPressed))
         {
-            var tempColor = cursor.color;
-            tempColor.a = 0f;
-            cursor.color = tempColor;
-            obj.CallUIEvent();
-            buttonPressed = true;
+            if(isFrame)
+            {
+                storage.FrameDetailsOpen(placeObject);
+            } else if (!buttonPressed)
+            {
+                var tempColor = cursor.color;
+                tempColor.a = 0f;
+                cursor.color = tempColor;
+                obj.CallUIEvent();
+                buttonPressed = true;
+            }
+            
         } else if (showSampleCanvas)
         {
             StopCoroutine(editCursor());
             obj2.StoreOnWall(placeObject);
+            showSampleCanvas = false;
             print("Placed Canvas");
         }
     }
@@ -122,7 +135,8 @@ public class InteractableGUI : MonoBehaviour
 
                 } else if (grab.CompareTag("PlaceableObject"))
                 {
-                    //For picking up picture frames?
+                    //For picking up picture frames? - need to add editing buffer & check if it's not full
+
                 }
                 else if (showSampleCanvas)
                 {
@@ -150,13 +164,13 @@ public class InteractableGUI : MonoBehaviour
                 GameObject grab = hit.transform.gameObject;
                 if (grab.CompareTag("InteractableObject"))
                 {
-                    if(grab != interactableGO)
+                    if (grab != interactableGO)
                     {
                         Debug.Log("Switched obj in InteractableGUI");
                         interactableGO = grab;
                         obj = interactableGO.GetComponent<InteractableObject>();
                     }
-                    
+
                     if (hit.collider.isTrigger && !fullVisible)
                     {
                         var tempColor = cursor.color;
@@ -164,14 +178,29 @@ public class InteractableGUI : MonoBehaviour
                         cursor.color = tempColor;
                         fullVisible = true;
                     }
-                    else if(!halfVisible)
+                    else if (!halfVisible)
                     {
                         var tempColor = cursor.color;
                         tempColor.a = .5f;
                         cursor.color = tempColor;
                         halfVisible = true;
                     }
+
+                } else if (grab.CompareTag("PlaceableObject")) 
+                {
                     
+                    if (!fullVisible)
+                    {
+                        
+                        var tempColor = cursor.color;
+                        tempColor.a = 1f;
+                        cursor.color = tempColor;
+                        fullVisible = true;
+                    }
+                    placeObject = grab;
+                    isFrame = true;
+
+
                 } else if (halfVisible || fullVisible)
                 {
                     CleanUpHelper();
@@ -189,6 +218,7 @@ public class InteractableGUI : MonoBehaviour
         buttonPressed = false;
         halfVisible = false;
         fullVisible = false;
+        isFrame = false;
         var tempColor = cursor.color;
         tempColor.a = 0f;
         cursor.color = tempColor;

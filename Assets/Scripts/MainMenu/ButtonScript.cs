@@ -12,8 +12,9 @@ public class ButtonScript : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         var audioMan = FindObjectOfType<AudioManager>();
+        
         audioMan.Stop("MainMenuBackground");
         audioMan.Assign3DSource(audioMan.aSrc, "GameStart");
         audioMan.Play("GameStart");

@@ -14,6 +14,7 @@ public class GalleryScaleUI : MonoBehaviour
 
     private string[] sizeList = { "XXSmall", "XSmall", "Small", "Medium", "Large", "XLarge" };
     private Vector2[] sizeValues = new Vector2[6];
+    public Vector2 resetSize;
 
     public int currentSizeIndex;
 
@@ -21,6 +22,7 @@ public class GalleryScaleUI : MonoBehaviour
     private void Start()
     {
         currentSizeIndex = 3;
+        resetSize = imageGUIObj.sizeDelta;
     }
 
     public void PreloadPhoto(Texture2D picData)
@@ -67,7 +69,7 @@ public class GalleryScaleUI : MonoBehaviour
         // returns true if overflow prevented advancing list
         bool didOverFlow = false;
         int newIndex = currentSizeIndex + change;
-        print("Prospective new index: " + newIndex);
+        //print("Prospective new index: " + newIndex);
         if (newIndex == sizeList.Length)
         {
             newIndex--;
@@ -77,7 +79,7 @@ public class GalleryScaleUI : MonoBehaviour
             newIndex++;
             didOverFlow = true;
         }
-        print("Actual new index: " + newIndex);
+        //print("Actual new index: " + newIndex);
 
         currentSizeIndex = newIndex;
 
@@ -107,5 +109,11 @@ public class GalleryScaleUI : MonoBehaviour
 
 
         return new Vector2(newX, newY);
+    }
+
+    public void ResetRect()
+    {
+        imageGUIObj.sizeDelta = resetSize;
+        currentSizeIndex = 3;
     }
 }

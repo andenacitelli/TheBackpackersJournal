@@ -34,13 +34,20 @@ public class DropTree : MonoBehaviour
 
     public TerrainManager terrainManager;
 
-    static private Dictionary<Vector3, GameObject> trees = new Dictionary<Vector3, GameObject>();
     static private Dictionary<(int, int), List<GameObject>> treesD = new Dictionary<(int, int), List<GameObject>>();
-    static private Dictionary<(int, int), List<plantsGroup>> plantsD = new Dictionary<(int, int), List<plantsGroup>>();
     static private List<(int, int)> currentChunks;
     static private List<(int, int)> toDoChunks;
     static private List<(int, int)> toRemoveChunks;
     static private List<(int, int)> finishedChunks;
+    static private List<(int, int)> touchedChunks;
+    static private Noise treeNoise;
+    static private Noise mushroomNoise;
+    static private Noise grassNoise;
+    static private List<Random> plantRandoms;
+    static private Random chunkRand;
+    static private (int, int) gridCount;
+    public  int GRID_TO_GENERATE_PER_FRAME;
+    public int PLANTS_TO_REMOVE_PER_FRAME;
 
     public List<GameObject> bushPrefabs;
     public List<GameObject> flowerPrefabs;
@@ -52,11 +59,15 @@ public class DropTree : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        treeNoise = gameObject.AddComponent<Noise>();
+        mushroomNoise = gameObject.AddComponent<Noise>();
+        grassNoise = gameObject.AddComponent<Noise>();
         currentChunks = TerrainManager.getChunksCords();
         currentChunks = new List<(int int1, int int2)>();
         toDoChunks = currentChunks;
         finishedChunks = new List<(int int1, int int2)>();
         toRemoveChunks = new List<(int int1, int int2)>();
+        touchedChunks = new List<(int int1, int int2)>();
     }
 
     private void OnDisable()
@@ -68,7 +79,7 @@ public class DropTree : MonoBehaviour
          * the additive wilderness scene is affecting your code. To fix the error thrown
          * when running the game from the main menu, just uncomment the line below:
          */
-        plantsD = new Dictionary<(int, int), List<plantsGroup>>();
+        treesD = new Dictionary<(int, int), List<GameObject>>();
 
         /*GENERAL NOTES ON DESIGN of foliage:
          * -----> NEEDS FIXES <------
@@ -96,7 +107,7 @@ public class DropTree : MonoBehaviour
         }
         GenerateTrees(); // Generate trees in in-range chunks
         toRemoveChunks = new List<(int, int)>();
-        foreach ((int, int) chunk in finishedChunks)
+        foreach ((int, int) chunk in touchedChunks)
         {
             if (!currentChunks.Contains(chunk))
             {
@@ -112,13 +123,13 @@ public class DropTree : MonoBehaviour
     }
 
     void GenerateTrees()
-    {        
+    {
+        int gridGeneratedThisFrame = 0;
+        
         if (toDoChunks.Count != 0)
-        {
+        {            
             int xCord = toDoChunks[0].Item1;
             int yCord = toDoChunks[0].Item2;
-            plantsD.Add((xCord, yCord), new List<plantsGroup>());
-            /*treesD.Add((xCord, yCord), new List<GameObject>());*/
             string chunkCord = "(" + xCord + ", " + yCord + ")";
             int seed = chunkCord.GetHashCode();
             int grassSeed = (chunkCord + "grass").GetHashCode();
@@ -126,226 +137,167 @@ public class DropTree : MonoBehaviour
             int bushSeed = (chunkCord + "bush").GetHashCode();
             int shroomSeed = (chunkCord + "shroom").GetHashCode();
             int waterPlantSeed = (chunkCord + "waterPlant").GetHashCode();
-            Random chunkRand = new Random(seed);
-            List<Random> plantRandoms = new List<Random>();
-            plantRandoms.Add(new Random(grassSeed));
-            plantRandoms.Add(new Random(flowerSeed));
-            plantRandoms.Add(new Random(bushSeed));
-            plantRandoms.Add(new Random(shroomSeed));
-            plantRandoms.Add(new Random(waterPlantSeed));
-            
-            for (int i = 0; i < 3; i++)
+            //If this is the first time GenerateTrees() is been used to generate plants for chunk:(xCord, yCord), we need to initial a pair in treesD and all the Random generator
+            if (!treesD.ContainsKey((xCord, yCord)))
             {
-                Vector2 random2D = RandomPointInChunk(xCord, yCord, chunkRand);                
-                plantsGroup toAdd = GenerateGroup(chunkRand, chunkRand.Next(1, 5), random2D, plantRandoms);
-                plantsD[(xCord, yCord)].Add(toAdd);
-/*                GameObject thisTree = Instantiate(treePrefabs[treeRand.Next(0,4)], pos, Quaternion.identity);
-                thisTree.transform.localScale = new Vector3(3f, 3f, 3f);
-                treesD[(xCord, yCord)].Add(thisTree);*/
-
-                /*                trees.Add(pos, Instantiate(treePrefab, pos, Quaternion.identity));*/
-                /*              Debug.Log(xCord + ", " + yCord + " tree dropped at " + pos.x + ", " + pos.z);*/
+                gridCount = (0,0);
+                treesD.Add((xCord, yCord), new List<GameObject>());
+                chunkRand = new Random(seed);
+                plantRandoms = new List<Random>();
+                plantRandoms.Add(new Random(grassSeed));
+                plantRandoms.Add(new Random(flowerSeed));
+                plantRandoms.Add(new Random(bushSeed));
+                plantRandoms.Add(new Random(shroomSeed));
+                plantRandoms.Add(new Random(waterPlantSeed));
+                touchedChunks.Add((xCord,yCord));
             }
-            finishedChunks.Add( (xCord, yCord) );
-/*            Debug.Log("DROPTREE__finishedGenerateing: " + xCord + ", " + yCord);*/
+
+            for (int i = gridCount.Item1; i < 80; i++)
+            {
+                float tempX = xCord * 80f - 40f + i;
+                for (int j = gridCount.Item2; j < 80; j++)
+                {
+                    float tempZ = yCord * 80f - 40f + j;
+                    //Generate Tree and Shrooms
+                    if (tempX % 2 == 0f && tempZ % 2 == 0f)
+                    {
+                        //GenerateTree
+                        if (treeNoise.GetNoiseAtPoint(tempX, tempZ) > 0.7)
+                        {
+                            if (chunkRand.Next(1, 10) < 5)
+                            {
+                                float xFix = (float)chunkRand.NextDouble() - 0.5f;
+                                float zFix = (float)chunkRand.NextDouble() - 0.5f;
+                                float treeX = tempX + xFix;
+                                float treeZ = tempZ + zFix;
+                                TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(new Vector2(treeX, treeZ));
+                                Vector3 pos = new Vector3(treeX, heightData.height, treeZ);
+                                if (heightData.height >= 30)
+                                {
+                                    GameObject tempTree = Instantiate(treePrefab, pos, Quaternion.identity);
+                                    tempTree.transform.parent = this.transform;
+                                    tempTree.transform.up = heightData.normal;
+                                    treesD[(xCord, yCord)].Add(tempTree);
+                                }
+                                else
+                                {
+                                    generateWaterPlant(pos, (xCord, yCord), plantRandoms);
+                                }                                
+                            }
+                        }
+                        //GenerateMushroom
+                        if (mushroomNoise.GetNoiseAtPoint(tempX, tempZ) > 0.7)
+                        {
+                            if (chunkRand.Next(1, 10) < 5)
+                            {
+                                float xFix = (float)chunkRand.NextDouble() - 0.5f;
+                                float zFix = (float)chunkRand.NextDouble() - 0.5f;
+                                float shroomX = tempX + xFix;
+                                float shroomZ = tempZ + zFix;
+                                TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(new Vector2(shroomX, shroomZ));
+                                Vector3 pos = new Vector3(shroomX, heightData.height, shroomZ);
+                                if (heightData.height >= 30)
+                                {
+                                    GameObject tempTree = Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 32)], pos, Quaternion.identity);
+                                    tempTree.transform.parent = this.transform;
+                                    tempTree.transform.up = heightData.normal;
+                                    treesD[(xCord, yCord)].Add(tempTree);
+                                }
+                                else
+                                {
+                                    generateWaterPlant(pos, (xCord, yCord), plantRandoms);
+                                }
+                            }
+                        }
+                    }
+                    //Generate Grass flower, bush
+
+                    if (grassNoise.GetNoiseAtPoint(tempX, tempZ) > 0.6)
+                    {
+                        float xFix = (float)chunkRand.NextDouble() - 0.5f;
+                        float ZFix = (float)chunkRand.NextDouble() - 0.5f;
+                        float grassX = tempX + xFix;
+                        float grassZ = tempZ + ZFix;
+                        TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(new Vector2(grassX, grassZ));
+                        Vector3 pos = new Vector3(grassX, heightData.height, grassZ);
+                        if (heightData.height >= 30)
+                        {
+                            GameObject prefab = grassPrefabs[plantRandoms[0].Next(0, 39)];
+                            float tempRand = (float)chunkRand.NextDouble();
+                            if (tempRand < 0.01)
+                            {
+                                prefab = bushPrefabs[plantRandoms[2].Next(0, 9)];
+                            }
+                            else if (tempRand < 0.55)
+                            {
+                                prefab = flowerPrefabs[plantRandoms[1].Next(0, 19)];
+                            }
+                            GameObject tempTree = Instantiate(prefab, pos, Quaternion.identity);
+                            tempTree.transform.parent = this.transform;
+                            tempTree.transform.up = heightData.normal;
+                            treesD[(xCord, yCord)].Add(tempTree);
+                        }
+                        else
+                        {
+                            generateWaterPlant(pos, (xCord, yCord), plantRandoms);
+                        }
+                    }
+                    gridGeneratedThisFrame++;
+                    gridCount.Item2++;
+                    if (j == 79)
+                    {
+                        int temp = gridCount.Item1;
+                        gridCount = (temp + 1, 0);
+                    }
+                    if (gridGeneratedThisFrame > GRID_TO_GENERATE_PER_FRAME)
+                    {
+                        return;
+                    }
+                }
+            }
+            finishedChunks.Add((xCord, yCord));
+            Debug.Log("(" + xCord + ", " + yCord + ") Generation SpeedTrack");
         }
+    }
+
+    private void generateWaterPlant(Vector3 pos, (int xCord, int yCord) chunkCord, List<Random> plantRandoms)
+    {
+        GameObject tempWaterPlants = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
+        tempWaterPlants.transform.parent = this.transform;
+        treesD[chunkCord].Add(tempWaterPlants);
     }
 
     void RemoveTrees()
     {
-/*        (int, int) toRemoveFromFinished = (0,0);
-        bool yesRemove = false;*/
-        /*        foreach ((int, int) chunk in finishedChunks)
-                {
-                    Debug.Log("finishedChunks: " + chunk.Item1 + ", " + chunk.Item2);
-                }
-                Debug.Log("finishedChunks: DONE!");
-                foreach ((int, int) chunk in currentChunks)
-                {
-                    Debug.Log("currentChunkss: " + chunk.Item1 + ", " + chunk.Item2);
-                }
-                Debug.Log("currentChunkss: DONE!");*/
+        int plantsRemovedThisFrame = 0;
         if (toRemoveChunks.Count != 0)
         {
-            List<Vector3> toRemove = new List<Vector3>();
+
             int xCord = toRemoveChunks[0].Item1;
             int yCord = toRemoveChunks[0].Item2;
-            float xFix = -40f + 80f * xCord;
-            float yFix = -40f + 80f * yCord;
-            foreach (plantsGroup plantsGroup in plantsD[(xCord, yCord)])
+            Debug.Log("At lease im here" + "removing: " + xCord + "  " + yCord);
+            for (int i = 0; i < treesD[(xCord, yCord)].Count; i++)
             {
-                plantsGroup.removePlantsGroup();
-            }
-            plantsD.Remove((xCord, yCord));
-            /*foreach (KeyValuePair<Vector3, GameObject> tree in trees)
-            {                
-                if (tree.Key.x <= xFix + 80f && tree.Key.x >= xFix && tree.Key.y <= yFix + 80f && tree.Key.y >= yFix)
+                Destroy(treesD[(xCord, yCord)][i]);
+                treesD[(xCord, yCord)].RemoveAt(i);
+                plantsRemovedThisFrame++;
+                if (plantsRemovedThisFrame > PLANTS_TO_REMOVE_PER_FRAME)
                 {
-                    Destroy(tree.Value);
-                    toRemove.Add(tree.Key);
+                    Debug.Log("returned");
+                    return;
                 }
             }
-            foreach (Vector3 tree in toRemove)
+            treesD.Remove((xCord, yCord));
+            if (touchedChunks.Contains((xCord, yCord)))
             {
-                *//*                    Debug.Log(xCord + ", " + yCord + " tree culled at " + tree.x + ", " + tree.z);*//*
-                trees.Remove(tree);
-            }*/
-            finishedChunks.Remove((xCord, yCord));
-        }
-
-/*        foreach ((int, int) chunk in finishedChunks)
-        {
-            if (!currentChunks.Contains(chunk))
-            {
-                List<Vector3> toRemove = new List<Vector3>();
-                int xCord = chunk.Item1;
-                int yCord = chunk.Item2;
-
-                float xFix = -40f + 80f * xCord;
-                float yFix = -40f + 80f * yCord;
-                foreach (KeyValuePair<Vector3, GameObject> tree in trees)
-                {
-                    if (tree.Key.x <= xFix + 80f && tree.Key.x >= xFix && tree.Key.y <= yFix + 80f && tree.Key.y >= yFix)
-                    {
-                        Destroy(tree.Value);
-                        toRemove.Add(tree.Key);
-                    }
-                }
-
-                foreach (Vector3 tree in toRemove)
-                {
-*//*                    Debug.Log(xCord + ", " + yCord + " tree culled at " + tree.x + ", " + tree.z);*//*
-                    trees.Remove(tree);
-                }
-                toRemoveFromFinished = chunk;
-                yesRemove = true;
-                goto RemoveChunkFromFinished;
+                touchedChunks.Remove((xCord, yCord));
             }
+            if (finishedChunks.Contains((xCord, yCord)))
+            {
+                finishedChunks.Remove((xCord, yCord));
+            }
+            
+            Debug.Log("(" + xCord + ", " + yCord + ") Remove SpeedTrack");
         }
-    RemoveChunkFromFinished:
-        if (yesRemove)
-        {
-            finishedChunks.Remove(toRemoveFromFinished);
-            Debug.Log("DROPTREE___REMOVEDD: " + toRemoveFromFinished.Item1 + ", " + toRemoveFromFinished.Item2);
-        }*/
-
-    }
-
-    private static Vector2 RandomPointInChunk(int xCord, int yCord, Random chunkRand)
-    {
-        float range = 80f;
-        float xFix = -40f + 80f * xCord;
-        float yFix = -40f + 80f * yCord;
-        
-        float x = (float)((chunkRand.NextDouble() * range) + xFix);
-        float z = (float)((chunkRand.NextDouble() * range) + yFix);
-
-        return new Vector2(x, z);
-    }
-
-    private plantsGroup GenerateGroup(Random chunkRand, int i, Vector2 center, List<Random> plantRandoms)
-    {
-        plantsGroup plants = new plantsGroup();
-        /*      grass 0;
-        flower 1;
-        bush 2;
-        shoorm 3;*/
-        float moistNoise = 0.2f;
-        
-        switch (i)
-        {
-            case 1:
-                /*                GameObject temp1 = Instantiate(flowerPrefabs[plantRandoms[1].Next(0, 19)]);
-                */
-                generateSinglePlant(plants, center, new Vector2(0f, 0f), 1, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-2f, -4f), 1, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(0f, 4f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(2f, -4f), 0, plantRandoms);
-
-                break;
-            case 2:
-                generateSinglePlant(plants, center, new Vector2(0f, 0f), 2, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-4f, -2f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-4f, 2f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(4f, -2f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(4f, 2f), 0, plantRandoms);
-                break;
-            case 3:
-                generateSinglePlant(plants, center, new Vector2(0f, 0f), 2, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-2f, -4f), 1, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-2f, 4f), 1, plantRandoms);
-                break;
-            case 4:
-                generateSinglePlant(plants, center, new Vector2(0f, 0f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(4f, -4f), 0, plantRandoms);
-                generateSinglePlant(plants, center, new Vector2(4f, 4f), 0, plantRandoms);
-                generateSinglePlant(plants, center, new Vector2(-4f, -4f), 0, plantRandoms);
-                generateSinglePlant(plants, center, new Vector2(-4f, 4f), 0, plantRandoms);
-                
-                break;
-            case 5:
-                generateSinglePlant(plants, center, new Vector2(0f, 0f), 2, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-4f, -2f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(-4f, 2f), 0, plantRandoms);
-
-                generateSinglePlant(plants, center, new Vector2(4f, 2f), 3, plantRandoms);
-                break;
-        }
-        return plants;
-    }
-
-    private void generateSinglePlant(plantsGroup plants, Vector2 center, Vector2 relativeToCenter, int type, List<Random> plantRandoms)
-    {
-        /*      grass 0;
-        flower 1;
-        bush 2;
-        shoorm 3;*/
-        GameObject temp;
-        Vector2 pos2D = center + relativeToCenter;
-        TerrainFunctions.TerrainPointData heightData = TerrainFunctions.GetTerrainPointData(pos2D);
-        Vector3 pos = new Vector3(pos2D.x, heightData.height, pos2D.y);
-        if (heightData.height < 30)
-            type = 4;
-            /*pos.y += 2f;*/
-        switch (type)
-        {
-            case 0:
-                temp = Instantiate(grassPrefabs[plantRandoms[0].Next(0, 39)], pos, Quaternion.identity);                                
-                break;
-            case 1:
-                temp = Instantiate(flowerPrefabs[plantRandoms[1].Next(0, 19)], pos, Quaternion.identity);
-                break;
-            case 2:
-                temp = Instantiate(bushPrefabs[plantRandoms[2].Next(0, 9)], pos, Quaternion.identity);
-                break;
-            case 3:
-                temp = Instantiate(mushroomPrefabs[plantRandoms[3].Next(0, 32)], pos, Quaternion.identity);
-                break;
-            case 4:
-                temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
-                break;
-            default:
-                temp = Instantiate(waterPlantPrefabs[plantRandoms[4].Next(0, 11)], pos, Quaternion.identity);
-                break;
-        }
-        temp.transform.up = heightData.normal;
-        plants.gameObjects.Add(temp);
-        temp.transform.parent = this.transform;
-
-
-
-
     }
 }

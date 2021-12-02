@@ -15,15 +15,25 @@ public class PauseMenu : MonoBehaviour
     public CameraRoll cr;
     public GameObject groveReturnPrompt;
     public GameObject groveReturn;
+    public GalleryStorage storage;
+    public GameObject journalGUI;
+    public JournalRoll journalRoll;
 
     private string input;
     private ReturnToGrove rTG;
+    private bool autoSaveThisFrame;
+    private bool roamLastFrame;
+    private bool storageLastFrame;
+    
     
 
     private void Awake()
     {
         action = new PauseAction();
         rTG = groveReturn.GetComponent<ReturnToGrove>();
+        autoSaveThisFrame = false;
+        roamLastFrame = false;
+        storageLastFrame = false;
     }
 
     private void OnEnable()
@@ -41,7 +51,45 @@ public class PauseMenu : MonoBehaviour
         action.Pause.PauseGame.performed += _ => DeterminePause();
     }
 
-    private void DeterminePause()
+    private void Update()
+    {
+        
+        if (!autoSaveThisFrame && ShouldAutoSave())
+        {
+            autoSaveThisFrame = true;
+            AutoSave();
+        } else if(autoSaveThisFrame)
+        {
+            autoSaveThisFrame = false;
+        }
+    }
+
+    private bool ShouldAutoSave()
+    {
+        bool shouldSave = false;
+        //autosave when...
+        if(roamLastFrame && !rTG.playerRoaming)
+        {
+            //player returns to the grove
+            shouldSave = true;
+        } else if(!storageLastFrame && storage.isOn)
+        {
+            print("Storage started - from Autosave detection");
+            //Player starts editing
+            shouldSave = true;
+        } else if(storageLastFrame && !storage.isOn)
+        {
+            //Player stops editing
+            print("Storage ended - from Autosave detection");
+            shouldSave = true;
+        }
+
+        roamLastFrame = rTG.playerRoaming;
+        storageLastFrame = storage.isOn;
+        return shouldSave;
+    }
+
+    public void DeterminePause()
     {  
         if(!isSaving){
             if (isPaused)
@@ -50,6 +98,18 @@ public class PauseMenu : MonoBehaviour
                 Pause();
                 DetermineReturnPrompt();
         }      
+    }
+
+    public void OpenJournal()
+    {
+        pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        journalGUI.SetActive(true);
+    }
+
+    public void CloseJournal()
+    {
+        journalGUI.SetActive(false);
     }
 
     private void DetermineReturnPrompt()
@@ -75,12 +135,52 @@ public class PauseMenu : MonoBehaviour
         savePrompt.SetActive(true);
         isSaving = true;
     }
+
+    public void AutoSave()
+    {
+        SaveByXML(PlayerPrefs.GetString("profileName"));
+        Resume();
+    }
+
     public void SaveByXML(string s)
     {
         if (s != "")
         {
+            if(journalRoll.photos == null)
+            {
+                journalRoll.photos = new List<photo>();
+            }
+
+            if (cr.cRollStorage == null)
+            {
+                // No load was ran, because player has no data.
+                cr.cRollStorage = new List<photo>();
+                
+            } else
+            {
+                // Check to be sure target directory exists
+                DirectoryInfo crInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/CameraRoll/");
+                DirectoryInfo grInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/GalleryRoll/");
+                DirectoryInfo jrInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/JournalRoll/");
+                // probably will need to add business here for the journal
+                if (!crInfo.Exists)
+                {
+                    crInfo.Create();
+                }
+                if (!grInfo.Exists)
+                {
+                    grInfo.Create();
+                }
+                if (!jrInfo.Exists)
+                {
+                    jrInfo.Create();
+                }
+            }
+
+            print("profileName pref set to: " + s);
+            PlayerPrefs.SetString("profileName", s);
             Save save = createSaveGameObject(s);
-            XmlDocument xmlDoc = new XmlDocument();
+            //XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
             string dataPath = Application.persistentDataPath + "/XMLSaves/";
             DirectoryInfo xmlSaveInfo = new DirectoryInfo(dataPath);
@@ -94,12 +194,29 @@ public class PauseMenu : MonoBehaviour
             savePrompt.SetActive(false);
             pauseMenuUI.SetActive(true);
             isSaving = false;
+
+            
+            foreach (photo p in save.crTest)
+            {
+                if(cr.profileName != s)
+                {
+                    cr.profileName = s;
+                }
+                cr.WriteFile(p.fileName, p.captureData);
+            }
+
+            foreach(photo p in save.gallRoll)
+            {
+                storage.WriteFile(p.fileName, p.captureData);
+            }
+
+            foreach(photo p in save.jRoll)
+            {
+                journalRoll.WriteFile(p.fileName, p.captureData);
+            }
         }
 
-        foreach(photo p in cr.cRollStorage)
-        {
-            cr.WriteFile(p.fileName, p.captureData);
-        }
+        
     }
 
     private Save createSaveGameObject(string s)
@@ -110,19 +227,29 @@ public class PauseMenu : MonoBehaviour
         save.playerPositionY = GameObject.FindWithTag("Player").transform.position.y;
         save.playerPositionZ = GameObject.FindWithTag("Player").transform.position.z;
 
-        #region getArray
+        /*
+        #region getCRArray
         string[] crPaths = new string[cr.cRollStorage.Count];
         int i = 0;
         Debug.Log("Saving...");
         foreach(photo p in cr.cRollStorage)
         {
             Debug.Log(p.fileName);
-            crPaths[i] = p.fileName;
+            //crPaths[i] = p.fileName;
             i++;
         }
         Debug.Log("-Finished-");
-        #endregion
-
+        #endregion*/
+        //save.cameraRollPaths = crPaths;
+        save.crTest = cr.cRollStorage.ToArray();
+        save.gallRoll = storage.gallery.ToArray();
+        save.jRoll = journalRoll.photos.ToArray();
+        /*print("saved gallRoll:");
+        foreach(photo p in save.gallRoll)
+        {
+            print(p.fileName);
+        }
+        print("---------------------");*/
         save.GamePercentage = 0;
         return save;
 

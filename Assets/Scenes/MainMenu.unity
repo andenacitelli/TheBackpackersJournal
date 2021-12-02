@@ -655,7 +655,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -923,7 +923,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1057,7 +1057,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3067,7 +3067,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3552,7 +3552,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Empty
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4036,7 +4036,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4620,7 +4620,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4888,7 +4888,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5156,7 +5156,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5498,7 +5498,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: load1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 69670e6f7db09b9489f7d8379313face, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f0b7e60154e139d4b84159775a8b5cb0, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
