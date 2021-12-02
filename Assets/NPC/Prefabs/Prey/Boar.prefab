@@ -677,6 +677,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4275412274730880457}
   - component: {fileID: 5806584623255384674}
+  - component: {fileID: 4556450665741968798}
   m_Layer: 20
   m_Name: Fangs 005
   m_TagString: Untagged
@@ -752,6 +753,22 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.06652473, y: 0.37373132, z: 0.00471054}
     m_Extent: {x: 0.13180234, y: 0.1047868, z: 0.17789519}
   m_DirtyAABB: 0
+--- !u!114 &4556450665741968798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2807776789543700013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 8c4edf238eef6f041bde431786dbcf2f, type: 2}
+  - {fileID: 2100000, guid: 7767ca3c4a937bc45bb483c8169d8ff4, type: 2}
+  animalMeshRenderer: {fileID: 5806584623255384674}
 --- !u!1 &2882991071946418359
 GameObject:
   m_ObjectHideFlags: 0
@@ -950,6 +967,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7442749433306147364}
   - component: {fileID: 2821284472039626346}
+  - component: {fileID: 5488460208810729756}
   m_Layer: 20
   m_Name: Fangs 004
   m_TagString: Untagged
@@ -1025,6 +1043,22 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.017125666, y: 0.3689878, z: -0.0029954463}
     m_Extent: {x: 0.10387886, y: 0.074950516, z: 0.12857988}
   m_DirtyAABB: 0
+--- !u!114 &5488460208810729756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3846586301727190157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 8c4edf238eef6f041bde431786dbcf2f, type: 2}
+  - {fileID: 2100000, guid: 7767ca3c4a937bc45bb483c8169d8ff4, type: 2}
+  animalMeshRenderer: {fileID: 2821284472039626346}
 --- !u!1 &4618714360787511787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1035,6 +1069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7870229622169080555}
   - component: {fileID: 2737009356843276711}
+  - component: {fileID: 1405239193076978922}
   m_Layer: 20
   m_Name: Fangs 001
   m_TagString: Untagged
@@ -1110,6 +1145,22 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.027000805, y: 0.3834187, z: 0.0024215244}
     m_Extent: {x: 0.081769384, y: 0.058129877, z: 0.10559231}
   m_DirtyAABB: 0
+--- !u!114 &1405239193076978922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4618714360787511787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 8c4edf238eef6f041bde431786dbcf2f, type: 2}
+  - {fileID: 2100000, guid: 7767ca3c4a937bc45bb483c8169d8ff4, type: 2}
+  animalMeshRenderer: {fileID: 2737009356843276711}
 --- !u!1 &4768922390299786115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1306,6 +1357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 730270075740516615}
   - component: {fileID: 899185507423876815}
+  - component: {fileID: 6016273453044882662}
   m_Layer: 20
   m_Name: Fangs 006
   m_TagString: Untagged
@@ -1381,6 +1433,22 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0471553, y: 0.43744892, z: 0.0064345747}
     m_Extent: {x: 0.1258103, y: 0.16990387, z: 0.14942093}
   m_DirtyAABB: 0
+--- !u!114 &6016273453044882662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5954605236642467313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 8c4edf238eef6f041bde431786dbcf2f, type: 2}
+  - {fileID: 2100000, guid: 7767ca3c4a937bc45bb483c8169d8ff4, type: 2}
+  animalMeshRenderer: {fileID: 899185507423876815}
 --- !u!1 &6317094466508410202
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,6 +1689,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7399939280800403991}
   - component: {fileID: 1760892717687423666}
+  - component: {fileID: 5169522231086194957}
   m_Layer: 20
   m_Name: Fangs 003
   m_TagString: Untagged
@@ -1696,6 +1765,22 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.053558696, y: 0.43050772, z: -0.0016193837}
     m_Extent: {x: 0.12072563, y: 0.10601656, z: 0.15133046}
   m_DirtyAABB: 0
+--- !u!114 &5169522231086194957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7523815217874439546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80bd7ddf5bcea394ea44a814beaef63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 2100000, guid: 8c4edf238eef6f041bde431786dbcf2f, type: 2}
+  - {fileID: 2100000, guid: 7767ca3c4a937bc45bb483c8169d8ff4, type: 2}
+  animalMeshRenderer: {fileID: 1760892717687423666}
 --- !u!1 &7786781762631332877
 GameObject:
   m_ObjectHideFlags: 0

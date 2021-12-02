@@ -507,8 +507,8 @@ GameObject:
   - component: {fileID: 1658734736236515806}
   - component: {fileID: 4933783316601376662}
   - component: {fileID: 4694447885043788831}
-  - component: {fileID: 7438086420687421503}
   - component: {fileID: 3239541842476241289}
+  - component: {fileID: 685065958863055103}
   m_Layer: 7
   m_Name: Fox
   m_TagString: Animal
@@ -604,7 +604,39 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   hearingRadius: 12
---- !u!82 &7438086420687421503
+--- !u!114 &3239541842476241289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3646856990718673954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa5271b56516d44f8e10402364a71eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canFly: 0
+  movementSpeed: 2
+  dashSpeed: 3
+  turnSpeed: 0.5
+  targetTolerance: 3
+  newTargetDelay: 0.5
+  currentSpeed: 0
+  newLocationMinDistance: 5
+  territory:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  animTransitionTime: 0.5
+  audioManagerNames:
+  - FoxDead
+  - FoxNoise
+  - FoxMulti
+  threatFleeTimeout: 2
+  threatRefreshDelay: 2
+  sleepTime: 30
+  maxSitTime: 20
+--- !u!82 &685065958863055103
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -700,38 +732,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3239541842476241289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3646856990718673954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fa5271b56516d44f8e10402364a71eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 2
-  dashSpeed: 3
-  turnSpeed: 0.5
-  targetTolerance: 3
-  newTargetDelay: 0.5
-  currentSpeed: 0
-  newLocationMinDistance: 5
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  animTransitionTime: 0.5
-  audioManagerNames:
-  - FoxDead
-  - FoxNoise
-  - FoxMulti
-  threatFleeTimeout: 2
-  threatRefreshDelay: 2
-  sleepTime: 30
-  maxSitTime: 20
 --- !u!1 &3723688589447851858
 GameObject:
   m_ObjectHideFlags: 0
