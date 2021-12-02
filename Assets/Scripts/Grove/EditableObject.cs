@@ -16,7 +16,9 @@ public class EditableObject : MonoBehaviour
     {
         gallery = galleryStorageGO.GetComponent<GalleryStorage>();
         validPlacement = gameObject.GetComponent<BoxCollider>();
+
         storedOnThisWall = new Dictionary<GameObject, Vector3>();
+        //Load GalleryRoll
     }
 
     public void StoreOnWall(GameObject frame)
@@ -24,11 +26,13 @@ public class EditableObject : MonoBehaviour
         frame.name = wallName + storedOnThisWall.Count;
         print("New frame " + frame.name + " added to wall");
         Vector3 storePoint = frame.transform.position;
+        //probably dont need
         frame.transform.position = storePoint;
+        
         transform.InverseTransformPoint(storePoint);
         frame.transform.parent = transform;
         storedOnThisWall.Add(frame, storePoint);
-        gallery.FinishStoragePlace(frame);
+        gallery.FinishStoragePlace(frame, storePoint);
     }
 
     public bool CanPlaceHere(GameObject frame)
@@ -58,4 +62,40 @@ public class EditableObject : MonoBehaviour
 
         return overlapDetect;
     }
+
+    public void LoadFrame(GameObject newFrame, Vector3 storeCoords)
+    {
+        newFrame.transform.localPosition = storeCoords;
+        Vector3 worldCoords = transform.TransformVector(storeCoords);
+        Vector3 ptOnBound = validPlacement.ClosestPoint(worldCoords);
+        storedOnThisWall.Add(newFrame, worldCoords);
+        //newFrame.transform.LookAt(ptOnBound.normalized);
+        //gallery.FinishStoragePlace(newFrame, storeCoords);
+    }
+
+    public bool DictChange(int removedIndex)
+    {
+        GameObject retHold = null;
+        bool found = false;
+        foreach(KeyValuePair<GameObject,Vector3> grabPair in storedOnThisWall)
+        {
+
+            if(grabPair.Key.name.Contains("" + removedIndex))
+            {
+                retHold = grabPair.Key;
+                found = true;
+                break;
+            }
+        }
+        if(retHold != null)
+        {
+            storedOnThisWall.Remove(retHold);
+        } else
+        {
+            print("frame not saved in searched wall");
+        }
+        
+        return found;
+    }
 }
+

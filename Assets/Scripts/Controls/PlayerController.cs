@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement Speed")]
+    [Header("Movement Speeds")]
     [Range (0.0f, 10.0f)]
     public float moveSpeed = 5.0f;
+    public float sprintModifier = 1.5f;
+    // sprinting
+    private bool isSprinting = false;
     [Header("Look Sensitivity")]
     [Range (0.0f, 1.0f)]
     public float horizontalSensitivity = 0.5f;
@@ -47,7 +50,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Player isn't in contact with the ground");
         }*/
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime); 
+        float currentSpeed = isSprinting ? moveSpeed * sprintModifier : moveSpeed;
+        controller.Move(moveDirection * currentSpeed * Time.deltaTime); 
     }
 
     public void UpdateLook()
@@ -68,6 +72,11 @@ public class PlayerController : MonoBehaviour
         moveHoriz = horizontal;
         moveVert = vertical;
         //Debug.Log($"Move Input: {moveHoriz}, {moveVert}");
+    }
+
+    public void OnSprintInput(float sprint)
+    {
+        isSprinting = sprint > 0.0f;
     }
 
     public void OnLookInput(float horizontal, float vertical)

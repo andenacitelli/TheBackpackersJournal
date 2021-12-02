@@ -12,6 +12,7 @@ TagManager:
   - PlaceableObject
   - Obstacle
   - Animal
+  - Roger
   layers:
   - Default
   - TransparentFX
@@ -24,8 +25,6 @@ TagManager:
   - 
   - 
   - Terrain
-  - 
-  - 
   - 
   - 
   - 

@@ -23,5 +23,6 @@ public class InteractableObject : MonoBehaviour
     public void CallUIEvent()
     {
         galleryStorage.StartGalleryStorage();
+        
     }
 }

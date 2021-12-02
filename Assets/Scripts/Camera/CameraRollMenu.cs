@@ -171,7 +171,17 @@ public class CameraRollMenu : MonoBehaviour
 
     public void UpdateCR(int guiIndex, Texture2D updateData)
     {
-        gallery.AssignPicture(guiIndex, updateData);
+        if(updateData != null)
+        {
+            gallery.AssignPicture(guiIndex, updateData);
+        } else
+        {
+            //This is kinda shotty but I think will work for the time
+            updateData = new Texture2D(Screen.height, Screen.width);
+            updateData.Apply();
+            gallery.AssignPicture(guiIndex, updateData);
+        }
+        
     }
 
     public void UpdatePopUp(Texture2D updateData)

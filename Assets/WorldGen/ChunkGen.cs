@@ -75,7 +75,7 @@ public class ChunkGen : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("OnEnable - ChuckGen");
+//        Debug.Log("OnEnable - ChuckGen");
     }
 
     // Makes chunk direction-related code much more readable

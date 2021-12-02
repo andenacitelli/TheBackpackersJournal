@@ -30,7 +30,7 @@ public class TerrainManager : MonoBehaviour
     private static bool finishedFirstTimeGeneration = false;
     private void Start()
     {
-        Debug.Log("Start - TerrainManager");
+//        Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
         //player = GameObject.Find("WorldGenPlayer");
 

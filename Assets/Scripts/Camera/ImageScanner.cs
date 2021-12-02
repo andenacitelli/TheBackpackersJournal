@@ -13,7 +13,7 @@ public class ImageScanner : MonoBehaviour
     private int width;
     private int height;
     
-    private List<GameObject> inView;
+    private List<string> inView;
 
     // Start is called before the first frame update
     void Start()
@@ -22,9 +22,9 @@ public class ImageScanner : MonoBehaviour
         height = mainCam.pixelHeight;     
     }
 
-    public List<GameObject> ScanFrame()
+    public List<string> ScanFrame()
     {
-        inView = new List<GameObject>();
+        inView = new List<string>();
         for(int i = 0; i < width; i += UNDERSAMPLE)
         {
             float xPixel = (float)i;
@@ -39,9 +39,9 @@ public class ImageScanner : MonoBehaviour
                 if (Physics.Raycast(ray, out hit))
                 {
                     //Will need changed
-                    if (hit.transform.gameObject.CompareTag("Box") && !inView.Contains(hit.transform.gameObject))
+                    if (hit.transform.gameObject.CompareTag("Box") && !inView.Contains(hit.transform.gameObject.name))
                     {
-                        inView.Add(hit.transform.gameObject);
+                        inView.Add(hit.transform.gameObject.name);
                     }
                     
                 }

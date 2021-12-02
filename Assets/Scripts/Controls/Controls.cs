@@ -57,6 +57,14 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""7a0b108d-1ea9-46c4-964c-ee0778b3a9af"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -200,6 +208,39 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""394ff5ae-2cd3-4ec5-adbb-7378a2aa613c"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4c6b6f1e-6dfb-408d-9a0c-e3fc8a663f26"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b9ac2fe-9bc9-409b-a3ce-c5ed9651a8fd"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -721,6 +762,7 @@ public class @Controls : IInputActionCollection, IDisposable
         m_Gameplay_RaiseCamera = m_Gameplay.FindAction("RaiseCamera", throwIfNotFound: true);
         m_Gameplay_UseCamera = m_Gameplay.FindAction("UseCamera", throwIfNotFound: true);
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+        m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -787,6 +829,7 @@ public class @Controls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_RaiseCamera;
     private readonly InputAction m_Gameplay_UseCamera;
     private readonly InputAction m_Gameplay_Interact;
+    private readonly InputAction m_Gameplay_Sprint;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -796,6 +839,7 @@ public class @Controls : IInputActionCollection, IDisposable
         public InputAction @RaiseCamera => m_Wrapper.m_Gameplay_RaiseCamera;
         public InputAction @UseCamera => m_Wrapper.m_Gameplay_UseCamera;
         public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+        public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -820,6 +864,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Interact.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Sprint.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
+                @Sprint.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
+                @Sprint.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnSprint;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -839,6 +886,9 @@ public class @Controls : IInputActionCollection, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Sprint.started += instance.OnSprint;
+                @Sprint.performed += instance.OnSprint;
+                @Sprint.canceled += instance.OnSprint;
             }
         }
     }
@@ -955,6 +1005,7 @@ public class @Controls : IInputActionCollection, IDisposable
         void OnRaiseCamera(InputAction.CallbackContext context);
         void OnUseCamera(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

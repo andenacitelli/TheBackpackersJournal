@@ -126,13 +126,11 @@ namespace Assets.WorldGen
             // Spawn a new cloud every ten seconds or so, all the way in the negative x coord and at a random z coord
             if (timeSinceLastCloud >= timeBetweenCloudSpawns)
             {
-                print("Spawning a new cloud!");
+//                print("Spawning a new cloud!");
                 timeSinceLastCloud = 0;
                 int randomCloudIndex = (int)Random.Range(0, 4); // Truncates to get to random [0, 3] integer
-                print("randomCloudIndex: " + randomCloudIndex);
-
-                // 0th child is for chunks, 1st child is for Clouds; Purely an organizational difference 
-                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform.GetChild(1));
+//                print("randomCloudIndex: " + randomCloudIndex);
+                GameObject newCloud = Instantiate(cloudPrefabs[randomCloudIndex], transform);
                 newCloud.transform.position = new Vector3(genBounds.min.x, Random.Range(cloudHeightLowerBound, cloudHeightUpperBound), Random.Range(genBounds.min.z, genBounds.max.z)); 
                 clouds.Add(newCloud);
             }
@@ -154,7 +152,7 @@ namespace Assets.WorldGen
                 Vector2 playerPos = new Vector2(player.transform.position.x, player.transform.position.z); 
                 if (Vector2.Distance(cloudPos, playerPos) > TerrainManager.generateRadius * ChunkGen.size)
                 {
-                    print("Cloud is too far, removing from the game.");
+//                    print("Cloud is too far, removing from the game.");
                     elementsToRemove.Add(cloud);
                 }
             }

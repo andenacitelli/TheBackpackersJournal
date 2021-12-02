@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     public GameObject cameraC;
     [Header("Game")]
     public GalleryStorage storage;
-    
+    public PauseMenu pMenu;
+    public JournalRoll journal;
 
     [Header("UI")]
     public Canvas uiCanvas;
@@ -29,20 +30,71 @@ public class GameManager : MonoBehaviour
     private CameraRollMenu crMenu;
     private string lastPopUp;
     private bool lastEditOn;
-
+    private Save saveInfo;
+    private LoadGame lMenu;
+    private WelcomeMenu wMenu;
+    private CameraRoll cr;
     public void Awake()
     {
+        //DontDestroyOnLoad(this);
+        lMenu = GetComponent<LoadGame>();
+
+        int profileIndex;
+        if (PlayerPrefs.HasKey("SaveIndex"))
+        {
+            profileIndex = PlayerPrefs.GetInt("SaveIndex");
+        } else
+        {
+            profileIndex = -1;
+        }
+
+        var newSave = lMenu.GetSaveForGame(profileIndex);
+        cr = cameraC.GetComponent<CameraRoll>();
+        if (newSave == null)
+        {
+            Debug.Log("No file to load - fresh start");
+            wMenu = uiCanvas.GetComponent<WelcomeMenu>();
+            wMenu.GUIOn();
+        } else
+        {
+            AssignSaveOnStart(newSave);
+            cr.LoadCRoll(newSave);
+            storage.LoadGRoll(newSave);
+            print("GameManager Load - Gave save to Journal");
+            journal.saveFromGM = newSave;
+        }
+        
         polC = cameraC.GetComponent<PolaroidController>();
+        
         hud = uiCanvas.GetComponent<InteractableGUI>();
         crMenu = uiCanvas.GetComponent<CameraRollMenu>();
         lastPopUp = "";
         lastEditOn = false;
     }
 
+    public void Start()
+    {
+        print("GameManager - Start");
+        //journal.LoadJRoll(newSave);
+        // load journal here
+    }
+    private void OnDisable()
+    {
+        // Gottta override this or it will persist between plays
+        PlayerPrefs.DeleteKey("SaveIndex");
+        PlayerPrefs.DeleteKey("profileName");
+    }
     public void Update()
     {
         DetermineInputState();
         DetermineGameState();
+    }
+
+    private void AssignSaveOnStart(Save newSave)
+    {
+        saveInfo = newSave;
+        PlayerPrefs.SetString("profileName", saveInfo.playerName);
+        Debug.Log("Profile Name: " + saveInfo.playerName + "saved to player prefs.");  
     }
 
     private void DetermineInputState() 
@@ -55,6 +107,7 @@ public class GameManager : MonoBehaviour
                 if (!lastEditOn)
                 {
                     //edit mode just turned on
+                    
                     hud.ToggleCursor(false, true, storage.scaleModifier);
                 } else
                 {
@@ -66,6 +119,7 @@ public class GameManager : MonoBehaviour
                 if (lastEditOn)
                 {
                     //edit mode just turned off
+                    
                     hud.ToggleCursor(false, false, -1);
                 }
                 else
