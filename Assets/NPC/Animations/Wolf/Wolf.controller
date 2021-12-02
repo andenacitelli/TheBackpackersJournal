@@ -472,7 +472,7 @@ AnimatorStateMachine:
     m_Position: {x: 720, y: -320, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7042766681931615085}
-    m_Position: {x: 670, y: -270, z: 0}
+    m_Position: {x: 690, y: -270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5645469806665560584}
     m_Position: {x: 300, y: -230, z: 0}
@@ -692,7 +692,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Laying 0
+  m_Name: Sleep Lay
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -758,7 +758,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Eat
+  m_Name: Eating
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

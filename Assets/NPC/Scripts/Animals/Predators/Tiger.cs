@@ -54,7 +54,7 @@ public class Tiger : PredatorController
         StopCoroutine(HuntTimer());
 
         // eat the kill for the set time
-        yield return StartCoroutine(WaitOnAnimationState("Eat"));
+        yield return StartCoroutine(WaitOnAnimationState("Eating"));
 
         yield return new WaitForSeconds(eatTime);
     }

@@ -29,7 +29,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DSleep to Stand
+  m_Name: Sleep to Stand
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -207,7 +207,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DStand to Seat
+  m_Name: Stand to Seat
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -628,7 +628,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DSeat to Sleep
+  m_Name: Seat to Sleep
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

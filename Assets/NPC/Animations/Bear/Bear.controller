@@ -861,7 +861,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Eat
+  m_Name: Eating
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -1053,7 +1053,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Be_Stand Roar
+  m_Name: Stand Roar
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1080,7 +1080,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Be_Stand Idle Scratch Neck
+  m_Name: Scratching
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1159,7 +1159,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Be_Stand to Idle
+  m_Name: Stand to Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1338,7 +1338,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Be_Idle to Stand
+  m_Name: Idle to Stand
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1563,7 +1563,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Be_Idle to Seat
+  m_Name: Idle to Seat
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

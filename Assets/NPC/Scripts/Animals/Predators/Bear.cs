@@ -56,7 +56,7 @@ public class Bear : PredatorController
 
         // eat the kill for the set time
         AnimalPlaySound("growl1");
-        yield return StartCoroutine(WaitOnAnimationState("Eat"));
+        yield return StartCoroutine(WaitOnAnimationState("Eating"));
 
         yield return new WaitForSeconds(eatTime);
     }
