@@ -1057,10 +1057,10 @@ GameObject:
   - component: {fileID: 6523815731795233450}
   - component: {fileID: 7502804793581682414}
   - component: {fileID: 7426581328117726883}
+  - component: {fileID: 1657813829099594966}
   - component: {fileID: 6523815731795233451}
   - component: {fileID: 6523815731795233444}
   - component: {fileID: 7842520520923863679}
-  - component: {fileID: 1657813829099594966}
   m_Layer: 7
   m_Name: Rabbit
   m_TagString: Animal
@@ -1116,7 +1116,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 0.285
   m_Radius: 0.1
-  m_SlopeLimit: 90
+  m_SlopeLimit: 67.5
   m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -1135,70 +1135,6 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 2
   m_Center: {x: 0, y: 0.15, z: 0.15}
---- !u!114 &6523815731795233451
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6523815731795233445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  creatureType: 1
---- !u!114 &6523815731795233444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6523815731795233445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRate: 0.2
-  viewingAngle: 210
-  visionRadius: 10.5
-  creatureMask:
-    serializedVersion: 2
-    m_Bits: 128
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hearingRadius: 7.7
---- !u!114 &7842520520923863679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6523815731795233445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2d64c0c8ae927c4ba1eeb2d485b4389, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 1
-  dashSpeed: 7
-  turnSpeed: 2
-  targetTolerance: 3
-  newTargetDelay: 1.5
-  currentSpeed: 0
-  newLocationMinDistance: 5
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 25, y: 0.5, z: 25}
-  animTransitionTime: 1
-  audioManagerNames:
-  - RabbitDead
-  threatFleeTimeout: 2
-  threatRefreshDelay: 2
-  eatTime: 5
 --- !u!82 &1657813829099594966
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1295,6 +1231,69 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6523815731795233451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523815731795233445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creatureType: 1
+--- !u!114 &6523815731795233444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523815731795233445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRate: 0.2
+  viewingAngle: 210
+  visionRadius: 10.5
+  creatureMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  hearingRadius: 7.7
+--- !u!114 &7842520520923863679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523815731795233445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2d64c0c8ae927c4ba1eeb2d485b4389, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 1
+  dashSpeed: 7
+  turnSpeed: 2
+  targetTolerance: 3
+  newTargetDelay: 1.5
+  currentSpeed: 0
+  newLocationMinDistance: 5
+  territory:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 25, y: 0.5, z: 25}
+  animTransitionTime: 1
+  audioManagerNames:
+  - RabbitDead
+  threatFleeTimeout: 2
+  threatRefreshDelay: 2
+  eatTime: 5
 --- !u!1 &6523815731859783091
 GameObject:
   m_ObjectHideFlags: 0

@@ -233,6 +233,7 @@ MonoBehaviour:
   totalSpawns: 0
   minSpawnDelaySeconds: 5
   maxSpawnDelaySeconds: 60
+  spawnManager: {fileID: 625113763}
   preySpawnChance: 0.65
   predSpawnChance: 0.35
   singleSpawnChance: 0.25

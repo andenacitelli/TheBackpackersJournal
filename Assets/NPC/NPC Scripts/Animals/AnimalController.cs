@@ -8,7 +8,6 @@ public class AnimalController : MonoBehaviour
     //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
     bool isMoving = false;
-    [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
     [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
@@ -46,7 +45,6 @@ public class AnimalController : MonoBehaviour
     protected readonly Dictionary<string, int> sounds = new Dictionary<string, int>();
 
 
-    public bool CanFly { get => canFly; }
     protected float WalkSpeed { get => movementSpeed; }
     protected float RunSpeed { get => dashSpeed; }
     protected float TurnSpeed { get => turnSpeed; }
@@ -133,9 +131,13 @@ public class AnimalController : MonoBehaviour
     // play given sound from animal
     protected void AnimalPlaySound(string shorthand)
     {
-        string soundName = TrueSoundName(shorthand);
-        audioManager.Assign3DSource(audioSource, soundName);
-        audioManager.Play(soundName);
+        if(audioManager != null)
+        {
+            string soundName = TrueSoundName(shorthand);
+            audioManager.Assign3DSource(audioSource, soundName);
+            audioManager.Play(soundName);
+        }
+
     }
 
     protected virtual IEnumerator TriggeredSounds() { yield return null; }
@@ -174,6 +176,7 @@ public class AnimalController : MonoBehaviour
             controller.Move(moveDirection * Time.deltaTime);
             yield return null;
         }
+
         isMoving = false;
     }
 
@@ -197,24 +200,8 @@ public class AnimalController : MonoBehaviour
         // generate a point within the bounds/territory
         targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
         while(Vector3.Distance(targetDestination, transform.position) < newLocationMinDistance) targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        if (!canFly) targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
+        targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
 
     }
 
-    // start roaming toward a new random location using the world gen
-    protected void GetNewRoamingDetination()
-    {
-
-        float minX = transform.position.x - newLocationMinDistance * 1.5f, minZ = transform.position.z - newLocationMinDistance * 1.5f;
-        float maxX = transform.position.x + newLocationMinDistance * 1.5f, maxZ = transform.position.z + newLocationMinDistance * 1.5f;
-        Vector2 newCoord;
-        TerrainFunctions.TerrainPointData heightData;
-        do
-        {
-            newCoord = new Vector2(Random.Range(minX, maxX), Random.Range(minZ, maxZ));
-            heightData = TerrainFunctions.GetTerrainPointData(newCoord);
-        } while (!heightData.isHit && Vector2.Distance(newCoord, new Vector2(transform.position.x, transform.position.z)) < newLocationMinDistance);
-        
-        targetDestination = new Vector3(newCoord.x, heightData.height, newCoord.y);
-    }
 }

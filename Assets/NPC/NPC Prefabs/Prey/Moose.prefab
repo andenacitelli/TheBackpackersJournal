@@ -1701,9 +1701,9 @@ GameObject:
   - component: {fileID: 6939403911068831587}
   - component: {fileID: 6666700092764791589}
   - component: {fileID: 6887445917070701054}
+  - component: {fileID: 3434410153711443999}
   - component: {fileID: 930077087959232438}
   - component: {fileID: 699776053275675711}
-  - component: {fileID: 3434410153711443999}
   - component: {fileID: 1313163905582891283}
   m_Layer: 7
   m_Name: Moose
@@ -1760,46 +1760,11 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.9
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 67.5
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0.5}
---- !u!114 &930077087959232438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8794440431520965634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  creatureType: 1
---- !u!114 &699776053275675711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8794440431520965634}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRate: 0.2
-  viewingAngle: 50
-  visionRadius: 10
-  creatureMask:
-    serializedVersion: 2
-    m_Bits: 128
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hearingRadius: 12
 --- !u!82 &3434410153711443999
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1896,6 +1861,41 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &930077087959232438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8794440431520965634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creatureType: 1
+--- !u!114 &699776053275675711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8794440431520965634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRate: 0.2
+  viewingAngle: 50
+  visionRadius: 10
+  creatureMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  hearingRadius: 12
 --- !u!114 &1313163905582891283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1908,7 +1908,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22bf31044e28cbc40a4130a9d227cbdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canFly: 0
   movementSpeed: 0
   dashSpeed: 0
   turnSpeed: 0.5

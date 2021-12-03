@@ -1377,9 +1377,9 @@ GameObject:
   - component: {fileID: 4911938874608868736}
   - component: {fileID: 8711053628968251846}
   - component: {fileID: 8931234979724010269}
+  - component: {fileID: 850750009748992764}
   - component: {fileID: 2922639732041235797}
   - component: {fileID: 3301450694054829788}
-  - component: {fileID: 850750009748992764}
   - component: {fileID: 1728303331659036935}
   m_Layer: 7
   m_Name: Raccoon
@@ -1436,46 +1436,11 @@ CharacterController:
   serializedVersion: 2
   m_Height: 0.45
   m_Radius: 0.15
-  m_SlopeLimit: 45
+  m_SlopeLimit: 67.5
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.25, z: 0}
---- !u!114 &2922639732041235797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6803568550681999073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  creatureType: 1
---- !u!114 &3301450694054829788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6803568550681999073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRate: 0.2
-  viewingAngle: 50
-  visionRadius: 10
-  creatureMask:
-    serializedVersion: 2
-    m_Bits: 128
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hearingRadius: 12
 --- !u!82 &850750009748992764
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1572,6 +1537,41 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2922639732041235797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6803568550681999073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creatureType: 1
+--- !u!114 &3301450694054829788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6803568550681999073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRate: 0.2
+  viewingAngle: 50
+  visionRadius: 10
+  creatureMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  hearingRadius: 12
 --- !u!114 &1728303331659036935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1584,7 +1584,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3ea3dd9fcab9245bffe3f7121f966b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canFly: 0
   movementSpeed: 3
   dashSpeed: 0
   turnSpeed: 0.5

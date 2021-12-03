@@ -1615,10 +1615,10 @@ GameObject:
   - component: {fileID: 95659398919577886}
   - component: {fileID: 143460972871814582}
   - component: {fileID: 7576389005460963219}
-  - component: {fileID: 1606219010814067869}
-  - component: {fileID: 8971305011326903458}
-  - component: {fileID: 3928172131408098489}
   - component: {fileID: 8536754021737864841}
+  - component: {fileID: 1606219010814067869}
+  - component: {fileID: 3928172131408098489}
+  - component: {fileID: 8971305011326903458}
   m_Layer: 7
   m_Name: Horse
   m_TagString: Animal
@@ -1673,7 +1673,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.9
   m_Radius: 0.5
-  m_SlopeLimit: 90
+  m_SlopeLimit: 67.5
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -1692,73 +1692,6 @@ CapsuleCollider:
   m_Height: 2.3
   m_Direction: 2
   m_Center: {x: 0, y: 0.75, z: 0}
---- !u!114 &1606219010814067869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847083141549040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  creatureType: 1
---- !u!114 &8971305011326903458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847083141549040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53283aa9f6556ab4e8d355acbe13e5cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 1.2
-  dashSpeed: 4
-  turnSpeed: 0.5
-  targetTolerance: 3
-  newTargetDelay: 0.5
-  currentSpeed: 0
-  newLocationMinDistance: 5
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 20, y: 0.5, z: 20}
-  animTransitionTime: 0.5
-  audioManagerNames:
-  - HorseDead
-  - HorseRun
-  - HorseDeep
-  - HorseSound
-  threatFleeTimeout: 2
-  threatRefreshDelay: 2
-  eatTime: 2
---- !u!114 &3928172131408098489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847083141549040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRate: 0.2
-  viewingAngle: 353
-  visionRadius: 10
-  creatureMask:
-    serializedVersion: 2
-    m_Bits: 128
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hearingRadius: 15.8
 --- !u!82 &8536754021737864841
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1855,6 +1788,72 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1606219010814067869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847083141549040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creatureType: 1
+--- !u!114 &3928172131408098489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847083141549040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRate: 0.2
+  viewingAngle: 353
+  visionRadius: 10
+  creatureMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  hearingRadius: 15.8
+--- !u!114 &8971305011326903458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847083141549040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53283aa9f6556ab4e8d355acbe13e5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 1.2
+  dashSpeed: 4
+  turnSpeed: 0.5
+  targetTolerance: 3
+  newTargetDelay: 0.5
+  currentSpeed: 0
+  newLocationMinDistance: 5
+  territory:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 20, y: 0.5, z: 20}
+  animTransitionTime: 0.5
+  audioManagerNames:
+  - HorseDead
+  - HorseRun
+  - HorseDeep
+  - HorseSound
+  threatFleeTimeout: 2
+  threatRefreshDelay: 2
+  eatTime: 2
 --- !u!1 &1862758366271582
 GameObject:
   m_ObjectHideFlags: 0

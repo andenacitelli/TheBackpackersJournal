@@ -35,9 +35,6 @@ public class Cougar : PredatorController
 
     protected override IEnumerator AttackBehavior()
     {
-        AnimalPlaySound("attack roar");
-        yield return new WaitForSeconds(2.5f);
-
         int randChoice = Random.Range(0, 3);
         switch (randChoice)
         {
@@ -51,6 +48,9 @@ public class Cougar : PredatorController
                 Animations.SetTrigger("paws attack");
                 break;
         }
+
+        AnimalPlaySound("attack roar");
+        yield return new WaitForSeconds(2.5f);
 
         // tell prey it's been hit
         yield return StartCoroutine(AffectPrey());
@@ -80,10 +80,11 @@ public class Cougar : PredatorController
     {
         // trigger transition and play sound
         Animations.SetTrigger("roar");
-        AnimalPlaySound("roar");
 
         // wait until the animation starts and finishes
         yield return StartCoroutine(WaitOnAnimationState("Roaring"));
+        AnimalPlaySound("roar");
+
         yield return new WaitUntil(IsIdling);
     }    
 

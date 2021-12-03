@@ -134,10 +134,10 @@ GameObject:
   - component: {fileID: 752659624909474995}
   - component: {fileID: -3407312769885680867}
   - component: {fileID: 7441454254978232818}
+  - component: {fileID: 6901382409865201490}
   - component: {fileID: 6231814617072822739}
   - component: {fileID: 8306841640380787777}
   - component: {fileID: 6231814617072822572}
-  - component: {fileID: 6901382409865201490}
   m_Layer: 7
   m_Name: Bear
   m_TagString: Animal
@@ -193,7 +193,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 1.9
   m_Radius: 0.5
-  m_SlopeLimit: 90
+  m_SlopeLimit: 67.5
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -212,74 +212,6 @@ CapsuleCollider:
   m_Height: 2.6
   m_Direction: 2
   m_Center: {x: 0, y: 0.8, z: 0.75}
---- !u!114 &6231814617072822739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801660295356595009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  creatureType: 2
---- !u!114 &8306841640380787777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801660295356595009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acd393c74f7e9064f914a940fd44705b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canFly: 0
-  movementSpeed: 1
-  dashSpeed: 5.5
-  turnSpeed: 2
-  targetTolerance: 3
-  newTargetDelay: 2
-  currentSpeed: 0
-  newLocationMinDistance: 3
-  territory:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 25, y: 0.5, z: 25}
-  animTransitionTime: 0.5
-  audioManagerNames:
-  - BearGrowl
-  - BearGrowlAlt
-  - BearSnarl
-  - BearRoar
-  huntTimeout: 5
-  threatRefreshDelay: 2
-  sleepTime: 10
-  eatTime: 5
---- !u!114 &6231814617072822572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801660295356595009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectRate: 0.2
-  viewingAngle: 40
-  visionRadius: 14
-  creatureMask:
-    serializedVersion: 2
-    m_Bits: 128
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hearingRadius: 5
 --- !u!82 &6901382409865201490
 AudioSource:
   m_ObjectHideFlags: 0
@@ -376,6 +308,73 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6231814617072822739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801660295356595009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1c93a8174e1dce41bf45890edf56886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  creatureType: 2
+--- !u!114 &8306841640380787777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801660295356595009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd393c74f7e9064f914a940fd44705b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 1
+  dashSpeed: 5.5
+  turnSpeed: 2
+  targetTolerance: 3
+  newTargetDelay: 2
+  currentSpeed: 0
+  newLocationMinDistance: 3
+  territory:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 25, y: 0.5, z: 25}
+  animTransitionTime: 0.5
+  audioManagerNames:
+  - BearGrowl
+  - BearGrowlAlt
+  - BearSnarl
+  - BearRoar
+  huntTimeout: 5
+  threatRefreshDelay: 2
+  sleepTime: 10
+  eatTime: 5
+--- !u!114 &6231814617072822572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801660295356595009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df438a6b6b4fb3644b2fb04cd8cf7796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectRate: 0.2
+  viewingAngle: 40
+  visionRadius: 14
+  creatureMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  hearingRadius: 5
 --- !u!1 &801713693145104375
 GameObject:
   m_ObjectHideFlags: 0
