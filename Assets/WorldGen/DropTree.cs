@@ -37,7 +37,7 @@ public class DropTree : MonoBehaviour
     public List<GameObject> grassPrefabs;
     public List<GameObject> mushroomPrefabs;
     public List<GameObject> waterPlantPrefabs;
-    public GameObject treePrefab;
+    public GameObject rock1prefab, rock2prefab, rock3prefab;
     public List<GameObject> treePrefabs;
 
     private class GFG : IComparer<(int, int)>
@@ -98,7 +98,7 @@ public class DropTree : MonoBehaviour
          * sure how counter-intuitive it is, just my thoughts.
          * 
          */
-        Debug.Log("DropTree: OnDisable Ran");
+/*        Debug.Log("DropTree: OnDisable Ran");*/
     }
     // Update is called once per frame
     void Update()
@@ -115,7 +115,6 @@ public class DropTree : MonoBehaviour
             playerPos = player.transform.position;
             currentChunk = ((int)((playerPos.x - 40) / 80), (int)((playerPos.z - 40) / 80));
         }
-        Debug.Log("PLAYERPOS: " + playerPos);
         currentChunks = TerrainManager.getChunksCords();
 
         toDoChunks = new List<(int, int)>();
@@ -255,6 +254,9 @@ public class DropTree : MonoBehaviour
                             else if (tempRand < 0.55)
                             {
                                 prefab = flowerPrefabs[plantRandoms[1].Next(0, 19)];
+                            }else if (tempRand > 0.99)
+                            {
+                                prefab = rock2prefab;
                             }
                             GameObject tempTree = Instantiate(prefab, pos, Quaternion.identity);
                             tempTree.transform.parent = this.transform;
@@ -279,8 +281,9 @@ public class DropTree : MonoBehaviour
                     }
                 }
             }
+
             finishedChunks.Add((xCord, yCord));
-            Debug.Log("(" + xCord + ", " + yCord + ") Generation SpeedTrack");
+/*            Debug.Log("(" + xCord + ", " + yCord + ") Generation SpeedTrack");*/
         }
     }
 
@@ -299,7 +302,7 @@ public class DropTree : MonoBehaviour
 
             int xCord = toRemoveChunks[0].Item1;
             int yCord = toRemoveChunks[0].Item2;
-            Debug.Log("At lease im here" + "removing: " + xCord + "  " + yCord);
+/*            Debug.Log("At lease im here" + "removing: " + xCord + "  " + yCord);*/
             for (int i = 0; i < treesD[(xCord, yCord)].Count; i++)
             {
                 Destroy(treesD[(xCord, yCord)][i]);
@@ -307,7 +310,7 @@ public class DropTree : MonoBehaviour
                 plantsRemovedThisFrame++;
                 if (plantsRemovedThisFrame > PLANTS_TO_REMOVE_PER_FRAME)
                 {
-                    Debug.Log("returned");
+/*                    Debug.Log("returned");*/
                     return;
                 }
             }
@@ -321,7 +324,7 @@ public class DropTree : MonoBehaviour
                 finishedChunks.Remove((xCord, yCord));
             }
             
-            Debug.Log("(" + xCord + ", " + yCord + ") Remove SpeedTrack");
-        }
+/*            Debug.Log("(" + xCord + ", " + yCord + ") Remove SpeedTrack");
+*/        }
     }
 }
