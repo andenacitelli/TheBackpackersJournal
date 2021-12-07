@@ -12,6 +12,9 @@ public class TerrainManager : MonoBehaviour
     [SerializeField]
     private GameObject tilePrefab;
 
+    [SerializeField]
+    private GameObject spawnManagerGO; 
+
     public GameObject player; 
 
     public GameObject TreeRockDropper;
@@ -45,6 +48,8 @@ public class TerrainManager : MonoBehaviour
         moistureNoise.scale = 500; // We want biomes to be pretty large; this equates to making the Perlin change per unit very small 
 
         // GenerateChunks();
+        var spawnM = spawnManagerGO.GetComponent<SpawnManager>();
+        spawnM.BeginSpawning(player.transform);
     }
 
     private void OnDisable()

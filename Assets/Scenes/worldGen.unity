@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0.99999905, b: 0.99999905, a: 1}
+  m_IndirectSpecularColor: {r: 0.17379464, g: 0.20892873, b: 0.2518292, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -639,6 +639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 6322903469593028105, guid: 2f020166ef04cae4bad76b88ada1ac75, type: 3}
+  spawnManager: {fileID: 625113762}
   player: {fileID: 1782234108}
   TreeRockDropper: {fileID: 926933605}
 --- !u!4 &1240365349
