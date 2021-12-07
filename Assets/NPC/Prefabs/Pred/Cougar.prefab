@@ -528,6 +528,7 @@ GameObject:
   - component: {fileID: 5193093632105870004}
   - component: {fileID: 7930540351870606996}
   - component: {fileID: 7927396373916369291}
+  - component: {fileID: 2871874070723063042}
   m_Layer: 7
   m_Name: Cougar
   m_TagString: Animal
@@ -752,6 +753,18 @@ MonoBehaviour:
   eatTime: 5
   maxSitTime: 20
   layTime: 10
+--- !u!114 &2871874070723063042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4299716371026205321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4395349755378574980
 GameObject:
   m_ObjectHideFlags: 0

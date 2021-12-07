@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 8306841640380787777}
   - component: {fileID: 6231814617072822572}
   - component: {fileID: 6901382409865201490}
+  - component: {fileID: 5930589955042677533}
   m_Layer: 7
   m_Name: Bear
   m_TagString: Animal
@@ -376,6 +377,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5930589955042677533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801660295356595009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &801713693145104375
 GameObject:
   m_ObjectHideFlags: 0
