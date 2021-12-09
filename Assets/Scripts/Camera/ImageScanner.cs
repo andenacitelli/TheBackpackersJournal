@@ -38,11 +38,20 @@ public class ImageScanner : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    //Will need changed
+                    string objName = hit.transform.gameObject.name;
+                    CanPhoto canP;
+                    if (!inView.Contains(objName))
+                    { 
+                        if (hit.transform.gameObject.TryGetComponent<CanPhoto>(out canP))
+                        {
+                            inView.Add(canP.ReportToken());
+                        }
+                    }
+                    /*Old test code:
                     if (hit.transform.gameObject.CompareTag("Box") && !inView.Contains(hit.transform.gameObject.name))
                     {
                         inView.Add(hit.transform.gameObject.name);
-                    }
+                    }*/
                     
                 }
                        

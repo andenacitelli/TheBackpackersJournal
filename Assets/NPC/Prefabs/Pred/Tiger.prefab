@@ -415,6 +415,7 @@ GameObject:
   - component: {fileID: 4843508759580017446}
   - component: {fileID: 5073814319953273007}
   - component: {fileID: 710461203771835745}
+  - component: {fileID: 3053096793188661220}
   m_Layer: 7
   m_Name: Tiger
   m_TagString: Animal
@@ -637,6 +638,18 @@ MonoBehaviour:
   eatTime: 5
   maxSitTime: 20
   layTime: 10
+--- !u!114 &3053096793188661220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878713476359342226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4260390090895084344
 GameObject:
   m_ObjectHideFlags: 0

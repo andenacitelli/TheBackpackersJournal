@@ -1381,6 +1381,7 @@ GameObject:
   - component: {fileID: 2922639732041235797}
   - component: {fileID: 3301450694054829788}
   - component: {fileID: 1728303331659036935}
+  - component: {fileID: 5970961179453701835}
   m_Layer: 7
   m_Name: Raccoon
   m_TagString: Animal
@@ -1606,6 +1607,18 @@ MonoBehaviour:
   threatRefreshDelay: 2
   sleepTime: 10
   maxSitTime: 20
+--- !u!114 &5970961179453701835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6803568550681999073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6834333833071445146
 GameObject:
   m_ObjectHideFlags: 0

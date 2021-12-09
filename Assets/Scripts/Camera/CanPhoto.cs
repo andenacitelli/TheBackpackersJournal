@@ -11,7 +11,6 @@ public class CanPhoto : MonoBehaviour, ICanPhoto
 {
     // This class can hold any attribute values we want
     // to attach to the attributes
-    [SerializeField] CameraRoll cRoll;
 
     private Renderer rend;
 
@@ -29,6 +28,24 @@ public class CanPhoto : MonoBehaviour, ICanPhoto
         }
         
         return hold;
+    }
+
+    public string ReportObjectName()
+    {
+        return gameObject.name;
+    }
+
+    public string ReportAction()
+    {
+        // Get animator or whatever here. will ret a string
+        return "Walk";
+    }
+
+    public string ReportToken()
+    {
+        string token = ReportObjectName() + "_" + ReportAction();
+        Debug.Log("Created new token: " + token);
+        return token;
     }
 
 }
