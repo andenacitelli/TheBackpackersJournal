@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Text;
+using System.Linq;
 
 public class ImageScanner : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class ImageScanner : MonoBehaviour
     private int height;
     
     private List<string> inView;
+    private Dictionary<string, int> inViewDict;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +26,8 @@ public class ImageScanner : MonoBehaviour
 
     public List<string> ScanFrame()
     {
-        inView = new List<string>();
+        
+        inViewDict = new Dictionary<string, int>();
         for(int i = 0; i < width; i += UNDERSAMPLE)
         {
             float xPixel = (float)i;
@@ -38,25 +41,37 @@ public class ImageScanner : MonoBehaviour
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit))
                 {
-                    string objName = hit.transform.gameObject.name;
+                    
                     CanPhoto canP;
-                    if (!inView.Contains(objName))
-                    { 
-                        if (hit.transform.gameObject.TryGetComponent<CanPhoto>(out canP))
+                    if (hit.transform.gameObject.TryGetComponent<CanPhoto>(out canP))
+                    {
+                        string token = canP.ReportToken();
+                        if (!inViewDict.ContainsKey(token))
                         {
-                            inView.Add(canP.ReportToken());
+                            inViewDict.Add(token, 1);
+                        } else
+                        {
+                            int grabCount = inViewDict[token];
+                            grabCount++;
+                            inViewDict[token] = grabCount;
                         }
                     }
                     /*Old test code:
+                     * string objName = hit.transform.gameObject.name;
                     if (hit.transform.gameObject.CompareTag("Box") && !inView.Contains(hit.transform.gameObject.name))
                     {
                         inView.Add(hit.transform.gameObject.name);
                     }*/
-                    
+
                 }
-                       
+
             }
+            
         }
+        // sort by highest value
+        var sortedDict = from entry in inViewDict orderby entry.Value descending select entry;
+        inViewDict = sortedDict.ToDictionary(pair => pair.Key, pair => pair.Value);
+        inView = new List<string>(inViewDict.Keys);
         return inView;
     }
     
