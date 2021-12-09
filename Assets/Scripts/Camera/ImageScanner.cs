@@ -74,5 +74,31 @@ public class ImageScanner : MonoBehaviour
         inView = new List<string>(inViewDict.Keys);
         return inView;
     }
+
+    public int ScoreView(List<string> currView)
+    {
+        int totalScore = 0;
+        
+        foreach(string token in currView)
+        {
+            int splitIndex = token.IndexOf('_');
+            string animalName = token.Substring(0, splitIndex);
+            string animalAction = token.Substring(splitIndex + 1);
+            // Animal Score
+            switch (animalName)
+            {
+                default:
+                    break;
+            }
+
+            //behavior score
+            switch (animalAction)
+            {
+                default:
+                    break;
+            }
+        }
+        return totalScore;
+    }
     
 }
