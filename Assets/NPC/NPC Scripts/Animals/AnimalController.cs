@@ -8,8 +8,8 @@ public class AnimalController : MonoBehaviour
     //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
     private readonly float GRAVITY = -9.8f;
-    [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
-    [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
+    [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // only used if no decent root motion on animation
+    [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // only used if no decent root motion on animation
     [SerializeField] [Range(0.0f, 5.0f)] private float turnSpeed = 0.5f; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 10.0f)] protected float targetTolerance = 3.0f; // public for spawner testing, will be private when using actual prefabs
     [SerializeField] [Range(0.0f, 10.0f)] protected float newTargetDelay = 0.5f;
@@ -175,9 +175,16 @@ public class AnimalController : MonoBehaviour
             //RotateToGroundNormal();
 
             // move toward target
-            Vector3 moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
-            moveDirection.y = GRAVITY;
+            Vector3 moveDirection = new Vector3();
+            if (!Animations.applyRootMotion)
+            { // not all animations have movement built-in
+                moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
+            }
+
+            if(!controller.isGrounded) moveDirection.y = GRAVITY;
+
             controller.Move(moveDirection * Time.deltaTime);
+
             yield return null;
         }
 
