@@ -15,6 +15,7 @@ public class Preload : MonoBehaviour
         PlayerPrefs.SetFloat("PlayerPosZ", 0f);
 
         CreatePath(Application.persistentDataPath + "/XMLSaves/");
+        Cursor.lockState = CursorLockMode.Confined;
         //CreatePath(Application.persistentDataPath + "/PhotoStorage/");
     }
 
