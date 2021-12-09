@@ -84,9 +84,50 @@ public class ImageScanner : MonoBehaviour
             int splitIndex = token.IndexOf('_');
             string animalName = token.Substring(0, splitIndex);
             string animalAction = token.Substring(splitIndex + 1);
+            // kinda sloppy but makes it easiest to account for male/female
+            if (animalName.Contains("Deer"))
+            {
+                animalName = "Deer";   
+            }
             // Animal Score
             switch (animalName)
             {
+                case "Bear":
+                    totalScore += 2;
+                    break;
+                case "Boar":
+                    totalScore += 2;
+                    break;
+                case "Cougar":
+                    totalScore += 3;
+                    break;
+                case "Cow":
+                    totalScore += 1;
+                    break;
+                case "Deer":
+                    totalScore += 1;
+                    break;
+                case "Fox":
+                    totalScore += 3;
+                    break;
+                case "Horse":
+                    totalScore += 2;
+                    break;
+                case "Moose":
+                    totalScore += 2;
+                    break;
+                case "Rabbit":
+                    totalScore += 1;
+                    break;
+                case "Raccoon":
+                    totalScore += 1;
+                    break;
+                case "Tiger":
+                    totalScore += 3;
+                    break;
+                case "Wolf":
+                    totalScore += 3;
+                    break;
                 default:
                     break;
             }
@@ -94,6 +135,30 @@ public class ImageScanner : MonoBehaviour
             //behavior score
             switch (animalAction)
             {
+                case "Run":
+                    totalScore += 1;
+                    break;
+                case "Death":
+                    totalScore += 3;
+                    break;
+                case "Attack":
+                    totalScore += 4;
+                    break;
+                case "Eating":
+                    totalScore += 2;
+                    break;
+                case "Howl":
+                    totalScore += 3;
+                    break;
+                case "Roar":
+                    totalScore += 3;
+                    break;
+                case "Sit":
+                    totalScore += 2;
+                    break;
+                case "LayingDown":
+                    totalScore += 2;
+                    break;
                 default:
                     break;
             }
