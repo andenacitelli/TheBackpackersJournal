@@ -255,15 +255,18 @@ public class CameraRoll : MonoBehaviour
     {
         Debug.Log("Recieved Photo");
         currView = imageScan.ScanFrame();
+        int imageScore = imageScan.ScoreView(currView);
         // pass currview to scanner rank to get totalScore
         Texture2D newTex = new Texture2D(Screen.width, Screen.height);
         newTex.LoadRawTextureData(rawData);
         newTex.Apply();
-        //TODO: Apply totalscore HERE
+        // Possibly add string for "rank" since it'd be easier to calculate here
         buffer = new photo
         {
             inView = currView.ToArray(),
-            captureData = newTex
+            captureData = newTex,
+            totalScore = imageScore
+            
         };
         bufferFilled = true;
     }
