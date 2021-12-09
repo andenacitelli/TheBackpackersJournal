@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
         }
 
         var newSave = lMenu.GetSaveForGame(profileIndex);
+
         cr = cameraC.GetComponent<CameraRoll>();
         if (newSave == null)
         {
