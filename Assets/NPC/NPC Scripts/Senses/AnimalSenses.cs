@@ -100,6 +100,7 @@ public class AnimalSenses : MonoBehaviour
                     }
                 }
             }
+
             yield return new WaitForSeconds(detectRate);
         }
     }

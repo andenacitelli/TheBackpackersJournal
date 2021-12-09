@@ -10173,7 +10173,7 @@ GameObject:
   - component: {fileID: 484376109}
   - component: {fileID: 484376110}
   - component: {fileID: 484376111}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Photo_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20788,7 +20788,7 @@ GameObject:
   - component: {fileID: 879062991}
   - component: {fileID: 879062992}
   - component: {fileID: 879062993}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -27798,7 +27798,7 @@ GameObject:
   - component: {fileID: 1203683507}
   - component: {fileID: 1203683506}
   - component: {fileID: 1203683508}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33113,9 +33113,93 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7695035881978622666, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -2800393760242770971, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -2745055432315072573, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -1827928219432720515, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -288646023608200363, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -223497345045204089, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 772069791072969936, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
       propertyPath: m_Name
       value: Polaroid_Prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2297003851995798098, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3009216794350497282, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3033545726899228425, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3220814075821248243, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3339315030124635930, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4096385721293840218, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584794146911261678, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5558489593596621950, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5600908742553747832, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6432377577617441348, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6439101056839194579, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6862726491760692036, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7990988359227451168, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9aeda1218e7fea140bbe73e0ee463107, type: 3}
@@ -34251,7 +34335,7 @@ GameObject:
   - component: {fileID: 1522101647}
   - component: {fileID: 1522101646}
   - component: {fileID: 1522101645}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
