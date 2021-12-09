@@ -238,9 +238,8 @@ public class SpawnManager : MonoBehaviour
             if (newSpawn == null) Debug.Log("GameObject not placed in world. spawn Failed");
             else
             {
-                // set movement bounds and start animal behavior
-                AnimalController animal = newSpawn.GetComponent<PreyController>();
-                if (animal == null) animal = newSpawn.GetComponent<PredatorController>();
+                // set movement bounds and start animal behavior             
+                AnimalController animal = newSpawn.GetComponent<AnimalController>();
                 animal.territory = new Bounds(GetChunkCoordinates(newSpawn.transform.position.x, newSpawn.transform.position.z), new Vector3(ChunkGen.size, 10.0f, ChunkGen.size));
                 animal.LetsGetGoing();
 
