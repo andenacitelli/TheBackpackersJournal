@@ -8,12 +8,15 @@ using System.Linq;
 public class LoadGame : MonoBehaviour
 {
     private string[] filenames = new string[10];
-
+    string savesPath;
     public void Awake()
     {
+        savesPath = Application.persistentDataPath + "/XMLSaves/";
+
+        if (!Directory.Exists(savesPath)) Debug.LogError($"Path {savesPath} not found.");
 
         int i = 0;
-        string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");
+        string[] XMLfiles = Directory.GetFiles(savesPath, "*.XML");
         foreach (string file in XMLfiles)
         {
             filenames[i] = Path.ChangeExtension(Path.GetFileName(file), null);
@@ -23,7 +26,10 @@ public class LoadGame : MonoBehaviour
 
     public Save GetSaveForGame(int i)
     {
-        string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");
+        savesPath = Application.persistentDataPath + "/XMLSaves/";
+
+        string[] XMLfiles = Directory.GetFiles(savesPath, "*.XML");
+        Debug.Log(XMLfiles);
         Save save = null;
         // if no profile loaded, use the most recently created.
         if (i == -1 || XMLfiles.Length == 0)

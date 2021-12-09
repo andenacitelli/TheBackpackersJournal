@@ -123,9 +123,7 @@ public class JournalRoll : MonoBehaviour
        
 
         if (loadOption == 0)
-        {
-            //ISSUE HERE
-            
+        {  
             //overwrite check, we aren't loading
             if (File.Exists(fileName))
             {
@@ -168,6 +166,7 @@ public class JournalRoll : MonoBehaviour
         photos.Add(newPhoto);
 
         pCont.UpdateImage(grabPhoto.captureData);
+        pCont.UpdateText(grabPhoto.totalScore);
         //update scoring info
     }
 

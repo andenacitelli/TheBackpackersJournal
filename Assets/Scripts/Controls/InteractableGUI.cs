@@ -48,9 +48,16 @@ public class InteractableGUI : MonoBehaviour
                 {
                     StopCoroutine(cursorOpacity());
                     placeObject = Instantiate(framePrefab);
+           
                     //print("OptionalScale " + scaleVal);
                     Vector3 scale = DetermineScale(scaleVal);
                     placeObject.transform.localScale = scale;
+
+                    // flip visual horizontally
+                    Transform toFlip = placeObject.transform.GetChild(0).GetChild(0).GetChild(0);
+                    toFlip.localScale = new Vector3(-toFlip.localScale.x, toFlip.localScale.y, toFlip.localScale.z);
+                    
+
                     display = placeObject.GetComponentInChildren<Image>();
                     StartCoroutine(editCursor());
                 } else
@@ -278,9 +285,8 @@ public class InteractableGUI : MonoBehaviour
                 break;
         }
         y = x * .8f;
+
         Debug.Log("Local Scale - x: " + x + " y: " + y);
         return new Vector3(x, y, .05f);
-
-        
     }
 }

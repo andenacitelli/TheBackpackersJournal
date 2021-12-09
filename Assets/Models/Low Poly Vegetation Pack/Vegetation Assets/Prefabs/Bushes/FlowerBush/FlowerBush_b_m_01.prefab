@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7760050835228858333}
   - component: {fileID: 7187191474208787500}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerBush_b_m_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   - component: {fileID: 7187191474223618184}
   - component: {fileID: 7187191474224945320}
   - component: {fileID: 7187191474226043496}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerBush_b_m_01_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 7187191474223618190}
   - component: {fileID: 7187191474224945326}
   - component: {fileID: 7187191474226043502}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlowerBush_b_m_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,7 +229,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7187191476293559356}
   - component: {fileID: 7187191476293560259}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,14 +11,19 @@ public class LoadMenu : MonoBehaviour
 
     public ButtonScript myButtonScript;
     public GameObject[] buttons;
+    string savesPath;
 
     private string[] filenames = new string[10];
     public void Awake()
     {
-        
+        savesPath = Application.persistentDataPath + "/XMLSaves/";
+
+        if (!Directory.Exists(savesPath)) Debug.LogError($"Path {savesPath} not found.");
+
+        string[] XMLfiles = Directory.GetFiles(savesPath, "*.XML");
+
         int i = 0;
-        string[] XMLfiles = Directory.GetFiles(Application.persistentDataPath + "/XMLSaves/", "*.XML");
-        foreach(string file in XMLfiles)
+        foreach (string file in XMLfiles)
         {
             buttons[i].SetActive(true);
             buttons[i].transform.GetChild(0).GetComponent<TMP_Text>().text = Path.ChangeExtension(Path.GetFileName(file), null);
@@ -31,7 +36,7 @@ public class LoadMenu : MonoBehaviour
     {
         Save save = new Save();
         string file = filenames[i];
-        if (File.Exists(Application.persistentDataPath + "/XMLSaves/" + file + ".xml"))
+        if (File.Exists(savesPath + file + ".xml"))
         {
             PlayerPrefs.SetInt("SaveIndex", i);
             myButtonScript.PlayGame();

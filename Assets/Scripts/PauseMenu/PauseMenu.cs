@@ -146,36 +146,20 @@ public class PauseMenu : MonoBehaviour
     {
         if (s != "")
         {
-            if(journalRoll.photos == null)
-            {
-                journalRoll.photos = new List<photo>();
-            }
-
             if (cr.cRollStorage == null)
             {
                 // No load was ran, because player has no data.
                 cr.cRollStorage = new List<photo>();
-                
-            } else
-            {
-                // Check to be sure target directory exists
-                DirectoryInfo crInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/CameraRoll/");
-                DirectoryInfo grInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/GalleryRoll/");
-                DirectoryInfo jrInfo = new DirectoryInfo(Application.persistentDataPath + "/PhotoStorage/" + s + "/JournalRoll/");
-                // probably will need to add business here for the journal
-                if (!crInfo.Exists)
-                {
-                    crInfo.Create();
-                }
-                if (!grInfo.Exists)
-                {
-                    grInfo.Create();
-                }
-                if (!jrInfo.Exists)
-                {
-                    jrInfo.Create();
-                }
             }
+
+            // Create the necessary photo storage paths for the save to avoid errors later
+            string pathName = Application.persistentDataPath + "/PhotoStorage/" + s + "/CameraRoll/";
+            Preload.CreatePath(pathName);
+            pathName = Application.persistentDataPath + "/PhotoStorage/" + s + "/GalleryRoll/";
+            Preload.CreatePath(pathName);
+            pathName = Application.persistentDataPath + "/PhotoStorage/" + s + "/JournalRoll/";
+            Preload.CreatePath(pathName);
+
 
             print("profileName pref set to: " + s);
             PlayerPrefs.SetString("profileName", s);
@@ -183,11 +167,6 @@ public class PauseMenu : MonoBehaviour
             //XmlDocument xmlDoc = new XmlDocument();
             XmlSerializer serializer = new XmlSerializer(typeof(Save));
             string dataPath = Application.persistentDataPath + "/XMLSaves/";
-            DirectoryInfo xmlSaveInfo = new DirectoryInfo(dataPath);
-            if (!xmlSaveInfo.Exists)
-            {
-                xmlSaveInfo.Create();
-            }
             FileStream stream = new FileStream(dataPath+ s + ".xml", FileMode.Create);
             serializer.Serialize(stream, save);
             stream.Close();

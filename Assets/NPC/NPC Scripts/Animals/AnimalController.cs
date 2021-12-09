@@ -7,11 +7,9 @@ public class AnimalController : MonoBehaviour
 {
     //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
-    bool isMoving = false;
-    [SerializeField] private bool canFly = false;
     private readonly float GRAVITY = -9.8f;
-    [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
-    [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
+    [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // only used if no decent root motion on animation
+    [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // only used if no decent root motion on animation
     [SerializeField] [Range(0.0f, 5.0f)] private float turnSpeed = 0.5f; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 10.0f)] protected float targetTolerance = 3.0f; // public for spawner testing, will be private when using actual prefabs
     [SerializeField] [Range(0.0f, 10.0f)] protected float newTargetDelay = 0.5f;
@@ -19,6 +17,7 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
+    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 40.0f;
 
     // TODO: remove territory. instead have roaming points use chunk area
     [SerializeField] public Bounds territory;
@@ -26,7 +25,7 @@ public class AnimalController : MonoBehaviour
 
     // Sight and Hearing
     protected Creature.CreatureTypes creatureType;
-    protected Vector3 targetDestination;
+    [SerializeField] private Vector3 targetDestination;
     private AnimalSenses senses;
     protected bool fleeing = false;
     protected Vector3 threatCenter; // center point of detected threats to flee
@@ -46,7 +45,6 @@ public class AnimalController : MonoBehaviour
     protected readonly Dictionary<string, int> sounds = new Dictionary<string, int>();
 
 
-    public bool CanFly { get => canFly; }
     protected float WalkSpeed { get => movementSpeed; }
     protected float RunSpeed { get => dashSpeed; }
     protected float TurnSpeed { get => turnSpeed; }
@@ -57,6 +55,7 @@ public class AnimalController : MonoBehaviour
     protected CharacterController Controller { get => controller; }
     public Creature.CreatureTypes CreatureType { get => creatureType; }
     public Animator Animations { get => anim;  }
+    protected Vector3 TargetDestination { get => targetDestination; set => targetDestination = value; }
 
     // to make it work with all the animals the triggers are: startRun, stopRun, startAttack, startWalk, returnIdle
 
@@ -110,7 +109,7 @@ public class AnimalController : MonoBehaviour
     // returns true when within tolerance distance of destination
     bool AtTarget()
     {
-        return Vector3.Distance(targetDestination, transform.position) <= targetTolerance;
+        return Vector3.Distance(TargetDestination, transform.position) <= targetTolerance;
     }
 
     protected bool IsIdling()
@@ -133,9 +132,13 @@ public class AnimalController : MonoBehaviour
     // play given sound from animal
     protected void AnimalPlaySound(string shorthand)
     {
-        string soundName = TrueSoundName(shorthand);
-        audioManager.Assign3DSource(audioSource, soundName);
-        audioManager.Play(soundName);
+        if(audioManager != null)
+        {
+            string soundName = TrueSoundName(shorthand);
+            audioManager.Assign3DSource(audioSource, soundName);
+            audioManager.Play(soundName);
+        }
+
     }
 
     protected virtual IEnumerator TriggeredSounds() { yield return null; }
@@ -157,34 +160,62 @@ public class AnimalController : MonoBehaviour
     {
         // start moving animations
         Animations.CrossFade("Walk", animTransitionTime);
-        isMoving = true;
         while (!AtTarget())
         {
             // adjust target to be in territory
             StayInYaLane();
 
             // turn toward target
-            Quaternion targetRotation = Quaternion.LookRotation(targetDestination - transform.position);
+            Quaternion targetRotation = Quaternion.LookRotation(TargetDestination - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
+
+            // adjust to face the correct slope
+            //RotateToGroundNormal();
+
             // move toward target
-            Vector3 moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
-            moveDirection.y = GRAVITY;
+            Vector3 moveDirection = new Vector3();
+            if (!Animations.applyRootMotion)
+            { // not all animations have movement built-in
+                moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
+            }
+
+            if(!controller.isGrounded) moveDirection.y = GRAVITY;
+
             controller.Move(moveDirection * Time.deltaTime);
+
             yield return null;
         }
-        isMoving = false;
+
+    }
+    
+    Vector3 GetGroundNormal()
+    {
+        RaycastHit groundHit;
+        Physics.Raycast(controller.center, Vector3.down, out groundHit, controller.height, LayerMask.GetMask("Terrain"));
+        return groundHit.normal;
+    }
+
+    protected void RotateToGroundNormal()
+    {
+        Vector3 normal = GetGroundNormal();
+
+        transform.rotation = Quaternion.FromToRotation(Vector3.forward, normal);
+
     }
 
     // very possibly going to get rid of this, makes it so that any animal can't leave the bounds given by maxX, maxY, maxZ
     // to fix fleeing/hunting outside of their territory
     void StayInYaLane()
     {
-        if (!territory.Contains(targetDestination))
+        if (!territory.Contains(TargetDestination))
         {
-            targetDestination = territory.ClosestPoint(targetDestination);
-            targetDestination.y = transform.position.y;
+            Vector3 target = territory.ClosestPoint(TargetDestination);
+            
+            // adjust y coordinate to be the ground
+            target.y = TerrainFunctions.GetTerrainPointData(new Vector2(target.x, target.z)).height;
+            TargetDestination = target;
         }
     }
 
@@ -194,27 +225,20 @@ public class AnimalController : MonoBehaviour
         float minX = territory.min.x, minY = territory.min.y, minZ = territory.min.z;
         float maxX = territory.max.x, maxY = territory.max.y, maxZ = territory.max.z;
 
+        // make random, randomer
+        Random.InitState((int)System.DateTime.Now.Ticks);
+
         // generate a point within the bounds/territory
-        targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        while(Vector3.Distance(targetDestination, transform.position) < newLocationMinDistance) targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        if (!canFly) targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
+        Vector3 target = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
 
-    }
-
-    // start roaming toward a new random location using the world gen
-    protected void GetNewRoamingDetination()
-    {
-
-        float minX = transform.position.x - newLocationMinDistance * 1.5f, minZ = transform.position.z - newLocationMinDistance * 1.5f;
-        float maxX = transform.position.x + newLocationMinDistance * 1.5f, maxZ = transform.position.z + newLocationMinDistance * 1.5f;
-        Vector2 newCoord;
-        TerrainFunctions.TerrainPointData heightData;
-        do
+        while (Vector3.Distance(target, transform.position) <= newLocationMinDistance && Vector3.Distance(target, transform.position) >= newLocationMaxDistance)
         {
-            newCoord = new Vector2(Random.Range(minX, maxX), Random.Range(minZ, maxZ));
-            heightData = TerrainFunctions.GetTerrainPointData(newCoord);
-        } while (!heightData.isHit && Vector2.Distance(newCoord, new Vector2(transform.position.x, transform.position.z)) < newLocationMinDistance);
+            TargetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
+        }
         
-        targetDestination = new Vector3(newCoord.x, heightData.height, newCoord.y);
+        // adjust y coordinate to be the ground
+        target.y = TerrainFunctions.GetTerrainPointData(new Vector2(target.x, target.z)).height;
+        TargetDestination = target;
     }
+
 }

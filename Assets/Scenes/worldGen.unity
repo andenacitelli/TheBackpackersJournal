@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0.99999905, b: 0.99999905, a: 1}
+  m_IndirectSpecularColor: {r: 0.17379464, g: 0.20892873, b: 0.2518292, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -203,20 +203,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availablePrey:
-  - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
-  - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
-  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
-  - {fileID: 1837017738195904814, guid: 8079fbb2cbdf2704caffc979585b58e4, type: 3}
-  - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   - {fileID: 9215208602991251238, guid: 3547dafc8aa9dda43b48b32ce916f43c, type: 3}
+  - {fileID: 1244760467543844, guid: 55a0c604b06c27f40b62213bf3b9194a, type: 3}
+  - {fileID: 6450717611911589797, guid: ea2bb62830090444a945dff58e0ab971, type: 3}
+  - {fileID: 3646856990718673954, guid: 6801cd8dac81c624db9e7718dbdf468e, type: 3}
+  - {fileID: 1847083141549040, guid: 531459dca90d35c48bbf51fe775f7288, type: 3}
+  - {fileID: 1837017738195904814, guid: 8079fbb2cbdf2704caffc979585b58e4, type: 3}
   - {fileID: 8794440431520965634, guid: cc882cd7058a9644683c448feea778e2, type: 3}
+  - {fileID: 6523815731795233445, guid: ffdbe0bd35dbd194d8a05cb779b9387c, type: 3}
   - {fileID: 6803568550681999073, guid: 366182f449d625846909ef1ba334a9bd, type: 3}
   availablePredators:
   - {fileID: 801660295356595009, guid: c97f6d5a212090e469accb3913ad61e7, type: 3}
-  - {fileID: 1674863437055274, guid: 009bfdcbf43056e4baacce4494b47114, type: 3}
-  - {fileID: 3878713476359342226, guid: 7719737b857c90e47b91d1d2422ce30a, type: 3}
   - {fileID: 4299716371026205321, guid: 0dff46d16beaad849ae110b49cdcdd9b, type: 3}
-  - {fileID: 3646856990718673954, guid: 6801cd8dac81c624db9e7718dbdf468e, type: 3}
+  - {fileID: 3878713476359342226, guid: 7719737b857c90e47b91d1d2422ce30a, type: 3}
+  - {fileID: 1674863437055274, guid: 009bfdcbf43056e4baacce4494b47114, type: 3}
 --- !u!114 &625113764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,19 +231,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpawns: 50
   totalSpawns: 0
-  minSpawnDelaySeconds: 5
-  maxSpawnDelaySeconds: 60
-  preySpawnChance: 0.65
-  predSpawnChance: 0.35
+  minSpawnDelaySeconds: 1
+  maxSpawnDelaySeconds: 30
+  spawnManager: {fileID: 625113763}
+  preySpawnChance: 0.55
+  predSpawnChance: 0.45
   singleSpawnChance: 0.25
   doubleSpawnChance: 0.25
   tripleSpawnChance: 0.4
   multiSpawnChance: 0.1
   sameSpeciesChance: 0.4
-  minPlayerDistance: 20
+  minPlayerDistance: 50
   maxPlayerDistance: 150
   aboveGroundDistance: 1
-  maxSpawnCenterDistance: 10
+  maxSpawnCenterDistance: 15
   minAnimalDistance: 1
   despawnDelaySeconds: 120
 --- !u!4 &625113765
@@ -787,7 +788,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621175, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58d784a71e1628e42880c15717248e3e, type: 3}

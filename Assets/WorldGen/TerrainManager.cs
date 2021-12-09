@@ -30,7 +30,7 @@ public class TerrainManager : MonoBehaviour
     private static bool finishedFirstTimeGeneration = false;
     private void Start()
     {
-//        Debug.Log("Start - TerrainManager");
+        Debug.Log("Start - TerrainManager");
         Physics.autoSyncTransforms = true;
         //player = GameObject.Find("WorldGenPlayer");
 
@@ -51,6 +51,7 @@ public class TerrainManager : MonoBehaviour
     {
         Debug.Log("OnDisable-TerrainManager");
         chunks = new Dictionary<Vector2Int, GameObject>();
+        generatingAChunk = false;
     }
 
     // Essentially just a getter
@@ -77,7 +78,7 @@ public class TerrainManager : MonoBehaviour
     void Update()
     {
         frame++;
-        print("Frame: " + frame);
+        //print("Frame: " + frame);
         if (!generatingAChunk)
         {
             GenerateNearestChunk(); 
@@ -98,6 +99,7 @@ public class TerrainManager : MonoBehaviour
         
         Vector2Int currentChunk = new Vector2Int(playerPosChunks.x, playerPosChunks.y);
         int counter = 0;
+
         for (int currentRadius = 0; currentRadius < generateRadius; currentRadius++)
         {
             for (int xIndex = currentChunk.x - currentRadius; xIndex <= currentChunk.x + currentRadius; xIndex++)
@@ -121,9 +123,10 @@ public class TerrainManager : MonoBehaviour
                         // Only generate this chunk if it doesn't already exist 
                         if (!generatingChunks.ContainsKey(pos) && !chunks.ContainsKey(pos))
                         {
+
                             generatingAChunk = true;
                             Vector3 chunkPos = new Vector3(xIndex * ChunkGen.size, this.gameObject.transform.position.y, zIndex * ChunkGen.size);
-                            print("(TM):Initializing chunk at " + chunkPos);
+                            //print("(TM):Initializing chunk at " + chunkPos);
 
                             // 0th Child is for Chunks; 1st child is for Clouds (this is 100% just for organizational purposes)
                             GameObject tile = Instantiate(tilePrefab, chunkPos, Quaternion.identity, this.gameObject.transform.GetChild(0)) as GameObject;
@@ -131,15 +134,16 @@ public class TerrainManager : MonoBehaviour
                             generatingChunks.Add(pos, tile);
 
                             counter++;
-                            print("Starting coroutine for this chunk: " + chunkPos);
+                            //print("Starting coroutine for this chunk: " + chunkPos);
                             StartCoroutine(tile.GetComponent<ChunkGen>().GenerateChunk());
-                            print("Started the coroutine for this chunk: " + chunkPos);
+                            //print("Started the coroutine for this chunk: " + chunkPos);
                             // Application.Quit();
                             return;
                         }
                     }
                 }
             }
+            
         }
 
         if (counter == 0 && finishedFirstTimeGeneration == false)

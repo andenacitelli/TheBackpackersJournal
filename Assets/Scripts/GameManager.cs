@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
         }
 
         var newSave = lMenu.GetSaveForGame(profileIndex);
+
         cr = cameraC.GetComponent<CameraRoll>();
         if (newSave == null)
         {
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         print("GameManager - Start");
+        StartCoroutine(HideMouse());
         //journal.LoadJRoll(newSave);
         // load journal here
     }
@@ -90,6 +92,31 @@ public class GameManager : MonoBehaviour
         DetermineGameState();
     }
 
+
+    IEnumerator HideMouse()
+    {
+        bool popUpActive;
+        yield return new WaitUntil(NonNullPopUp);
+        while (true)
+        {
+            popUpActive = !popUpMenus.ActiveChildren().Equals("");
+            Cursor.visible = popUpActive;
+            if (Cursor.visible) Cursor.lockState = CursorLockMode.Confined;
+            else Cursor.lockState = CursorLockMode.Locked;
+            yield return StartCoroutine(WaitOnPopUpChange(popUpActive));
+        }
+    }
+    bool NonNullPopUp() { return popUpMenus != null; }
+    IEnumerator WaitOnPopUpChange(bool popUpStatus)
+    {
+        bool popUpActive = !popUpMenus.ActiveChildren().Equals("");
+        while (popUpStatus == popUpActive)
+        {
+            popUpActive = !popUpMenus.ActiveChildren().Equals("");
+            yield return null;
+        }
+    }
+
     private void AssignSaveOnStart(Save newSave)
     {
         saveInfo = newSave;
@@ -100,6 +127,7 @@ public class GameManager : MonoBehaviour
     private void DetermineInputState() 
     {
         string activePopUp = popUpMenus.ActiveChildren();
+
         if (activePopUp.Equals(""))
         {
             if (storage.editingStorageOn)
@@ -114,7 +142,8 @@ public class GameManager : MonoBehaviour
                     HandleStorageEditingInput();
                 }
                 
-            } else
+            } 
+            else
             {
                 if (lastEditOn)
                 {

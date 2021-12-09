@@ -97,10 +97,10 @@ public class WildlifeEventSpawning : MonoBehaviour
 
             heightData = TerrainFunctions.GetTerrainPointData(new Vector2(location.x, location.z));
             // loop if point not on a chunk or if it's too close to player
-        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < spawnSettings.minPlayerDistance);
+        } while (!heightData.isHit || Vector2.Distance(new Vector2(playerPos.x, playerPos.z), new Vector2(location.x, location.z)) < spawnSettings.MinPlayerDistance);
 
 
-        location.y = heightData.height + spawnSettings.aboveGroundDistance;
+        location.y = heightData.height + spawnSettings.AboveGroundDistance;
 
         return location;
     }

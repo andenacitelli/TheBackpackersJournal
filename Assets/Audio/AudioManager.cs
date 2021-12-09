@@ -62,13 +62,13 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("Sound: " + name + " not found!(When asked to play)");
             return;
         } else if (s.source == null) {
-            Debug.Log("AudioSource newly assigned.");
+            //Debug.Log("AudioSource newly assigned.");
         } else
         {
-            Debug.Log("AudioSource replaced");
+            //Debug.Log("AudioSource replaced");
         }
         s.source = newSrc;
-        Debug.Log($"{newSrc.gameObject.name} playing sound.\nAudio source comparison\nPassed: {newSrc}\nUsing: {s.source}");
+        //Debug.Log($"{newSrc.gameObject.name} playing sound.\nAudio source comparison\nPassed: {newSrc}\nUsing: {s.source}");
         s.source.clip = s.clip;
         s.source.outputAudioMixerGroup = s.group;
         s.source.volume = s.volume;
