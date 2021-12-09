@@ -138,6 +138,11 @@ public class GalleryStorage : MonoBehaviour
         display.color = holdColor;
 
         newFrame.transform.localScale = frameScale;
+
+        // flip visual horizontally
+        Transform toFlip = newFrame.transform.GetChild(0).GetChild(0).GetChild(0);
+        toFlip.localScale = new Vector3(-toFlip.localScale.x, toFlip.localScale.y, toFlip.localScale.z);
+
         newFrame.transform.rotation = q;
         wall.LoadFrame(newFrame, framePos);
         yield return new WaitForEndOfFrame();
