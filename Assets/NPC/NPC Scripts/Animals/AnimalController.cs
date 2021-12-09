@@ -7,7 +7,6 @@ public class AnimalController : MonoBehaviour
 {
     //[SerializeField] private bool inEvent = false;
     [Header("Movement Settings")]
-    bool isMoving = false;
     private readonly float GRAVITY = -9.8f;
     [SerializeField] [Range(0.0f, 10.0f)] public float movementSpeed; // public for spawner testing, will be private when using actual models
     [SerializeField] [Range(0.0f, 15.0f)] public float dashSpeed; // public for spawner testing, will be private when using actual models
@@ -25,7 +24,7 @@ public class AnimalController : MonoBehaviour
 
     // Sight and Hearing
     protected Creature.CreatureTypes creatureType;
-    protected Vector3 targetDestination;
+    [SerializeField]protected Vector3 targetDestination;
     private AnimalSenses senses;
     protected bool fleeing = false;
     protected Vector3 threatCenter; // center point of detected threats to flee
@@ -159,7 +158,6 @@ public class AnimalController : MonoBehaviour
     {
         // start moving animations
         Animations.CrossFade("Walk", animTransitionTime);
-        isMoving = true;
         while (!AtTarget())
         {
             // adjust target to be in territory
@@ -170,6 +168,9 @@ public class AnimalController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
+            // adjust to face the correct slope
+            RotateToGroundNormal();
+
             // move toward target
             Vector3 moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
             moveDirection.y = GRAVITY;
@@ -177,7 +178,21 @@ public class AnimalController : MonoBehaviour
             yield return null;
         }
 
-        isMoving = false;
+    }
+    
+    Vector3 GetGroundNormal()
+    {
+        RaycastHit groundHit;
+        Physics.Raycast(controller.center, Vector3.down, out groundHit, controller.height, LayerMask.GetMask("Terrain"));
+        return groundHit.normal;
+    }
+
+    protected void RotateToGroundNormal()
+    {
+        Vector3 normal = GetGroundNormal();
+
+        transform.rotation = Quaternion.FromToRotation(Vector3.forward, normal);
+
     }
 
     // very possibly going to get rid of this, makes it so that any animal can't leave the bounds given by maxX, maxY, maxZ

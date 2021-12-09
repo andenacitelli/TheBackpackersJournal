@@ -46,6 +46,7 @@ public class GroveToWilderness : MonoBehaviour
         Scene buffer = SceneManager.GetSceneByName("DontDestroyOnLoad");
         SceneManager.MoveGameObjectToScene(player, buffer);
         */
+
         SceneManager.LoadScene("worldGen", LoadSceneMode.Additive);
         yield return new WaitForEndOfFrame();
 
@@ -63,7 +64,6 @@ public class GroveToWilderness : MonoBehaviour
 
         // tell spawn manager to begin spawning
         GameObject spawnerGO = GameObject.Find("SpawnManager");
-        //This is broken - should've been tested when it pushed.
         SpawnManager spawnM = spawnerGO.GetComponent<SpawnManager>();
         spawnM.BeginSpawning(player.transform);
 

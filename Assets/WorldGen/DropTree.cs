@@ -115,7 +115,7 @@ public class DropTree : MonoBehaviour
             playerPos = player.transform.position;
             currentChunk = ((int)((playerPos.x - 40) / 80), (int)((playerPos.z - 40) / 80));
         }
-        Debug.Log("PLAYERPOS: " + playerPos);
+        //Debug.Log("PLAYERPOS: " + playerPos);
         currentChunks = TerrainManager.getChunksCords();
 
         toDoChunks = new List<(int, int)>();
@@ -280,7 +280,7 @@ public class DropTree : MonoBehaviour
                 }
             }
             finishedChunks.Add((xCord, yCord));
-            Debug.Log("(" + xCord + ", " + yCord + ") Generation SpeedTrack");
+            //Debug.Log("(" + xCord + ", " + yCord + ") Generation SpeedTrack");
         }
     }
 
@@ -299,7 +299,7 @@ public class DropTree : MonoBehaviour
 
             int xCord = toRemoveChunks[0].Item1;
             int yCord = toRemoveChunks[0].Item2;
-            Debug.Log("At lease im here" + "removing: " + xCord + "  " + yCord);
+            //Debug.Log("At lease im here" + "removing: " + xCord + "  " + yCord);
             for (int i = 0; i < treesD[(xCord, yCord)].Count; i++)
             {
                 Destroy(treesD[(xCord, yCord)][i]);
@@ -307,7 +307,7 @@ public class DropTree : MonoBehaviour
                 plantsRemovedThisFrame++;
                 if (plantsRemovedThisFrame > PLANTS_TO_REMOVE_PER_FRAME)
                 {
-                    Debug.Log("returned");
+                    //Debug.Log("returned");
                     return;
                 }
             }
@@ -321,7 +321,7 @@ public class DropTree : MonoBehaviour
                 finishedChunks.Remove((xCord, yCord));
             }
             
-            Debug.Log("(" + xCord + ", " + yCord + ") Remove SpeedTrack");
+            //Debug.Log("(" + xCord + ", " + yCord + ") Remove SpeedTrack");
         }
     }
 }

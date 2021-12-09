@@ -84,7 +84,7 @@ public class PredatorController : AnimalController
     protected IEnumerator AffectPrey()
     {
         // start target's death sequence
-        PreyController prey = huntingTarget.gameObject.GetComponent<PreyController>();
+        PreyController prey = huntingTarget != null ? huntingTarget.gameObject.GetComponent<PreyController>() : null;
         if (prey != null && !prey.IsAttacked())
         {
             prey.StopAllCoroutines();

@@ -104,7 +104,7 @@ public class ChunkGen : MonoBehaviour
         cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
         vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
 
-        print("Calculated grid of points to use for a chunk.");
+        //print("Calculated grid of points to use for a chunk.");
         yield return null; 
 
         /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
@@ -146,7 +146,7 @@ public class ChunkGen : MonoBehaviour
 
         mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
 
-        print("Triangulated values for a chunk this frame.");
+        //print("Triangulated values for a chunk this frame.");
         yield return null; 
 
         Mesh actualMesh = GenerateMesh(mesh);
@@ -158,7 +158,7 @@ public class ChunkGen : MonoBehaviour
 
         List<float> noiseValues = TerrainManager.heightNoise.GenerateNoiseMap(tempVertices, offsetX, offsetZ);
 
-        print("Generated mesh and noise values for a chunk this frame.");
+        //print("Generated mesh and noise values for a chunk this frame.");
         yield return null; 
 
         yield return StartCoroutine(UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues));
@@ -172,7 +172,7 @@ public class ChunkGen : MonoBehaviour
 
         // Signifies to TerrainManager.Update() that it can start generating another chunk
         TerrainManager.generatingAChunk = false;
-        print("Set the mesh and indicated another chunk can be generated next frame this frame.");
+        //print("Set the mesh and indicated another chunk can be generated next frame this frame.");
     }
 
     // Generates a Mesh object from the provided TriangleNet.Mesh object
@@ -247,7 +247,7 @@ public class ChunkGen : MonoBehaviour
             meshVertices[i] = new Vector3(vertex.x, this.heightCurve.Evaluate(height) * this.heightMultiplier, vertex.z);
         }
 
-        print("Scaled height values Perlin => World Space for a chunk this frame.");
+        //print("Scaled height values Perlin => World Space for a chunk this frame.");
         yield return null; 
 
         // Given coordinates of the center point of a triangle, returns the color that triangle should be
@@ -333,7 +333,7 @@ public class ChunkGen : MonoBehaviour
             colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
 
-        print("Calculated all the colors for a chunk this frame.");
+        //print("Calculated all the colors for a chunk this frame.");
         yield return null; 
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 
@@ -341,7 +341,7 @@ public class ChunkGen : MonoBehaviour
         mesh.colors = colors;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
-        print("Actually applied vertices/colors to a chunk this frame.");
+        //print("Actually applied vertices/colors to a chunk this frame.");
         yield return null; 
     }
 

@@ -241,7 +241,7 @@ MonoBehaviour:
   tripleSpawnChance: 0.4
   multiSpawnChance: 0.1
   sameSpeciesChance: 0.4
-  minPlayerDistance: 20
+  minPlayerDistance: 50
   maxPlayerDistance: 150
   aboveGroundDistance: 1
   maxSpawnCenterDistance: 10
@@ -778,7 +778,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2731847667364621175, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58d784a71e1628e42880c15717248e3e, type: 3}
