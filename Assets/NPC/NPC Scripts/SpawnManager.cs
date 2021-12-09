@@ -114,7 +114,7 @@ public class SpawnManager : MonoBehaviour
             // add chunk key to dictionary if it hasn't been added yet
             if (!worldAnimals.ContainsKey(animalChunkPos))
             {
-                Debug.Log($"First animal spawned on chunk at {animalChunkPos}");
+                //Debug.Log($"First animal spawned on chunk at {animalChunkPos}");
 
                 worldAnimals.Add(animalChunkPos, new HashSet<GameObject>());
             }
@@ -125,7 +125,7 @@ public class SpawnManager : MonoBehaviour
         }
         else
         {// if not on a chunk, remove the animal and destroy
-            Debug.Log($"No chunk at {animal.transform.position}. Removing.");
+            Debug.LogWarning($"No chunk at {animal.transform.position}. Removing.");
             RemoveFromAnimals(animal, true);
         }
     }

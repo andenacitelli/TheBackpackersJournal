@@ -35,8 +35,11 @@ public class Wolf : PredatorController
 
     protected override IEnumerator AttackBehavior()
     {
+        float tempRange = audioSource.maxDistance;
+        audioSource.maxDistance = 100.0f;
         AnimalPlaySound("attackHowl");
         yield return new WaitForSeconds(3.0f);
+        audioSource.maxDistance = tempRange;
 
         int randChoice = Random.Range(0, 3);
         switch (randChoice)
@@ -102,8 +105,12 @@ public class Wolf : PredatorController
     private IEnumerator IdleHowl()
     {
         // trigger transition and play sound
+        float tempRange = audioSource.maxDistance;
+        audioSource.maxDistance = 100.0f;
         Animations.SetTrigger("howl");
         AnimalPlaySound("idleHowl");
+        yield return new WaitForSeconds(3.0f);
+        audioSource.maxDistance = tempRange;
 
         // wait until the animation starts and finishes
         yield return StartCoroutine(WaitOnAnimationState("Howling"));
