@@ -1888,15 +1888,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectRate: 0.2
-  viewingAngle: 50
-  visionRadius: 10
+  viewingAngle: 145
+  visionRadius: 17
   creatureMask:
     serializedVersion: 2
     m_Bits: 128
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  hearingRadius: 12
+  hearingRadius: 20
 --- !u!114 &1313163905582891283
 MonoBehaviour:
   m_ObjectHideFlags: 0

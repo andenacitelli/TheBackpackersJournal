@@ -1816,7 +1816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectRate: 0.2
   viewingAngle: 353
-  visionRadius: 10
+  visionRadius: 20
   creatureMask:
     serializedVersion: 2
     m_Bits: 128

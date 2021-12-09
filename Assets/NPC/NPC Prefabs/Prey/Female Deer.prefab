@@ -739,7 +739,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  hearingRadius: 10
+  hearingRadius: 20
 --- !u!114 &700259753915978574
 MonoBehaviour:
   m_ObjectHideFlags: 0

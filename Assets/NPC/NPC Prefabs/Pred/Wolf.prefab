@@ -336,14 +336,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectRate: 0.2
   viewingAngle: 75
-  visionRadius: 40
+  visionRadius: 55
   creatureMask:
     serializedVersion: 2
     m_Bits: 128
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
-  hearingRadius: 15
+  hearingRadius: 30
 --- !u!114 &264570649428540138
 MonoBehaviour:
   m_ObjectHideFlags: 0
