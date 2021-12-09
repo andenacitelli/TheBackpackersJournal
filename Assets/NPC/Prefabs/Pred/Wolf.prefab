@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: -4195761844150462558}
   - component: {fileID: 6664397593738484779}
   - component: {fileID: 264570649428540138}
+  - component: {fileID: -5810670026050128406}
   m_Layer: 7
   m_Name: Wolf
   m_TagString: Animal
@@ -365,6 +366,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 0.5
   audioManagerNames:
   - WolfSingleBark2
@@ -379,6 +381,18 @@ MonoBehaviour:
   sleepTime: 30
   eatTime: 5
   layTime: 10
+--- !u!114 &-5810670026050128406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674863437055274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &235236336327560435
 GameObject:
   m_ObjectHideFlags: 0

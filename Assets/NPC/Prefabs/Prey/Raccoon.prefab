@@ -1381,7 +1381,7 @@ GameObject:
   - component: {fileID: 2922639732041235797}
   - component: {fileID: 3301450694054829788}
   - component: {fileID: 1728303331659036935}
-  - component: {fileID: 5970961179453701835}
+  - component: {fileID: -6473861649487163685}
   m_Layer: 7
   m_Name: Raccoon
   m_TagString: Animal
@@ -1595,6 +1595,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 0.5
   audioManagerNames:
   - DeadCoon
@@ -1607,7 +1608,7 @@ MonoBehaviour:
   threatRefreshDelay: 2
   sleepTime: 10
   maxSitTime: 20
---- !u!114 &5970961179453701835
+--- !u!114 &-6473861649487163685
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -509,6 +509,7 @@ GameObject:
   - component: {fileID: 4933783316601376662}
   - component: {fileID: 4694447885043788831}
   - component: {fileID: 3239541842476241289}
+  - component: {fileID: 4080339610149190244}
   m_Layer: 7
   m_Name: Fox
   m_TagString: Animal
@@ -722,6 +723,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 0.5
   audioManagerNames:
   - FoxDead
@@ -731,6 +733,18 @@ MonoBehaviour:
   threatRefreshDelay: 2
   sleepTime: 30
   maxSitTime: 20
+--- !u!114 &4080339610149190244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3646856990718673954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3723688589447851858
 GameObject:
   m_ObjectHideFlags: 0

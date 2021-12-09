@@ -528,7 +528,7 @@ GameObject:
   - component: {fileID: 5570888516534735165}
   - component: {fileID: 5193093632105870004}
   - component: {fileID: 7927396373916369291}
-  - component: {fileID: 2871874070723063042}
+  - component: {fileID: -4900392050201294279}
   m_Layer: 7
   m_Name: Cougar
   m_TagString: Animal
@@ -742,6 +742,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 0.5
   audioManagerNames:
   - CougarRoar
@@ -752,7 +753,7 @@ MonoBehaviour:
   eatTime: 5
   maxSitTime: 20
   layTime: 10
---- !u!114 &2871874070723063042
+--- !u!114 &-4900392050201294279
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

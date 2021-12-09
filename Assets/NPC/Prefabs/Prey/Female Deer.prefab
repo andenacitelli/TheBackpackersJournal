@@ -534,6 +534,7 @@ GameObject:
   - component: {fileID: 3698854628543796562}
   - component: {fileID: 6201111640451084628}
   - component: {fileID: 700259753915978574}
+  - component: {fileID: 8131253629807007974}
   m_Layer: 7
   m_Name: Female Deer
   m_TagString: Animal
@@ -761,6 +762,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 20, y: 0.5, z: 20}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 1
   audioManagerNames:
   - DeerSound
@@ -775,6 +777,18 @@ MonoBehaviour:
   maxSleepDuration: 90
   head: {fileID: 6454441384999988471}
   spots: {fileID: 6450769724659174003}
+--- !u!114 &8131253629807007974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6450717611911589797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6450738027700318017
 GameObject:
   m_ObjectHideFlags: 0

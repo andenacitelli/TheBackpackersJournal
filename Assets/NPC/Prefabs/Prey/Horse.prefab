@@ -1619,6 +1619,7 @@ GameObject:
   - component: {fileID: 1606219010814067869}
   - component: {fileID: 3928172131408098489}
   - component: {fileID: 8971305011326903458}
+  - component: {fileID: -1439796739696978397}
   m_Layer: 7
   m_Name: Horse
   m_TagString: Animal
@@ -1845,6 +1846,7 @@ MonoBehaviour:
   territory:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 20, y: 0.5, z: 20}
+  targetDestination: {x: 0, y: 0, z: 0}
   animTransitionTime: 0.5
   audioManagerNames:
   - HorseDead
@@ -1854,6 +1856,18 @@ MonoBehaviour:
   threatFleeTimeout: 2
   threatRefreshDelay: 2
   eatTime: 2
+--- !u!114 &-1439796739696978397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847083141549040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6e351cb67d126449aa1d353015f4060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1862758366271582
 GameObject:
   m_ObjectHideFlags: 0
