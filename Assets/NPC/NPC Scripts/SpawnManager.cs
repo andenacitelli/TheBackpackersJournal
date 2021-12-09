@@ -108,18 +108,20 @@ public class SpawnManager : MonoBehaviour
     void AddToAnimals(GameObject animal)
     {
         Vector3 animalChunkPos = GetChunkCoordinates(animal.transform.position.x, animal.transform.position.z);
-
         if (!animalChunkPos.Equals(Vector3.positiveInfinity))
         {
+
             // add chunk key to dictionary if it hasn't been added yet
             if (!worldAnimals.ContainsKey(animalChunkPos))
             {
+                Debug.Log($"First animal spawned on chunk at {animalChunkPos}");
+
                 worldAnimals.Add(animalChunkPos, new HashSet<GameObject>());
             }
 
             // add animal to the list associated with its chunk
             worldAnimals[animalChunkPos].Add(animal);
-//            Debug.Log("Successfully added animal to dictionary");
+            spawnSettings.TotalSpawns++;
         }
         else
         {// if not on a chunk, remove the animal and destroy
@@ -139,6 +141,7 @@ public class SpawnManager : MonoBehaviour
             {
                 // remove animal from the list associated with its chunk
                 worldAnimals[animalChunkPos].Remove(animal);
+                spawnSettings.TotalSpawns--;
             }
             if (toDestroy) Destroy(animal);
         }
@@ -146,37 +149,6 @@ public class SpawnManager : MonoBehaviour
         {
             Destroy(animal);
         }
-    }
-
-    // updates what chunk the animal is associated with in the dictionary
-    void UpdateChunkAnimals(GameObject animal, Vector3 prevChunk)
-    {
-        Vector3 animalChunkPos = GetChunkCoordinates(animal.transform.position.x, animal.transform.position.z);
-
-        Vector3 oldChunk = Vector3.negativeInfinity; // negative infinity because it can't be nulled
-
-        // check each chunk with animals for the animal
-        foreach (KeyValuePair<Vector3, HashSet<GameObject>> chunkAnimals in worldAnimals)
-        {
-            if (chunkAnimals.Value.Contains(animal))
-            {
-                // get chunk location and stop searching if animal is found
-                oldChunk = chunkAnimals.Key;
-                break;
-            }
-        }
-
-        if (!animalChunkPos.Equals(oldChunk) && !oldChunk.Equals(Vector3.negativeInfinity))
-        { // if animal has moved to a new chunk, remove it from it's old one
-            worldAnimals[oldChunk].Remove(animal);
-        }
-
-        if (!animalChunkPos.Equals(Vector3.positiveInfinity))
-        {
-            // add animal to the chunk at its current position
-            AddToAnimals(animal);
-        }
-
     }
 
     GameObject NoiseSpawn(Vector3 spawnPoint)
@@ -251,6 +223,7 @@ public class SpawnManager : MonoBehaviour
 
                 // add to world animals
                 AddToAnimals(newSpawn);
+                yield return null;
                 spawnedPoints.Add(spawnPoint);
                 spawned.Add(newSpawn);
 

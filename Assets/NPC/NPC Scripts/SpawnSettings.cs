@@ -31,8 +31,8 @@ public class SpawnSettings : MonoBehaviour
     [Header("Despawning")]
     [SerializeField] private float despawnDelaySeconds = 120.0f;
 
-    public int TotalSpawns { get => totalSpawns;}
     public int MaxSpawns { get => maxSpawns;}
+    public int TotalSpawns { get => totalSpawns; set => totalSpawns = value; }
     public float PreySpawnChance { get => preySpawnChance; }
     public float PredSpawnChance { get => predSpawnChance; }
     public float DoubleSpawnChance { get => doubleSpawnChance; }
@@ -47,24 +47,4 @@ public class SpawnSettings : MonoBehaviour
     public float MinSpawnDelaySeconds { get => minSpawnDelaySeconds; }
     public float MaxSpawnDelaySeconds { get => maxSpawnDelaySeconds; }
     public float DespawnDelaySeconds { get => despawnDelaySeconds; }
-
-    private void Start()
-    {
-        StartCoroutine(UpdateSpawnTotal());
-    }
-
-    private bool TotalChanged() { return spawnManager.worldAnimals.Count != TotalSpawns; }
-
-    /// <summary>
-    /// Updates the total number of animals spawned in the game and waits for it to change.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator UpdateSpawnTotal()
-    {
-        while (true)
-        {
-            yield return new WaitUntil(TotalChanged);
-            totalSpawns = spawnManager.worldAnimals.Count;
-        }
-    }
 }
