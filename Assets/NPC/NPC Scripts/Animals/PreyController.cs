@@ -97,7 +97,7 @@ public class PreyController : AnimalController
         {
             GetThreatCenter();
             Vector3 target = threatCenter - transform.position; // get location away from the threat point
-            targetDestination = transform.position - target;
+            TargetDestination = transform.position - target;
             yield return null;
         }
     }

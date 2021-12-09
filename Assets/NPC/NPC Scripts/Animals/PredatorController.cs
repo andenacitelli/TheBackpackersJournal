@@ -190,7 +190,7 @@ public class PredatorController : AnimalController
             threatCenter.y = transform.position.y;
 
             Vector3 target = threatCenter - transform.position; // get location away from the threat point
-            targetDestination = transform.position - target;
+            TargetDestination = transform.position - target;
             yield return null;
         }
 
@@ -229,7 +229,7 @@ public class PredatorController : AnimalController
         // update destination to target's current position
         while (IsHunting())
         {
-            targetDestination = huntingTarget.transform.position;
+            TargetDestination = huntingTarget.transform.position;
             yield return new WaitForSeconds(Senses.DetectRate * 2);
         }
     }

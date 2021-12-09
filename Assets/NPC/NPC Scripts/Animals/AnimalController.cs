@@ -17,6 +17,7 @@ public class AnimalController : MonoBehaviour
 
     [Header("Roam Restrictions")]
     [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMinDistance = 5.0f;
+    [SerializeField] [Range(0.0f, 100.0f)] private float newLocationMaxDistance = 40.0f;
 
     // TODO: remove territory. instead have roaming points use chunk area
     [SerializeField] public Bounds territory;
@@ -24,7 +25,7 @@ public class AnimalController : MonoBehaviour
 
     // Sight and Hearing
     protected Creature.CreatureTypes creatureType;
-    [SerializeField]protected Vector3 targetDestination;
+    [SerializeField] private Vector3 targetDestination;
     private AnimalSenses senses;
     protected bool fleeing = false;
     protected Vector3 threatCenter; // center point of detected threats to flee
@@ -54,6 +55,7 @@ public class AnimalController : MonoBehaviour
     protected CharacterController Controller { get => controller; }
     public Creature.CreatureTypes CreatureType { get => creatureType; }
     public Animator Animations { get => anim;  }
+    protected Vector3 TargetDestination { get => targetDestination; set => targetDestination = value; }
 
     // to make it work with all the animals the triggers are: startRun, stopRun, startAttack, startWalk, returnIdle
 
@@ -107,7 +109,7 @@ public class AnimalController : MonoBehaviour
     // returns true when within tolerance distance of destination
     bool AtTarget()
     {
-        return Vector3.Distance(targetDestination, transform.position) <= targetTolerance;
+        return Vector3.Distance(TargetDestination, transform.position) <= targetTolerance;
     }
 
     protected bool IsIdling()
@@ -164,12 +166,13 @@ public class AnimalController : MonoBehaviour
             StayInYaLane();
 
             // turn toward target
-            Quaternion targetRotation = Quaternion.LookRotation(targetDestination - transform.position);
+            Quaternion targetRotation = Quaternion.LookRotation(TargetDestination - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
 
+
             // adjust to face the correct slope
-            RotateToGroundNormal();
+            //RotateToGroundNormal();
 
             // move toward target
             Vector3 moveDirection = transform.TransformDirection(Vector3.forward) * currentSpeed;
@@ -199,10 +202,13 @@ public class AnimalController : MonoBehaviour
     // to fix fleeing/hunting outside of their territory
     void StayInYaLane()
     {
-        if (!territory.Contains(targetDestination))
+        if (!territory.Contains(TargetDestination))
         {
-            targetDestination = territory.ClosestPoint(targetDestination);
-            targetDestination.y = transform.position.y;
+            Vector3 target = territory.ClosestPoint(TargetDestination);
+            
+            // adjust y coordinate to be the ground
+            target.y = TerrainFunctions.GetTerrainPointData(new Vector2(target.x, target.z)).height;
+            TargetDestination = target;
         }
     }
 
@@ -212,11 +218,20 @@ public class AnimalController : MonoBehaviour
         float minX = territory.min.x, minY = territory.min.y, minZ = territory.min.z;
         float maxX = territory.max.x, maxY = territory.max.y, maxZ = territory.max.z;
 
-        // generate a point within the bounds/territory
-        targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        while(Vector3.Distance(targetDestination, transform.position) < newLocationMinDistance) targetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
-        targetDestination.y = transform.position.y; // adjust height if not flying, probably fucks behavior on nonflat surfaces
+        // make random, randomer
+        Random.InitState((int)System.DateTime.Now.Ticks);
 
+        // generate a point within the bounds/territory
+        Vector3 target = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
+
+        while (Vector3.Distance(target, transform.position) <= newLocationMinDistance && Vector3.Distance(target, transform.position) >= newLocationMaxDistance)
+        {
+            TargetDestination = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), Random.Range(minZ, maxZ));
+        }
+        
+        // adjust y coordinate to be the ground
+        target.y = TerrainFunctions.GetTerrainPointData(new Vector2(target.x, target.z)).height;
+        TargetDestination = target;
     }
 
 }

@@ -75,7 +75,7 @@ public class SpawnManager : MonoBehaviour
 
     // return the Vector3 coordinates of the chunk that contains the point at (x,z)
     // if no chunk found, return infinity
-    Vector3 GetChunkCoordinates(float x, float z)
+    public static Vector3 GetChunkCoordinates(float x, float z)
     {
         Vector3 coordinates = Vector3.positiveInfinity;
 
