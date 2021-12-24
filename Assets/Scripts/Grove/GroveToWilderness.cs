@@ -50,8 +50,8 @@ public class GroveToWilderness : MonoBehaviour
         SceneManager.LoadScene("worldGen", LoadSceneMode.Additive);
         yield return new WaitForEndOfFrame();
 
-        Scene thisScene = SceneManager.GetSceneByName("firstperson");
-        Scene wilderness = SceneManager.GetSceneByName("worldGen");
+        Scene thisScene = SceneManager.GetSceneByName("FirstPerson");
+        Scene wilderness = SceneManager.GetSceneByName("WorldGen");
         yield return new WaitForEndOfFrame();
         
         GameObject terrainGO = GameObject.Find("TerrainManager");

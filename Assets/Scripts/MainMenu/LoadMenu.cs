@@ -8,7 +8,6 @@ using TMPro;
 
 public class LoadMenu : MonoBehaviour
 {
-
     public ButtonScript myButtonScript;
     public GameObject[] buttons;
     string savesPath;
