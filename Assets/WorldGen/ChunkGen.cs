@@ -92,7 +92,12 @@ public class ChunkGen : MonoBehaviour
         return output;
     }
 
-    public IEnumerator GenerateChunk()
+    public IEnumerator GenerateChunk() {
+        yield return StartCoroutine(GenerateGeometry());
+        yield return StartCoroutine(GenerateFlora()); 
+    }
+
+    public IEnumerator GenerateGeometry()
     {
         // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
@@ -166,6 +171,9 @@ public class ChunkGen : MonoBehaviour
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
         this.gameObject.layer = LayerMask.NameToLayer("Terrain");
 
+        // Generate all the plants that will be on the chunk 
+        GenerateFlora();
+
         // Transfer this between chunk dictionaries, as it's done generating  
         TerrainManager.chunks.Add(this.coords, this.gameObject);
         TerrainManager.generatingChunks.Remove(this.coords);
@@ -173,6 +181,34 @@ public class ChunkGen : MonoBehaviour
         // Signifies to TerrainManager.Update() that it can start generating another chunk
         TerrainManager.generatingAChunk = false;
         //print("Set the mesh and indicated another chunk can be generated next frame this frame.");
+    }
+
+    public IEnumerator GenerateFlora() {
+
+        // Generate a random grid of points and offset each a bit to add randomness 
+        const int NUM_ROWS = 20, NUM_COLS = 20;
+        float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
+        cellWidth = Mathf.RoundToInt((bounds.max.x - bounds.min.x) / NUM_COLS);
+        cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
+        vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+        foreach (Vertex vertex in vertices) {
+            vertex.x += Random.Range(-cellWidth / 2, cellWidth / 2);
+            vertex.y += Random.Range(-cellHeight / 2, cellHeight / 2);
+        }
+        yield return null;
+
+        // Spawn a random bush at each point 
+        foreach (Vertex vertex in vertices) {
+            Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);
+            float absoluteX = coords.x * size + pos.x;
+            float absoluteZ = coords.y * size + pos.y;
+            GameObject bush = Instantiate(
+                (GameObject)FloraManager.GetRandomPrefabOfType("Bush"), 
+                new Vector3(absoluteX, TerrainFunctions.GetTerrainPointData(new Vector2(absoluteX, absoluteZ)).height, absoluteZ), 
+                Quaternion.identity);
+            bush.transform.parent = this.transform;
+        }
+        yield return null;
     }
 
     // Generates a Mesh object from the provided TriangleNet.Mesh object
