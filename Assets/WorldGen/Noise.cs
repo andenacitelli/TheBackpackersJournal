@@ -7,7 +7,7 @@ public class Wave
 {
     public float seed;
     public float frequency;
-    public float amplitude; 
+    public float amplitude;
 }
 
 public class Noise : MonoBehaviour
@@ -30,7 +30,7 @@ public class Noise : MonoBehaviour
         waves[0].seed = Random.Range(0, 10000);
         waves[1].seed = Random.Range(0, 10000);
         waves[2].seed = Random.Range(0, 10000);
-        
+
         // Essentially simulating octaves, which are weaker, but more detailed layers added on top of each other
         waves[0].amplitude = 4;
         waves[1].amplitude = 2;
@@ -64,6 +64,8 @@ public class Noise : MonoBehaviour
 
         // Normalize to [0, 1] by saving the amplification we did 
         noise /= normalization;
+        if (noise < .5f && noise > .25f) noise = noise - (.5f - noise);
+        if (noise > .5f && noise < .75f) noise = noise + (noise - .5f);
         return noise;
     }
 
