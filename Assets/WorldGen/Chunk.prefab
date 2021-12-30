@@ -118,6 +118,9 @@ MonoBehaviour:
     highHeight: 0.3
     color: {r: 0.9339623, g: 0.7560627, b: 0.6467248, a: 0}
     randomizationFactor: 0.05
+    plantTypes:
+    - Reeds
+    - Rocks
   - name: desert
     lowMoisture: 0
     highMoisture: 0.3
@@ -125,6 +128,11 @@ MonoBehaviour:
     highHeight: 0.47
     color: {r: 0.9433962, g: 0.83554935, b: 0.63545746, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - CactusWithBottoms
+    - DeadBush
+    - TreeLeafless
+    - Rocks
   - name: deciduous forest
     lowMoisture: 0.3
     highMoisture: 0.47
@@ -132,6 +140,14 @@ MonoBehaviour:
     highHeight: 0.47
     color: {r: 0, g: 0.6415094, b: 0.17267114, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - BirchTree
+    - BirchTreeLeafless
+    - OakTree
+    - Rocks
+    - FlowersTwoSided
+    - Mushrooms
+    - OtherPlants
   - name: wetlands
     lowMoisture: 0.47
     highMoisture: 1
@@ -139,6 +155,16 @@ MonoBehaviour:
     highHeight: 0.47
     color: {r: 0.3301887, g: 0.24782684, b: 0.0978106, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - DeadBush
+    - FlowerBush
+    - FlowersTwoSided
+    - Mushrooms
+    - BirchTree
+    - BirchTreeLeafless
+    - TreeStump
+    - TreeLeafless
+    - Rocks
   - name: tundra
     lowMoisture: 0
     highMoisture: 0.3
@@ -146,6 +172,10 @@ MonoBehaviour:
     highHeight: 1
     color: {r: 0.9811321, g: 0.923149, b: 0.8182271, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - Rocks
+    - TreeLeafless
+    - PineTree
   - name: coniferous forest
     lowMoisture: 0.3
     highMoisture: 0.47
@@ -153,6 +183,14 @@ MonoBehaviour:
     highHeight: 1
     color: {r: 0.08942683, g: 0.3018868, b: 0.13478497, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - Rocks
+    - TreeLeafless
+    - TreeStump
+    - PineTree
+    - Bush
+    - DeadBush
+    - OtherPlants
   - name: halloween
     lowMoisture: 0.47
     highMoisture: 1
@@ -160,6 +198,14 @@ MonoBehaviour:
     highHeight: 1
     color: {r: 0.31137693, g: 0.10728017, b: 0.38679248, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - Rocks
+    - Bush
+    - DeadBush
+    - FlowerBush
+    - Mushrooms
+    - TreeLeafless
+    - TreeStump
   - name: mountain
     lowMoisture: 1
     highMoisture: 1
@@ -167,6 +213,9 @@ MonoBehaviour:
     highHeight: 1
     color: {r: 1, g: 1, b: 1, a: 1}
     randomizationFactor: 0.05
+    plantTypes:
+    - Rocks
+    - TreeLeafless
   meshRenderer: {fileID: 6322903469593028111}
   meshFilter: {fileID: 6322903469593028108}
   meshCollider: {fileID: 6322903469593028110}

@@ -15,7 +15,7 @@ namespace Assets.WorldGen
             // Stores the normal vector at the hit point; lets us do things like:
             // - Tilt trees according to terrain
             // - Don't generate trees and other flora on very steep hills
-            public Vector3 normal; 
+            public Vector3 normal;
 
             // Stores whether the raycast actually collided with the terrain layer or not
             public bool isHit;
