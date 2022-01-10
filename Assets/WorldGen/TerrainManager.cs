@@ -7,12 +7,12 @@ using UnityEngine.SceneManagement;
 public class TerrainManager : MonoBehaviour
 {
     // Unfortunately can't really make static variales editable from the Editor
-    static public int generateRadius = 6; 
+    static public int generateRadius = 8;
 
     [SerializeField]
     private GameObject tilePrefab;
 
-    public GameObject player; 
+    public GameObject player;
 
     public GameObject TreeRockDropper;
 
@@ -58,7 +58,7 @@ public class TerrainManager : MonoBehaviour
     // Used by chunks to get info about topography of other neighboring chunks when interpolating Delaunay stuff between them 
     public static GameObject GetChunkAtCoords(Vector2Int coords)
     {
-        return chunks.ContainsKey(coords) ? chunks[coords] : null; 
+        return chunks.ContainsKey(coords) ? chunks[coords] : null;
     }
 
     public static List<(int, int)> getChunksCords()
@@ -66,7 +66,7 @@ public class TerrainManager : MonoBehaviour
         List<(int, int)> currentChunks = new List<(int int1, int int2)>();
         foreach (KeyValuePair<Vector2Int, GameObject> chunk in chunks)
         {
-            currentChunks.Add(((int)(chunk.Value.transform.position.x/80), (int)(chunk.Value.transform.position.z / 80)));
+            currentChunks.Add(((int)(chunk.Value.transform.position.x / 80), (int)(chunk.Value.transform.position.z / 80)));
         }
         return currentChunks;
     }
@@ -74,14 +74,14 @@ public class TerrainManager : MonoBehaviour
     // If nothing is generating, we start a coroutine, then that coroutine switches this back when it's done, 
     // causing this to start a new coroutine ... ad nauseum
     public static bool generatingAChunk = false;
-    private int frame = 0; 
+    private int frame = 0;
     void Update()
     {
         frame++;
         //print("Frame: " + frame);
         if (!generatingAChunk)
         {
-            GenerateNearestChunk(); 
+            GenerateNearestChunk();
         }
 
         // Note that we can't really turn CullChunks() into a coroutine, as we can (and do) already limit it
@@ -89,14 +89,14 @@ public class TerrainManager : MonoBehaviour
         // (as opposed to ChunkGen.GenerateChunk(), which has like five separate steps we can separate into five frames of work
         // CullChunks(); // Destroy generated, out-of-range chunks 
     }
-    
+
     void GenerateNearestChunk()
     {
         // Instantiate a tile at the given position
         Vector2Int playerPosChunks = new Vector2Int(
-            Mathf.RoundToInt(player.transform.position.x / ChunkGen.size), 
+            Mathf.RoundToInt(player.transform.position.x / ChunkGen.size),
             Mathf.RoundToInt(player.transform.position.z / ChunkGen.size));
-        
+
         Vector2Int currentChunk = new Vector2Int(playerPosChunks.x, playerPosChunks.y);
         int counter = 0;
 
@@ -114,7 +114,7 @@ public class TerrainManager : MonoBehaviour
                     }
 
                     // Only generate if it's on the outside border x-wise or z-wise
-                    if (xIndex != currentChunk.x - currentRadius && xIndex != currentChunk.x + currentRadius && 
+                    if (xIndex != currentChunk.x - currentRadius && xIndex != currentChunk.x + currentRadius &&
                         zIndex != currentChunk.y - currentRadius && zIndex != currentChunk.y + currentRadius)
                     {
                         // Chunk pos (in chunks)
@@ -143,13 +143,15 @@ public class TerrainManager : MonoBehaviour
                     }
                 }
             }
-            
+
         }
 
+        /* 
         if (counter == 0 && finishedFirstTimeGeneration == false)
         {
             TreeRockDropper.SetActive(true);
         }
+        */
     }
 
     // Removes elements 

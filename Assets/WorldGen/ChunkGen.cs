@@ -6,31 +6,17 @@ using TriangleNet.Geometry;
 using TriangleNet.Topology;
 using Assets.WorldGen;
 
-// Selectively shade chunks 
-[System.Serializable]
-public class Biome {
-    public string name; // Mostly just makes things more readable from the editor
-    public float lowMoisture, highMoisture;
-    public float lowHeight, highHeight; 
-    public Color color;
-    public float randomizationFactor;
-}
-
 // Generate chunks 
 public class ChunkGen : MonoBehaviour
 {
     [SerializeField]
-    static public float size = 80; // Length, in meters, of each chunk's edge
+    static public float size = 40; // Length, in meters, of each chunk's edge
     private Bounds bounds = new Bounds(Vector3.zero, new Vector3(size, 0, size));
     Color gizmoColor;
 
     [SerializeField]
     private GameObject tilePrefab;
     private int tileWidth, tileDepth;
-
-    // Edit different "biomes" from the editor 
-    [SerializeField]
-    private Biome[] biomes;
 
     [SerializeField]
     private MeshRenderer meshRenderer;
@@ -45,8 +31,8 @@ public class ChunkGen : MonoBehaviour
     private TriangleNet.Mesh mesh;
 
     // The mesh above ends up holding vertices in other chunks as well; this is a simple list of just the inner vertices
-    int cellWidth, cellHeight; 
-    private HashSet<Vertex> vertices = new HashSet<Vertex>(); 
+    int cellWidth, cellHeight;
+    private HashSet<Vertex> vertices = new HashSet<Vertex>();
 
     // Set by the class Instanting the gameObject linked to this script
     public Vector2Int coords;
@@ -75,7 +61,7 @@ public class ChunkGen : MonoBehaviour
 
     private void OnEnable()
     {
-//        Debug.Log("OnEnable - ChuckGen");
+        //        Debug.Log("OnEnable - ChuckGen");
     }
 
     // Makes chunk direction-related code much more readable
@@ -94,6 +80,16 @@ public class ChunkGen : MonoBehaviour
 
     public IEnumerator GenerateChunk()
     {
+        yield return StartCoroutine(GenerateGeometry());
+
+        Vector3 center = new Vector3(coords.x * size, 0, coords.y * size);
+        Vector3 scale = new Vector3(size, 0, size);
+        Bounds bounds = new Bounds(center, scale);
+        yield return StartCoroutine(FloraManager.GenerateFlora(bounds, this.transform));
+    }
+
+    public IEnumerator GenerateGeometry()
+    {
         // Seed this random generation off chunk coords so each chunk generates the same every time.
         Random.InitState(coords.GetHashCode());
 
@@ -105,7 +101,7 @@ public class ChunkGen : MonoBehaviour
         vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
 
         //print("Calculated grid of points to use for a chunk.");
-        yield return null; 
+        yield return null;
 
         /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
         int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
@@ -134,37 +130,40 @@ public class ChunkGen : MonoBehaviour
 
         TriangleNet.Meshing.ConstraintOptions constraintOptions = new TriangleNet.Meshing.ConstraintOptions()
         {
-            ConformingDelaunay = false, 
+            ConformingDelaunay = false,
             // Convex = true 
             // SegmentSplitting = 1
         };
 
         TriangleNet.Meshing.QualityOptions qualityOptions = new TriangleNet.Meshing.QualityOptions()
-        { 
+        {
             // MinimumAngle = 30,
         };
 
         mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
 
         //print("Triangulated values for a chunk this frame.");
-        yield return null; 
+        yield return null;
 
         Mesh actualMesh = GenerateMesh(mesh);
         gameObject.GetComponent<MeshFilter>().mesh = actualMesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = actualMesh;
-        
+
         List<Vector2> tempVertices = Vector3ToVector2(this.meshFilter.mesh.vertices);
         float offsetX = transform.position.x, offsetZ = transform.position.z;
 
         List<float> noiseValues = TerrainManager.heightNoise.GenerateNoiseMap(tempVertices, offsetX, offsetZ);
 
         //print("Generated mesh and noise values for a chunk this frame.");
-        yield return null; 
+        yield return null;
 
         yield return StartCoroutine(UpdateVertexHeightsAndColors(this.meshFilter.mesh, noiseValues));
 
         gameObject.GetComponent<MeshCollider>().sharedMesh = gameObject.GetComponent<MeshFilter>().mesh;
         this.gameObject.layer = LayerMask.NameToLayer("Terrain");
+
+        // Generate all the plants that will be on the chunk 
+        // GenerateFlora();
 
         // Transfer this between chunk dictionaries, as it's done generating  
         TerrainManager.chunks.Add(this.coords, this.gameObject);
@@ -203,13 +202,13 @@ public class ChunkGen : MonoBehaviour
 
             triangles.Add(vertices.Count);
             triangles.Add(vertices.Count + 1);
-            triangles.Add(vertices.Count + 2);  
+            triangles.Add(vertices.Count + 2);
 
             vertices.Add(v0);
             vertices.Add(v1);
             vertices.Add(v2);
 
-            var normal = Vector3.Cross(v1 - v0, v2 - v0);            
+            var normal = Vector3.Cross(v1 - v0, v2 - v0);
             for (int x = 0; x < 3; x++)
             {
                 normals.Add(normal);
@@ -222,7 +221,7 @@ public class ChunkGen : MonoBehaviour
         chunkMesh.uv = uvs.ToArray();
         chunkMesh.triangles = triangles.ToArray();
         chunkMesh.normals = normals.ToArray();
-        return chunkMesh;        
+        return chunkMesh;
     }
 
     // Takes the provided mesh, sets heights, and applies colors 
@@ -230,7 +229,7 @@ public class ChunkGen : MonoBehaviour
     // TODO: Need to split this up way more into functions (or, even better, a separate file) - it's kind of a god function
     private IEnumerator UpdateVertexHeightsAndColors(Mesh mesh, List<float> heightmap)
     {
-        Vector3[] meshVertices = mesh.vertices;        
+        Vector3[] meshVertices = mesh.vertices;
 
         // Because vertices are duplicated across triangles rather than shared, we need to store what the first instance of each vertex's color was and then
         // use that cached color instead of randomly generating a new one the next time
@@ -248,7 +247,7 @@ public class ChunkGen : MonoBehaviour
         }
 
         //print("Scaled height values Perlin => World Space for a chunk this frame.");
-        yield return null; 
+        yield return null;
 
         // Given coordinates of the center point of a triangle, returns the color that triangle should be
         // belowColor, belowThreshold: Color of the biome below this, and the threshold at which the chosen layer becomes that layer.
@@ -261,18 +260,18 @@ public class ChunkGen : MonoBehaviour
             float fuzzAmount = fuzzingNoise * HEIGHT_BLEND_AMPLITUDE / this.heightMultiplier;
 
             // 2. Get moisture value at that point 
-            float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z); 
+            float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z);
 
             // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
-            float heightPostFuzz = Mathf.Clamp(point.y + fuzzAmount, 0, 1); 
-            Biome biome = ChooseBiome(heightPostFuzz, moisture);
+            float heightPostFuzz = Mathf.Clamp(point.y + fuzzAmount, 0, 1);
+            Biome biome = Biomes.ChooseBiome(heightPostFuzz, moisture);
             Color baseColor = biome.color;
 
             // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
-            const float perlin_weight = .35f; 
+            const float perlin_weight = .35f;
             baseColor = new Color(
-                Mathf.Clamp(baseColor.r + perlin_weight * noise, 0, 1), 
+                Mathf.Clamp(baseColor.r + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
 
@@ -280,8 +279,8 @@ public class ChunkGen : MonoBehaviour
             const float random_weight = .06f;
             float randomizationFactor = biome.randomizationFactor;
             baseColor = new Color(
-                Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
-                Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1), 
+                Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1),
+                Mathf.Clamp(baseColor.g + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1),
                 Mathf.Clamp(baseColor.b + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1));
 
             return baseColor;
@@ -305,13 +304,13 @@ public class ChunkGen : MonoBehaviour
             {
                 for (float z = minz; z <= maxz; z += SAMPLING_LENGTH)
                 {
-                    Vector3 point = new Vector3(x, averagePoint.y, z); 
+                    Vector3 point = new Vector3(x, averagePoint.y, z);
                     Color subpointColor = ChooseColor(point);
                     if (cachedColors.ContainsKey(point)) surroundingColors.Add(cachedColors[point]); // Used cached value if possible
                     else // Otherwise, calculate and add to cache 
                     {
                         cachedColors.Add(point, subpointColor);
-                        surroundingColors.Add(subpointColor); 
+                        surroundingColors.Add(subpointColor);
                     }
                 }
             }
@@ -319,22 +318,22 @@ public class ChunkGen : MonoBehaviour
             // Get average color of list of colors 
             Color averageColors(List<Color> colors)
             {
-                float r = 0, g = 0, b = 0; 
+                float r = 0, g = 0, b = 0;
                 foreach (Color color in colors)
                 {
                     r += color.r;
                     g += color.g;
-                    b += color.b; 
+                    b += color.b;
                 }
                 return new Color(r / colors.Count, g / colors.Count, b / colors.Count);
             }
 
-            Color color = averageColors(surroundingColors); 
+            Color color = averageColors(surroundingColors);
             colors[i] = colors[i + 1] = colors[i + 2] = color;
         }
 
         //print("Calculated all the colors for a chunk this frame.");
-        yield return null; 
+        yield return null;
 
         // Update actual mesh properties; basically "apply" the heights to the mesh 
         mesh.vertices = meshVertices;
@@ -342,33 +341,16 @@ public class ChunkGen : MonoBehaviour
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
         //print("Actually applied vertices/colors to a chunk this frame.");
-        yield return null; 
+        yield return null;
     }
 
     // How "vertical" we want our map to be. Lower values will result in less extreme highs and lows and will generally make slopes smoother.
     [SerializeField]
-    private float heightMultiplier; 
+    private float heightMultiplier;
 
     // A useful thing Unity adds that lets us essentially do a height distribution rather than relying entirely on noise ourselves
     [SerializeField]
     private AnimationCurve heightCurve;
-
-    // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
-    Biome ChooseBiome(float height, float moisture)
-    {
-        foreach (Biome biome in biomes)
-        {
-            if (height >= biome.lowHeight && height < biome.highHeight && 
-                moisture >= biome.lowMoisture && moisture < biome.highMoisture)
-            {
-                return biome;
-            }
-        }
-
-        // If we didn't hit one, print an error message and assign the last biome as a default
-        Debug.LogError(string.Format("Height {0} and Moisture {1} did not fit into a biome's description.", height, moisture)); 
-        return biomes[biomes.Length - 1]; 
-    }
 
     public HashSet<Vertex> GetBoundaryVertices()
     {
@@ -433,7 +415,7 @@ public class ChunkGen : MonoBehaviour
             // We're probably in the editor
             return;
         }
-        
+
         float offsetX = coords.x * size, offsetZ = coords.y * size;
 
         /* 
@@ -446,7 +428,7 @@ public class ChunkGen : MonoBehaviour
 
         Gizmos.color = gizmoColor;
         Visualization.DrawTriangulations(mesh, offsetX, offsetZ);
-        
+
         float x, z;
         foreach (Vertex v in vertices)
         {

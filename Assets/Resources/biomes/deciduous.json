@@ -1,0 +1,24 @@
+{
+    "name": "deciduous", 
+    "lowHeight": 0.2, 
+    "highHeight": 0.5,
+    "lowMoisture": 0.33,
+    "highMoisture": 0.67,
+    "r": 34,
+    "g": 139,
+    "b": 34,
+    "color": "#228b22", 
+    "randomizationFactor": 0.1, 
+    "plantTypes": [
+        "Bush", 
+        "DeadBush", 
+        "FlowerBush", 
+        "FlowersTwoSided", 
+        "Grass3D", 
+        "Rocks", 
+        "TreeStump", 
+        "BirchTree", 
+        "BirchTreeLeafless", 
+        "OakTree"
+    ]
+}

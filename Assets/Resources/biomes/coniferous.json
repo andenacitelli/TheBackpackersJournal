@@ -1,0 +1,21 @@
+{
+    "name": "coniferous", 
+    "lowHeight": 0.5, 
+    "highHeight": 0.8,
+    "lowMoisture": 0.33,
+    "highMoisture": 0.67,
+    "r": 84, 
+    "g": 96,
+    "b": 79,
+    "randomizationFactor": 0.1, 
+    "plantTypes": [
+        "DeadBush", 
+        "Rocks", 
+        "TreeLeafless",
+        "TreeStump", 
+        "PineTree", 
+        "Grass3D", 
+        "Bush", 
+        "FlowerBush"
+    ]
+}

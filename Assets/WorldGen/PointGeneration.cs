@@ -35,7 +35,7 @@ public class PointGeneration : MonoBehaviour
 
         // Useful Constants
         float width = bounds.max.x - bounds.min.x, height = bounds.max.z - bounds.min.z;
-        float cellHeight = height / numRows, cellWidth = width / numColumns; 
+        float cellHeight = height / numRows, cellWidth = width / numColumns;
 
         // Assert: 2 * each padding is less than overall cell width/height
         if (2 * horizPadding > cellWidth) throw new System.Exception("ERROR: generatePointsGrid() called with invalid horizontal padding. Ensure horizPadding <= cellWidth.");
@@ -50,10 +50,10 @@ public class PointGeneration : MonoBehaviour
                 // <Offset to get from world origin to chunk space> + <offset to get to right cell> + <random range within cell> 
                 float y = bounds.min.z + (row * cellHeight) + Random.Range(0 + vertPadding, cellHeight - vertPadding);
                 float x = bounds.min.x + (col * cellWidth) + Random.Range(0 + horizPadding, cellWidth - horizPadding);
-                output.Add(new Vertex(x, y)); 
+                output.Add(new Vertex(x, y));
             }
         }
-        return output; 
+        return output;
     }
 
     // Generates a Triangle.NET polygon with NUM_POINTS *mostly* random points; with Poisson disk sampling,
@@ -77,6 +77,6 @@ public class PointGeneration : MonoBehaviour
                 break;
             }
         }
-        return output; 
+        return output;
     }
 }
