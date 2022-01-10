@@ -43,9 +43,9 @@ namespace Assets.WorldGen
                 return new TerrainPointData(hit.point.y, hit.normal, true);
             }
 
-            // Should only get to this value if function is called on a chunk that has not been instantiated.
-            // isHit defaults to `false`. 
-            return new TerrainPointData();
+            // Just means it didn't hit terrain layer;
+            // Caller is expected to check isHit parameter before doing assuming return isn't garbage
+            return new TerrainPointData(0, Vector3.zero, false);
         }
     }
 }

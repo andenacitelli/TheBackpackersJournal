@@ -99,19 +99,29 @@ namespace Assets.WorldGen
             // 2. For each point, determine its biome, then spawn a random prefab from that biome's list of prefabs
             foreach (Vector3 spawnPoint in spawnPoints)
             {
-                // Get the biome at this point
+                // 1. Get the biome at this point
                 Biome biome = Biomes.GetBiomeAtPoint(spawnPoint);
 
-                // Get a random prefab from that biome's list of prefabs
+                // 2. Get a random prefab from that biome's list of prefabs
                 Object prefab = GetRandomPrefabOfType(biome.plantTypes[Random.Range(0, biome.plantTypes.Length)]);
 
-                // Instantiate the prefab at this point
-                GameObject bush = (GameObject)Instantiate(prefab, spawnPoint, Quaternion.identity);
+                // 3. Instantiate the prefab at this point
+                GameObject bush = (GameObject)Instantiate(prefab, spawnPoint, Quaternion.identity, parent);
 
-                // Set the prefab's parent to the chunk's transform
-                bush.transform.parent = parent;
+                // 4. Set rotation to be perpendicular to the normal vector of the ground
+                // TODO: Should probably be set to some middle ground between "up" and the normal vector, as things don't actually grow at precisely the normal vector IRL
+                // Note that Unity will let you pass in a Vector3 when a Vector2 is the correct parameter type; 
+                // However, it will set Vector2(x, y) to Vector3(x, y, 0) rather than the Vector3(x, 0, y) we want
+                // ...was a "fun" bug to fix
+                Vector2 compressed = new Vector2(spawnPoint.x, spawnPoint.z);
+                TerrainFunctions.TerrainPointData terrainPointData = TerrainFunctions.GetTerrainPointData(compressed);
+                if (!terrainPointData.isHit)
+                {
+                    throw new System.Exception(string.Format("GenerateFlora ordered a raycast {0} to hit the terrain, but it didn't hit anything!", spawnPoint));
+                }
+                bush.transform.up = terrainPointData.normal;
 
-                // Spin the prefab randomly around its y axis (helps world look less uniform)
+                // 5. Spin the prefab randomly around its y axis (helps world look less uniform)
                 bush.transform.Rotate(bush.transform.up, Random.Range(0, 360));
             }
             yield return null;
