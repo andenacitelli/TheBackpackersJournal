@@ -102,6 +102,10 @@ namespace Assets.WorldGen
                 // 1. Get the biome at this point
                 Biome biome = Biomes.GetBiomeAtPoint(spawnPoint);
 
+                // Don't spawn stuff at / near water (water is at 26, but the shader makes it go a little up/down, hence the wiggle room)
+                // TODO: Shouldn't be hardcoded
+                if (spawnPoint.y < 28 && !biome.name.Equals("beach")) continue;
+
                 // 2. Get a random prefab from that biome's list of prefabs
                 Object prefab = GetRandomPrefabOfType(biome.plantTypes[Random.Range(0, biome.plantTypes.Length)]);
 
