@@ -112,7 +112,7 @@ namespace Assets.WorldGen
                 bush.transform.parent = parent;
 
                 // Spin the prefab randomly around its y axis (helps world look less uniform)
-                bush.transform.Rotate(Vector3.up, Random.Range(0, 360));
+                bush.transform.Rotate(bush.transform.up, Random.Range(0, 360));
             }
             yield return null;
         }
