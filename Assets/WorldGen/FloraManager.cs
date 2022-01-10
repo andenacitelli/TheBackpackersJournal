@@ -51,15 +51,11 @@ namespace Assets.WorldGen
             }
         }
 
+        /* 
         // Generates points (absolute)
         public static void GeneratePlant(Bounds bounds, Transform parent, string plant)
         {
-            // 1. Generate points
-            const int NUM_ROWS = 10, NUM_COLS = 10;
-            float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
-            float cellWidth = Mathf.RoundToInt(ChunkGen.size / NUM_COLS);
-            float cellHeight = Mathf.RoundToInt(ChunkGen.size / NUM_ROWS);
-            HashSet<Vertex> vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+
 
             // 2. Generate heightmap value for those points
             // 3. Actually instantiate grass at those points
@@ -76,69 +72,49 @@ namespace Assets.WorldGen
                 bush.transform.parent = parent;
             }
         }
+        */
 
-        public static IEnumerator GenerateFlora(Biome[] biomes, Bounds bounds, Transform parent)
+        public static List<Vector3> GetSpawnPoints(Bounds bounds)
         {
-            // Probably best organizationally to keep a list of which plant types should be in each biome, 
-            // and give each plant or plant type its own spawning function
-            Biome biome = TerrainFunctions.ChooseBiome(
-                    TerrainManager.heightNoise.GetNoiseAtPoint(bounds.center.x, bounds.center.z),
-                    TerrainManager.moistureNoise.GetNoiseAtPoint(bounds.center.x, bounds.center.z));
-            foreach (string plant in floraPrefabs.Keys)
+            const int NUM_ROWS = 15, NUM_COLS = 15;
+            float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
+            float cellWidth = Mathf.RoundToInt(ChunkGen.size / NUM_COLS);
+            float cellHeight = Mathf.RoundToInt(ChunkGen.size / NUM_ROWS);
+            HashSet<Vertex> vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
+            List<Vector3> spawnPoints = new List<Vector3>();
+            foreach (Vertex vertex in vertices)
             {
-                // Iterate through keys of floraPrefabs
-                if (System.Array.IndexOf(biome.plantTypes, plant) != -1)
-                {
-                    print("Biome " + biome.name + " has plant type " + plant);
-                    GeneratePlant(bounds, parent, plant);
-                }
-
-                // Check one plant type per frame
-                print("Checked one biome!");
-                yield return null;
-
-                /* Not yet implemented 
-                if (System.Array.IndexOf(biome.plantTypes, "DeadBush") != -1)
-                    yield return instance.StartCoroutine(GenerateDeadBush(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "FlowerBush") != -1)
-                    yield return instance.StartCoroutine(GenerateFlowerBush(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "CactusNoBottoms") != -1)
-                    yield return instance.StartCoroutine(GenerateCactusNoBottoms(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "CactusWithBottoms") != -1)
-                    yield return instance.StartCoroutine(GenerateCactusWithBottoms(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "FlowersOneSided") != -1)
-                    yield return instance.StartCoroutine(GenerateFlowersOneSided(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "FlowersTwoSided") != -1)
-                    yield return instance.StartCoroutine(GenerateFlowersTwoSided(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "Grass3D") != -1)
-                    yield return instance.StartCoroutine(GenerateGrass(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "GrassPlane") != -1)
-                    yield return instance.StartCoroutine(GenerateGrassPlane(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "MeshGrass") != -1)
-                    yield return instance.StartCoroutine(GenerateMeshGrass(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "Mushrooms") != -1)
-                    yield return instance.StartCoroutine(GenerateMushrooms(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "OtherPlants") != -1)
-                    yield return instance.StartCoroutine(GenerateOtherPlants(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "Reeds") != -1)
-                    yield return instance.StartCoroutine(GenerateReeds(bounds, parent));
-
-                if (System.Array.IndexOf(biome.plantTypes, "BirchTree") != -1)
-                    yield return instance.StartCoroutine(GenerateBirchTree(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "BirchTreeLeafless") != -1)
-                    yield return instance.StartCoroutine(GenerateBirchTreeLeafless(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "OakTree") != -1)
-                    yield return instance.StartCoroutine(GenerateOakTree(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "PineTree") != -1)
-                    yield return instance.StartCoroutine(GeneratePineTree(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "Rocks") != -1)
-                    yield return instance.StartCoroutine(GenerateRocks(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "TreeLeafless") != -1)
-                    yield return instance.StartCoroutine(GenerateTreeLeafless(bounds, parent));
-                if (System.Array.IndexOf(biome.plantTypes, "TreeStump") != -1)
-                    yield return instance.StartCoroutine(GenerateTreeStump(bounds, parent));
-                */
+                Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);
+                float height = TerrainFunctions.GetTerrainPointData(pos).height;
+                spawnPoints.Add(new Vector3(pos.x, height, pos.y));
             }
+            return spawnPoints;
+        }
+
+        public static IEnumerator GenerateFlora(Bounds bounds, Transform parent)
+        {
+            // 1. Get a list of points in this chunk at which we'd like to spawn something
+            List<Vector3> spawnPoints = GetSpawnPoints(bounds);
+
+            // 2. For each point, determine its biome, then spawn a random prefab from that biome's list of prefabs
+            foreach (Vector3 spawnPoint in spawnPoints)
+            {
+                // Get the biome at this point
+                Biome biome = Biomes.GetBiomeAtPoint(spawnPoint);
+
+                // Get a random prefab from that biome's list of prefabs
+                Object prefab = GetRandomPrefabOfType(biome.plantTypes[Random.Range(0, biome.plantTypes.Length)]);
+
+                // Instantiate the prefab at this point
+                GameObject bush = (GameObject)Instantiate(prefab, spawnPoint, Quaternion.identity);
+
+                // Set the prefab's parent to the chunk's transform
+                bush.transform.parent = parent;
+
+                // Spin the prefab randomly around its y axis (helps world look less uniform)
+                bush.transform.Rotate(Vector3.up, Random.Range(0, 360));
+            }
+            yield return null;
         }
 
         const string VegetationBasePath = "Low Poly Vegetation Pack/Vegetation Assets/Prefabs";
@@ -158,7 +134,7 @@ namespace Assets.WorldGen
             floraPrefabs.Add("MeshGrass", Resources.LoadAll(VegetationBasePath + "/Grass/MeshGrass", typeof(Object)));
             floraPrefabs.Add("Mushrooms", Resources.LoadAll(VegetationBasePath + "/Mushrooms", typeof(Object)));
             floraPrefabs.Add("OtherPlants", Resources.LoadAll(VegetationBasePath + "/Plants/Other_Plants", typeof(Object)));
-            floraPrefabs.Add("Reeds", Resources.LoadAll(VegetationBasePath + "/Reeds", typeof(Object)));
+            floraPrefabs.Add("Reeds", Resources.LoadAll(VegetationBasePath + "/Plants/Reeds", typeof(Object)));
 
             // Low Poly Tree Pack
             floraPrefabs.Add("BirchTree", Resources.LoadAll(TreeBasePath + "/BirchTree", typeof(Object)));
@@ -172,7 +148,15 @@ namespace Assets.WorldGen
 
         public static Object GetRandomPrefabOfType(string floraType)
         {
-            return floraPrefabs[floraType][Random.Range(0, floraPrefabs[floraType].Length)];
+            try
+            {
+                return floraPrefabs[floraType][Random.Range(0, floraPrefabs[floraType].Length)];
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Could not find prefab of type " + floraType);
+                throw e;
+            }
         }
     }
 }

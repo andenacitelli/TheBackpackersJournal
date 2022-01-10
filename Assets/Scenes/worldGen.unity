@@ -397,6 +397,7 @@ GameObject:
   - component: {fileID: 1240365348}
   - component: {fileID: 1240365350}
   - component: {fileID: 1240365351}
+  - component: {fileID: 1240365352}
   m_Layer: 0
   m_Name: TerrainManager
   m_TagString: Untagged
@@ -466,6 +467,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6e1eb81d1f30d94eb312cd1ca56b353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1240365352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240365347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9932c2b454274e64c9b26010bf57b263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1305649867

@@ -10,29 +10,67 @@ namespace Assets.WorldGen
         public float lowMoisture, highMoisture;
         public float lowHeight, highHeight;
         public Color color;
+        public int r, g, b;
         public float randomizationFactor;
         public string[] plantTypes;
+
+        public static Biome CreateFromJSON(string jsonString)
+        {
+            Biome biome = JsonUtility.FromJson<Biome>(jsonString);
+            biome.color = new Color(biome.r / 255f, biome.g / 255f, biome.b / 255f);
+            return biome;
+        }
     }
 
     public class Biomes : MonoBehaviour
     {
-        public static Biome[] biomes;
+        public static Dictionary<string, Biome> biomes = new Dictionary<string, Biome>();
+
+        void Awake()
+        {
+            // Read data from all files in 'biomes' folder of resources
+            TextAsset[] files = Resources.LoadAll<TextAsset>("Biomes");
+            foreach (TextAsset file in files)
+            {
+                Biome biome = Biome.CreateFromJSON(file.text);
+                biomes.Add(biome.name, biome);
+
+                /* 
+                print("Added biome: " + biome.name);
+                print("lowMoisture: " + biome.lowMoisture);
+                print("highMoisture: " + biome.highMoisture);
+                print("lowHeight: " + biome.lowHeight);
+                print("highHeight: " + biome.highHeight);
+                print("color: " + biome.color);
+                print("randomizationFactor: " + biome.randomizationFactor);
+                print("plantTypes: " + biome.plantTypes);
+                */
+            }
+        }
+
+        public static Biome GetBiomeAtPoint(Vector3 point)
+        {
+            // Get height and moisture for point 
+            float height = TerrainManager.heightNoise.GetNoiseAtPoint(point.x, point.z);
+            float moisture = TerrainManager.moistureNoise.GetNoiseAtPoint(point.x, point.z);
+
+            // Return result of ChooseBiome call 
+            return ChooseBiome(height, moisture);
+        }
 
         // Helper method that returns which color should be used for a given vertex height (technically a noise value, but it's basically the same thing)
         public static Biome ChooseBiome(float height, float moisture)
         {
-            foreach (Biome biome in biomes)
+            // Iterate through keys of 'biomes'
+            foreach (Biome biome in biomes.Values)
             {
-                if (height >= biome.lowHeight && height < biome.highHeight &&
-                    moisture >= biome.lowMoisture && moisture < biome.highMoisture)
+                // If the height and moisture values are within the range of this biome's height and moisture values, return this biome
+                if (height >= biome.lowHeight && height <= biome.highHeight && moisture >= biome.lowMoisture && moisture <= biome.highMoisture)
                 {
                     return biome;
                 }
             }
-
-            // If we didn't hit one, print an error message and assign the last biome as a default
-            Debug.LogError(string.Format("Height {0} and Moisture {1} did not fit into a biome's description.", height, moisture));
-            return biomes[biomes.Length - 1];
+            throw new System.Exception(string.Format("No valid biome found with height {0} and moisture {1}!", height, moisture));
         }
     }
 }

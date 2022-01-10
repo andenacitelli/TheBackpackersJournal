@@ -1,0 +1,14 @@
+{
+    "name": "mountain", 
+    "lowHeight": 0.8, 
+    "highHeight": 1.0,
+    "lowMoisture": 0,
+    "highMoisture": 1,
+    "r": 30,
+    "g": 30,
+    "b": 30,
+    "randomizationFactor": 0.1, 
+    "plantTypes": [
+        "Rocks"
+    ]
+}

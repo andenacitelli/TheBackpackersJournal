@@ -1,0 +1,17 @@
+{
+    "name": "desert", 
+    "lowHeight": 0.2, 
+    "highHeight": 0.5,
+    "lowMoisture": 0.0,
+    "highMoisture": 0.33,
+    "r": 237,
+    "g": 201,
+    "b": 175,
+    "randomizationFactor": 0.1, 
+    "plantTypes": [
+        "DeadBush", 
+        "Rocks", 
+        "TreeLeafless",
+        "TreeStump"
+    ]
+}

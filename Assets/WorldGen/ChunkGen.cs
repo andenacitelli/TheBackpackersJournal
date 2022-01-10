@@ -18,10 +18,6 @@ public class ChunkGen : MonoBehaviour
     private GameObject tilePrefab;
     private int tileWidth, tileDepth;
 
-    // Edit different "biomes" from the editor 
-    [SerializeField]
-
-
     [SerializeField]
     private MeshRenderer meshRenderer;
 
@@ -89,7 +85,7 @@ public class ChunkGen : MonoBehaviour
         Vector3 center = new Vector3(coords.x * size, 0, coords.y * size);
         Vector3 scale = new Vector3(size, 0, size);
         Bounds bounds = new Bounds(center, scale);
-        yield return StartCoroutine(FloraManager.GenerateFlora(biomes, bounds, this.transform));
+        yield return StartCoroutine(FloraManager.GenerateFlora(bounds, this.transform));
     }
 
     public IEnumerator GenerateGeometry()
@@ -268,7 +264,7 @@ public class ChunkGen : MonoBehaviour
 
             // 3. Determine base color by lerping between the two boundary colors of the range we're placed in after height fuzzing is applied
             float heightPostFuzz = Mathf.Clamp(point.y + fuzzAmount, 0, 1);
-            Biome biome = TerrainFunctions.ChooseBiome(heightPostFuzz, moisture);
+            Biome biome = Biomes.ChooseBiome(heightPostFuzz, moisture);
             Color baseColor = biome.color;
 
             // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)

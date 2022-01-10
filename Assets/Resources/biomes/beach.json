@@ -1,0 +1,15 @@
+{
+    "name": "beach", 
+    "lowHeight": 0, 
+    "highHeight": 0.2,
+    "lowMoisture": 0,
+    "highMoisture": 1,
+    "r": 179,
+    "g": 162,
+    "b": 133,
+    "randomizationFactor": 0.1, 
+    "plantTypes": [
+        "Reeds", 
+        "Rocks"
+    ]
+}
