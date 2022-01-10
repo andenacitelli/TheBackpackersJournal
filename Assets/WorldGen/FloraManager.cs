@@ -127,6 +127,12 @@ namespace Assets.WorldGen
 
                 // 5. Spin the prefab randomly around its y axis (helps world look less uniform)
                 bush.transform.Rotate(bush.transform.up, Random.Range(0, 360));
+
+                // 6. Scale the prefab randomly (helps world look less uniform)
+                // We scale each dimension independently rather than scaling by one value, which further promotes variety
+                // float factor = Random.Range(.7f, 1.3f);
+                // bush.transform.localScale = new Vector3(factor, factor, factor);
+                bush.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f));
             }
             yield return null;
         }
