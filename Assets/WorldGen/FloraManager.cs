@@ -51,37 +51,11 @@ namespace Assets.WorldGen
             }
         }
 
-        /* 
-        // Generates points (absolute)
-        public static void GeneratePlant(Bounds bounds, Transform parent, string plant)
+        public static List<Vector3> GetSpawnPoints(Bounds bounds, float frequency)
         {
-
-
-            // 2. Generate heightmap value for those points
-            // 3. Actually instantiate grass at those points
-            foreach (Vertex vertex in vertices)
-            {
-                Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);
-                float absoluteX = bounds.center.x * ChunkGen.size + pos.x;
-                float absoluteZ = bounds.center.y * ChunkGen.size + pos.y;
-                float height = TerrainFunctions.GetTerrainPointData(pos).height;
-                GameObject bush = Instantiate(
-                    (GameObject)FloraManager.GetRandomPrefabOfType(plant),
-                    new Vector3(pos.x, height, pos.y),
-                    Quaternion.identity);
-                bush.transform.parent = parent;
-            }
-        }
-        */
-
-        public static List<Vector3> GetSpawnPoints(Bounds bounds)
-        {
-            const int NUM_ROWS = 15, NUM_COLS = 15;
-            float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
-            float cellWidth = Mathf.RoundToInt(ChunkGen.size / NUM_COLS);
-            float cellHeight = Mathf.RoundToInt(ChunkGen.size / NUM_ROWS);
-            HashSet<Vertex> vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
             List<Vector3> spawnPoints = new List<Vector3>();
+            HashSet<Vertex> vertices = PointGeneration.generatePointsRandom(
+                Mathf.RoundToInt(Random.Range(.6f, 1.2f) * 100 * frequency), bounds);
             foreach (Vertex vertex in vertices)
             {
                 Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);
@@ -91,30 +65,58 @@ namespace Assets.WorldGen
             return spawnPoints;
         }
 
+        public static HashSet<Biome> GetBiomesInChunk(Bounds bounds)
+        {
+            HashSet<Biome> biomes = new HashSet<Biome>();
+            const float SAMPLING_INTERVAL = 1;
+            for (float x = bounds.min.x; x < bounds.max.x; x += SAMPLING_INTERVAL)
+            {
+                for (float z = bounds.min.z; z < bounds.max.z; z += SAMPLING_INTERVAL)
+                {
+                    Biome biome = Biomes.GetBiomeAtPoint(new Vector3(x, 0, z));
+                    if (!biomes.Contains(biome))
+                    {
+                        biomes.Add(biome);
+                    }
+                }
+            }
+            return biomes;
+        }
+
         public static IEnumerator GenerateFlora(Bounds bounds, Transform parent)
         {
-            // 1. Get a list of points in this chunk at which we'd like to spawn something
-            List<Vector3> spawnPoints = GetSpawnPoints(bounds);
+            // Do a rough sampling of the chunk 
+            HashSet<Biome> biomes = GetBiomesInChunk(bounds);
 
-            // 2. For each point, determine its biome, then spawn a random prefab from that biome's list of prefabs
-            foreach (Vector3 spawnPoint in spawnPoints)
+            // For each biome found in this chunk, get spawn points of every associated 
+            // bit of flora, trimming any that aren't that biome 
+            foreach (Biome biome in biomes)
             {
-                // Get the biome at this point
-                Biome biome = Biomes.GetBiomeAtPoint(spawnPoint);
+                foreach (PlantInfo plant in biome.plantTypes)
+                {
+                    // Get the spawn points for this plant type, trimming to only the ones in this biome
+                    List<Vector3> spawnPoints = GetSpawnPoints(bounds, plant.frequency);
+                    spawnPoints = spawnPoints.FindAll(point => Biomes.GetBiomeAtPoint(point) == biome);
+                    foreach (Vector3 spawnPoint in spawnPoints)
+                    {
+                        TerrainFunctions.TerrainPointData terrainPointData = TerrainFunctions.GetTerrainPointData(new Vector2(spawnPoint.x, spawnPoint.z));
+                        if (!terrainPointData.isHit)
+                        {
+                            throw new System.Exception(string.Format("GenerateFlora ordered a raycast {0} to hit the terrain, but it didn't hit anything!", spawnPoint));
+                        }
+                        Vector3 pointWithHeight = new Vector3(spawnPoint.x, terrainPointData.height, spawnPoint.z);
 
-                // Get a random prefab from that biome's list of prefabs
-                Object prefab = GetRandomPrefabOfType(biome.plantTypes[Random.Range(0, biome.plantTypes.Length)]);
+                        Object prefab = GetRandomPrefabOfType(plant.name);
+                        GameObject go = (GameObject)Instantiate(prefab, pointWithHeight, Quaternion.identity, parent);
+                        go.transform.up = terrainPointData.normal; // Make normal to ground 
 
-                // Instantiate the prefab at this point
-                GameObject bush = (GameObject)Instantiate(prefab, spawnPoint, Quaternion.identity);
-
-                // Set the prefab's parent to the chunk's transform
-                bush.transform.parent = parent;
-
-                // Spin the prefab randomly around its y axis (helps world look less uniform)
-                bush.transform.Rotate(bush.transform.up, Random.Range(0, 360));
+                        // Randomly vary direction it's facing and size 
+                        go.transform.Rotate(go.transform.up, Random.Range(0, 360));
+                        go.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f));
+                    }
+                }
+                yield return null;
             }
-            yield return null;
         }
 
         const string VegetationBasePath = "Low Poly Vegetation Pack/Vegetation Assets/Prefabs";

@@ -81,11 +81,7 @@ public class ChunkGen : MonoBehaviour
     public IEnumerator GenerateChunk()
     {
         yield return StartCoroutine(GenerateGeometry());
-
-        Vector3 center = new Vector3(coords.x * size, 0, coords.y * size);
-        Vector3 scale = new Vector3(size, 0, size);
-        Bounds bounds = new Bounds(center, scale);
-        yield return StartCoroutine(FloraManager.GenerateFlora(bounds, this.transform));
+        yield return StartCoroutine(FloraManager.GenerateFlora(this.meshRenderer.bounds, this.transform));
     }
 
     public IEnumerator GenerateGeometry()
