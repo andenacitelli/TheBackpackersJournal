@@ -265,14 +265,14 @@ public class ChunkGen : MonoBehaviour
 
             // 4. Perlin noise contributes to most of the color tweaking (we want triangles to be visually, slightly distinct from surrounding ones)
             float noise = (TerrainManager.colorRandomizationNoise.GetNoiseAtPoint(point.x, point.z) - .5f) * 2;
-            const float perlin_weight = .35f;
+            const float perlin_weight = .5f;
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.g + perlin_weight * noise, 0, 1),
                 Mathf.Clamp(baseColor.b + perlin_weight * noise, 0, 1));
 
             // 5. Pure random tweaking is also applied slightly, helping triangles with similar values to be visually, slightly distinct
-            const float random_weight = .06f;
+            const float random_weight = .1f;
             float randomizationFactor = biome.randomizationFactor;
             baseColor = new Color(
                 Mathf.Clamp(baseColor.r + random_weight * Random.Range(-1, 1) * randomizationFactor, 0, 1),

@@ -142,9 +142,9 @@ namespace Assets.WorldGen
                 name = "Grass3D",
                 frequency = 1,
                 bunchChance = 1,
-                minBunchSize = 2,
-                maxBunchSize = 6,
-                bunchRadius = 2
+                minBunchSize = 20,
+                maxBunchSize = 50,
+                bunchRadius = 10
             });
             plantTypes.Add(new PlantInfo()
             {
@@ -229,8 +229,8 @@ namespace Assets.WorldGen
                 name = "Grass3D",
                 frequency = 1,
                 bunchChance = 1,
-                minBunchSize = 2,
-                maxBunchSize = 6,
+                minBunchSize = 20,
+                maxBunchSize = 50,
                 bunchRadius = 2
             });
             plantTypes.Add(new PlantInfo()
@@ -316,8 +316,8 @@ namespace Assets.WorldGen
                 name = "Grass3D",
                 frequency = 1f,
                 bunchChance = 1,
-                minBunchSize = 2,
-                maxBunchSize = 6,
+                minBunchSize = 10,
+                maxBunchSize = 30,
                 bunchRadius = 2
             });
             return plantTypes;
@@ -375,9 +375,9 @@ namespace Assets.WorldGen
                 name = "Grass3D",
                 frequency = 1,
                 bunchChance = 1,
-                minBunchSize = 2,
-                maxBunchSize = 6,
-                bunchRadius = 2
+                minBunchSize = 20,
+                maxBunchSize = 50,
+                bunchRadius = 10
             });
             plantTypes.Add(new PlantInfo()
             {
@@ -446,6 +446,15 @@ namespace Assets.WorldGen
             {
                 name = "PineTree",
                 frequency = .8f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Grass3D",
+                frequency = 1,
+                bunchChance = 1,
+                minBunchSize = 10,
+                maxBunchSize = 20,
+                bunchRadius = 10
             });
             return plantTypes;
         }
