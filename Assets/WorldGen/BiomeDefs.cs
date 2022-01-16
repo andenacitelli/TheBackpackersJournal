@@ -137,7 +137,7 @@ namespace Assets.WorldGen
             List<PlantInfo> plantTypes = new List<PlantInfo>();
             plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .7f });
             plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .8f });
+            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .5f });
             plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .4f });
             plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = .7f });
             return plantTypes;
@@ -163,7 +163,7 @@ namespace Assets.WorldGen
             List<PlantInfo> plantTypes = new List<PlantInfo>();
             plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .3f });
             plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .2f });
+            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .1f });
             plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .3f });
             plantTypes.Add(new PlantInfo() { name = "PineTree", frequency = .7f });
             plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = 1 });
@@ -192,7 +192,7 @@ namespace Assets.WorldGen
             List<PlantInfo> plantTypes = new List<PlantInfo>();
             plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .2f });
             plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .3f });
+            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .1f });
             plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .3f });
             plantTypes.Add(new PlantInfo() { name = "PineTree", frequency = .8f });
             return plantTypes;
@@ -216,7 +216,7 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "Reeds", frequency = .4f });
+            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .4f });
             return plantTypes;
         }
     }

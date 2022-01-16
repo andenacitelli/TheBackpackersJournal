@@ -54,8 +54,7 @@ namespace Assets.WorldGen
         public static List<Vector3> GetSpawnPoints(Bounds bounds, float frequency)
         {
             List<Vector3> spawnPoints = new List<Vector3>();
-            HashSet<Vertex> vertices = PointGeneration.generatePointsRandom(
-                Mathf.RoundToInt(Random.Range(.6f, 1.2f) * 100 * frequency), bounds);
+            HashSet<Vertex> vertices = PointGeneration.generatePointsPoissonDiscSampling(Mathf.RoundToInt(Random.Range(.6f, 1.2f) * 100 * frequency), bounds, 6);
             foreach (Vertex vertex in vertices)
             {
                 Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);
@@ -104,14 +103,33 @@ namespace Assets.WorldGen
                         {
                             throw new System.Exception(string.Format("GenerateFlora ordered a raycast {0} to hit the terrain, but it didn't hit anything!", spawnPoint));
                         }
-                        Vector3 pointWithHeight = new Vector3(spawnPoint.x, terrainPointData.height, spawnPoint.z);
 
+                        // If terrain is too steep and this is a type of tree, skip it
+                        // ~roughly equivalent to "no more than 30deg tilt" but the math is probably off b/c I think the normal is a normalized vector
+                        // TODO: Make it so only bigger plants are affected by this (e.g. trees)
+                        if (terrainPointData.normal.y < 0.9f && plant.name.Contains("Tree"))
+                        {
+                            continue;
+                        }
+
+                        // Prevent stuff other than reeds from spawning in the water
+                        if (terrainPointData.height < 28 && !plant.name.Contains("Reeds"))
+                        {
+                            continue;
+                        }
+
+                        Vector3 pointWithHeight = new Vector3(spawnPoint.x, terrainPointData.height, spawnPoint.z);
                         Object prefab = GetRandomPrefabOfType(plant.name);
                         GameObject go = (GameObject)Instantiate(prefab, pointWithHeight, Quaternion.identity, parent);
-                        go.transform.up = terrainPointData.normal; // Make normal to ground 
 
                         // Randomly vary direction it's facing and size 
+                        // For some reason, if we do this after rotating according to normal vector, it messes up
                         go.transform.Rotate(go.transform.up, Random.Range(0, 360));
+
+                        // Make normal to ground 
+                        go.transform.up = terrainPointData.normal;
+
+                        // Randomly scale by a bit just to add variety to the world
                         go.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f));
                     }
                 }
