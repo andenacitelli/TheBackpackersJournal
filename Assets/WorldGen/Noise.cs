@@ -21,23 +21,27 @@ public class Noise : MonoBehaviour
     // If the implementer wants a non-random set of waves, they can modify this.waves after constructing
     private Wave[] GenWaves()
     {
-        Wave[] waves = new Wave[3];
+        Wave[] waves = new Wave[4];
         waves[0] = new Wave();
         waves[1] = new Wave();
         waves[2] = new Wave();
+        waves[3] = new Wave();
 
         // Randomize Seeds
         waves[0].seed = Random.Range(0, 10000);
         waves[1].seed = Random.Range(0, 10000);
         waves[2].seed = Random.Range(0, 10000);
+        waves[3].seed = Random.Range(0, 10000);
 
         // Essentially simulating octaves, which are weaker, but more detailed layers added on top of each other
         waves[0].amplitude = 4;
         waves[1].amplitude = 2;
-        waves[2].amplitude = 1;
+        waves[2].amplitude = 2;
+        waves[3].amplitude = 1;
         waves[0].frequency = 1;
         waves[1].frequency = 2;
         waves[2].frequency = 4;
+        waves[3].frequency = 6;
 
         return waves;
     }
