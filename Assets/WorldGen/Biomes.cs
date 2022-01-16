@@ -8,6 +8,10 @@ namespace Assets.WorldGen
     {
         public string name;
         public float frequency; // 1 => Everywhere, .7 = Common, .5 = Sparse, .3 = Rare, .1 = Very Rare
+        public float bunchChance;
+        public int minBunchSize;
+        public int maxBunchSize;
+        public float bunchRadius;
     }
 
     public class Biome

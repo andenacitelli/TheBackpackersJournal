@@ -24,8 +24,24 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "Reeds", frequency = .5f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Reeds",
+                frequency = .7f,
+                bunchChance = .8f,
+                minBunchSize = 2,
+                maxBunchSize = 5,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .2f,
+                bunchChance = .8f,
+                minBunchSize = 2,
+                maxBunchSize = 5,
+                bunchRadius = 2
+            });
             return plantTypes;
         }
     }
@@ -48,10 +64,26 @@ namespace Assets.WorldGen
         {
             // TODO: Idea: Moving Tumbleweeds
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .4f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .3f,
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .2f,
+                bunchChance = 1f,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
             // plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .2f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .2f
+            });
             return plantTypes;
         }
     }
@@ -73,16 +105,72 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "Bush", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "FlowerBush", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "FlowersTwoSided", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = 1 });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "BirchTree", frequency = .7f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Bush",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = .5f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .2f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "FlowerBush",
+                frequency = .3f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 8,
+                bunchRadius = .5f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "FlowersTwoSided",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Grass3D",
+                frequency = 1,
+                bunchChance = 1,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .1f,
+                bunchChance = 1f,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .3f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "BirchTree",
+                frequency = .7f
+            });
             // plantTypes.Add(new PlantInfo() { name = "BirchTreeLeafless", frequency = .7f });
-            plantTypes.Add(new PlantInfo() { name = "OakTree", frequency = .5f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "OakTree",
+                frequency = .5f
+            });
             return plantTypes;
         }
     }
@@ -104,16 +192,80 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "Bush", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "FlowerBush", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "FlowersTwoSided", frequency = .7f });
-            plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = .9f });
-            plantTypes.Add(new PlantInfo() { name = "Mushrooms", frequency = .8f });
-            plantTypes.Add(new PlantInfo() { name = "Reeds", frequency = .4f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Bush",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .6f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "FlowerBush",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "FlowersTwoSided",
+                frequency = .7f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Grass3D",
+                frequency = 1,
+                bunchChance = 1,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Mushrooms",
+                frequency = .8f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Reeds",
+                frequency = .4f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .2f,
+                bunchChance = 1f,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
             // plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .2f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .2f
+            });
             return plantTypes;
         }
     }
@@ -135,11 +287,39 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .7f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .8f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .4f });
-            plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = .7f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .7f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .1f,
+                bunchChance = .4f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 1
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeLeafless",
+                frequency = .5f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .4f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Grass3D",
+                frequency = 1f,
+                bunchChance = 1,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
             return plantTypes;
         }
     }
@@ -161,14 +341,62 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "PineTree", frequency = .7f });
-            plantTypes.Add(new PlantInfo() { name = "Grass3D", frequency = 1 });
-            plantTypes.Add(new PlantInfo() { name = "Bush", frequency = .6f });
-            plantTypes.Add(new PlantInfo() { name = "FlowerBush", frequency = .6f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .3f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .3f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeLeafless",
+                frequency = .1f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .3f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "PineTree",
+                frequency = .7f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Grass3D",
+                frequency = 1,
+                bunchChance = 1,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Bush",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "FlowerBush",
+                frequency = .6f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
             return plantTypes;
         }
     }
@@ -190,11 +418,35 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "DeadBush", frequency = .2f });
-            plantTypes.Add(new PlantInfo() { name = "Rocks", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeLeafless", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "TreeStump", frequency = .3f });
-            plantTypes.Add(new PlantInfo() { name = "PineTree", frequency = .8f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "DeadBush",
+                frequency = .2f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .3f,
+                bunchChance = .7f,
+                minBunchSize = 2,
+                maxBunchSize = 3,
+                bunchRadius = 2
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeLeafless",
+                frequency = .1f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "TreeStump",
+                frequency = .3f
+            });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "PineTree",
+                frequency = .8f
+            });
             return plantTypes;
         }
     }
@@ -216,7 +468,15 @@ namespace Assets.WorldGen
         private List<PlantInfo> GetPlantInfo()
         {
             List<PlantInfo> plantTypes = new List<PlantInfo>();
-            plantTypes.Add(new PlantInfo() { name = "Reeds", frequency = .4f });
+            plantTypes.Add(new PlantInfo()
+            {
+                name = "Rocks",
+                frequency = .2f,
+                bunchChance = 1,
+                minBunchSize = 2,
+                maxBunchSize = 6,
+                bunchRadius = 2
+            });
             return plantTypes;
         }
     }
