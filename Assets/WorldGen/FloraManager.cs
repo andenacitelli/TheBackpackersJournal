@@ -118,19 +118,34 @@ namespace Assets.WorldGen
                             continue;
                         }
 
-                        Vector3 pointWithHeight = new Vector3(spawnPoint.x, terrainPointData.height, spawnPoint.z);
-                        Object prefab = GetRandomPrefabOfType(plant.name);
-                        GameObject go = (GameObject)Instantiate(prefab, pointWithHeight, Quaternion.identity, parent);
+                        // Handle bunched flora spawns 
+                        if (plant.bunchChance > 0 && Random.Range(0f, 1f) < plant.bunchChance)
+                        {
+                            int bunchSize = Random.Range(plant.minBunchSize, plant.maxBunchSize + 1);
+                            for (int i = 0; i < bunchSize; i++)
+                            {
+                                Object prefab = GetRandomPrefabOfType(plant.name);
+                                Vector3 position = new Vector3(Random.Range(spawnPoint.x - plant.bunchRadius, spawnPoint.x + plant.bunchRadius),
+                                                                0,
+                                                                Random.Range(spawnPoint.z - plant.bunchRadius, spawnPoint.z + plant.bunchRadius));
+                                position.y = TerrainFunctions.GetTerrainPointData(new Vector2(position.x, position.z)).height;
+                                GameObject go = (GameObject)Instantiate(prefab, position, Quaternion.identity, parent);
+                                go.transform.Rotate(go.transform.up, Random.Range(0, 360)); // Vary direction it's facing
+                                go.transform.up = terrainPointData.normal; // Make normal to ground 
+                                go.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f)); // Vary size
+                            }
+                        }
 
-                        // Randomly vary direction it's facing and size 
-                        // For some reason, if we do this after rotating according to normal vector, it messes up
-                        go.transform.Rotate(go.transform.up, Random.Range(0, 360));
-
-                        // Make normal to ground 
-                        go.transform.up = terrainPointData.normal;
-
-                        // Randomly scale by a bit just to add variety to the world
-                        go.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f));
+                        // Otherwise, just spawn a single one 
+                        else
+                        {
+                            Vector3 pointWithHeight = new Vector3(spawnPoint.x, terrainPointData.height, spawnPoint.z);
+                            Object prefab = GetRandomPrefabOfType(plant.name);
+                            GameObject go = (GameObject)Instantiate(prefab, pointWithHeight, Quaternion.identity, parent);
+                            go.transform.Rotate(go.transform.up, Random.Range(0, 360)); // Vary direction it's facing
+                            go.transform.up = terrainPointData.normal; // Make normal to ground 
+                            go.transform.localScale = new Vector3(Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f), Random.Range(.7f, 1.5f)); // Vary size
+                        }
                     }
                 }
                 yield return null;
