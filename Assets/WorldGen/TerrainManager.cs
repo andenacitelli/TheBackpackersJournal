@@ -26,8 +26,6 @@ public class TerrainManager : MonoBehaviour
 
     // Chunks that are mid-coroutine - i.e. are generating in steps across several frames
     static public Dictionary<Vector2Int, GameObject> generatingChunks = new Dictionary<Vector2Int, GameObject>();
-
-    private static bool finishedFirstTimeGeneration = false;
     private void Start()
     {
         Debug.Log("Start - TerrainManager");
