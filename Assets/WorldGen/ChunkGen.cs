@@ -90,13 +90,7 @@ public class ChunkGen : MonoBehaviour
         Random.InitState(coords.GetHashCode());
 
         // Generate set of vertices to feed into triangulation
-        const int NUM_ROWS = 20, NUM_COLS = 20;
-        float HORIZ_PADDING = .5f, VERT_PADDING = .5f;
-        cellWidth = Mathf.RoundToInt((bounds.max.x - bounds.min.x) / NUM_COLS);
-        cellHeight = Mathf.RoundToInt((bounds.max.z - bounds.min.z) / NUM_ROWS);
-        vertices = PointGeneration.generatePointsGrid(bounds, NUM_ROWS, NUM_COLS, HORIZ_PADDING, VERT_PADDING);
-
-        //print("Calculated grid of points to use for a chunk.");
+        vertices = PointGeneration.generatePointsPoissonDiscSampling(400, bounds, 3);
         yield return null;
 
         /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
