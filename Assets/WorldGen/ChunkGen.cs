@@ -113,10 +113,11 @@ public class ChunkGen : MonoBehaviour
         polygon.Add(new Vertex(bounds.max.x, bounds.max.z));
 
         // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
-        for (float i = bounds.min.x; i < bounds.max.x; i += cellWidth) polygon.Add(new Vertex(i, bounds.min.z));
-        for (float i = bounds.min.x; i < bounds.max.x; i += cellWidth) polygon.Add(new Vertex(i, bounds.max.z));
-        for (float i = bounds.min.z; i < bounds.max.z; i += cellHeight) polygon.Add(new Vertex(bounds.min.x, i));
-        for (float i = bounds.min.z; i < bounds.max.z; i += cellHeight) polygon.Add(new Vertex(bounds.max.x, i));
+        const float INTERVAL = 2;
+        for (float i = bounds.min.x; i < bounds.max.x; i += INTERVAL) polygon.Add(new Vertex(i, bounds.min.z));
+        for (float i = bounds.min.x; i < bounds.max.x; i += INTERVAL) polygon.Add(new Vertex(i, bounds.max.z));
+        for (float i = bounds.min.z; i < bounds.max.z; i += INTERVAL) polygon.Add(new Vertex(bounds.min.x, i));
+        for (float i = bounds.min.z; i < bounds.max.z; i += INTERVAL) polygon.Add(new Vertex(bounds.max.x, i));
 
         TriangleNet.Meshing.ConstraintOptions constraintOptions = new TriangleNet.Meshing.ConstraintOptions()
         {
