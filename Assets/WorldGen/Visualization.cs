@@ -41,6 +41,7 @@ namespace Assets.WorldGen
 
         // Gets a list of boundary edges by iterating through the triangles array and finding the edges
         // ("subsegments" as Triangle.NET calls them) that are only referenced once 
+        /* 
         public static void DrawChunkBoundaryEdges(ChunkGen genComponent)
         {
             Gizmos.color = Color.yellow;
@@ -51,5 +52,6 @@ namespace Assets.WorldGen
                 Gizmos.DrawLine(p0, p1);
             }
         }
+        */
     }
 }

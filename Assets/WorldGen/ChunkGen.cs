@@ -27,6 +27,9 @@ public class ChunkGen : MonoBehaviour
     [SerializeField]
     private MeshCollider meshCollider;
 
+    // Instead of repeatedly recalculating biomes in a chunk, we sample the borders of each chunk to determine what's most likely 
+
+
     // Holds the inner triangulation of this chunk in Triangle.NET's format
     private TriangleNet.Mesh mesh;
 
@@ -90,48 +93,22 @@ public class ChunkGen : MonoBehaviour
         Random.InitState(coords.GetHashCode());
 
         // Generate set of vertices to feed into triangulation
-        vertices = PointGeneration.generatePointsPoissonDiscSampling(400, bounds, 3);
+        vertices = PointGeneration.GeneratePointsGrid(bounds, 20, 20, .7f, .7f);
         yield return null;
-
-        /* Poisson disc point generation is more random and natural, but less performant and too hard to see a difference to use 
-        int NUM_POINTS_BASELINE = Mathf.RoundToInt((size / 4) * (size / 4)); 
-        int NUM_POINTS = Mathf.RoundToInt(Random.Range(.9f * NUM_POINTS_BASELINE, 1.1f * NUM_POINTS_BASELINE));
-        const float RADIUS = 6; 
-        vertices = PointGeneration.generatePointsPoissonDiscSampling(NUM_POINTS, bounds, RADIUS);
-        */
 
         // Turn points into a Triangle.NET polygon which we can use for triangulation
         Polygon polygon = new Polygon();
-
-        // Let Triangle.NET do the hard work of actually generating the triangles to connect them
         foreach (Vertex v in vertices) polygon.Add(v);
-
-        // Add the corners 
         polygon.Add(new Vertex(bounds.min.x, bounds.min.z));
         polygon.Add(new Vertex(bounds.min.x, bounds.max.z));
         polygon.Add(new Vertex(bounds.max.x, bounds.min.z));
         polygon.Add(new Vertex(bounds.max.x, bounds.max.z));
-
-        // Add points at random, semi-bounded intervals along the edges, which produces harder to notice artifacts
         const float INTERVAL = 2;
         for (float i = bounds.min.x; i < bounds.max.x; i += INTERVAL) polygon.Add(new Vertex(i, bounds.min.z));
         for (float i = bounds.min.x; i < bounds.max.x; i += INTERVAL) polygon.Add(new Vertex(i, bounds.max.z));
         for (float i = bounds.min.z; i < bounds.max.z; i += INTERVAL) polygon.Add(new Vertex(bounds.min.x, i));
         for (float i = bounds.min.z; i < bounds.max.z; i += INTERVAL) polygon.Add(new Vertex(bounds.max.x, i));
-
-        TriangleNet.Meshing.ConstraintOptions constraintOptions = new TriangleNet.Meshing.ConstraintOptions()
-        {
-            ConformingDelaunay = false,
-            // Convex = true 
-            // SegmentSplitting = 1
-        };
-
-        TriangleNet.Meshing.QualityOptions qualityOptions = new TriangleNet.Meshing.QualityOptions()
-        {
-            // MinimumAngle = 30,
-        };
-
-        mesh = (TriangleNet.Mesh)polygon.Triangulate(constraintOptions, qualityOptions);
+        mesh = (TriangleNet.Mesh)polygon.Triangulate();
 
         //print("Triangulated values for a chunk this frame.");
         yield return null;
@@ -277,6 +254,7 @@ public class ChunkGen : MonoBehaviour
             return baseColor;
         }
 
+        yield return null;
         Color[] colors = new Color[meshVertices.Length];
 
         // We average each point between the base colors of all the surrounding points; we cache each value to avoid calculating it more than once
@@ -291,18 +269,24 @@ public class ChunkGen : MonoBehaviour
             const int SAMPLING_LENGTH = 8; // Distance between points we sample; if radius is 8 and length is 2 it will sample from [-8, -6, ..., 6, 8]
             float minx = transform.position.x + averagePoint.x - SAMPLING_RADIUS, maxx = transform.position.x + averagePoint.x + SAMPLING_RADIUS;
             float minz = transform.position.z + averagePoint.z - SAMPLING_RADIUS, maxz = transform.position.z + averagePoint.z + SAMPLING_RADIUS;
+            float r = 0, g = 0, b = 0;
+            int numColors = 0;
             for (float x = minx; x <= maxx; x += SAMPLING_LENGTH)
             {
                 for (float z = minz; z <= maxz; z += SAMPLING_LENGTH)
                 {
                     Vector3 point = new Vector3(x, averagePoint.y, z);
                     Color subpointColor = ChooseColor(point);
+                    r += (int)subpointColor.r;
+                    g += (int)subpointColor.g;
+                    b += (int)subpointColor.b;
                     if (cachedColors.ContainsKey(point)) surroundingColors.Add(cachedColors[point]); // Used cached value if possible
                     else // Otherwise, calculate and add to cache 
                     {
                         cachedColors.Add(point, subpointColor);
                         surroundingColors.Add(subpointColor);
                     }
+                    numColors++;
                 }
             }
 
@@ -331,7 +315,6 @@ public class ChunkGen : MonoBehaviour
         mesh.colors = colors;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
-        //print("Actually applied vertices/colors to a chunk this frame.");
         yield return null;
     }
 
@@ -342,93 +325,4 @@ public class ChunkGen : MonoBehaviour
     // A useful thing Unity adds that lets us essentially do a height distribution rather than relying entirely on noise ourselves
     [SerializeField]
     private AnimationCurve heightCurve;
-
-    public HashSet<Vertex> GetBoundaryVertices()
-    {
-        List<Osub> boundarySubsegments = GetBoundaryEdges();
-        HashSet<Vertex> boundaryVertices = new HashSet<Vertex>();
-        foreach (Osub subsegment in boundarySubsegments)
-        {
-            // First vertex of segment 
-            if (!boundaryVertices.Contains(subsegment.Segment.vertices[0]))
-            {
-                boundaryVertices.Add(subsegment.Segment.vertices[0]);
-            }
-
-            // Second vertex of segment
-            if (!boundaryVertices.Contains(subsegment.Segment.vertices[1]))
-            {
-                boundaryVertices.Add(subsegment.Segment.vertices[1]);
-            }
-        }
-        return boundaryVertices;
-    }
-
-    public List<Osub> GetBoundaryEdges()
-    {
-        Dictionary<Osub, int> edges = new Dictionary<Osub, int>();
-
-        // Get a count of each subsegment 
-        foreach (Triangle triangle in mesh.Triangles)
-        {
-            foreach (Osub subseg in triangle.subsegs)
-            {
-                if (!edges.ContainsKey(subseg))
-                {
-                    edges.Add(subseg, 1);
-                }
-
-                else
-                {
-                    edges[subseg] += 1;
-                }
-            }
-        }
-
-        // Eliminate any subsegment that appears in more than one triangle 
-        List<Osub> uniqueSegments = new List<Osub>(); // Can't modify a dictionary during iteration
-        foreach (Osub subseg in edges.Keys)
-        {
-            if (edges[subseg] == 1)
-            {
-                uniqueSegments.Add(subseg);
-            }
-        }
-
-        return uniqueSegments;
-    }
-
-    // Renders Triangulations on game pause
-    public void OnDrawGizmos()
-    {
-        if (mesh == null)
-        {
-            // We're probably in the editor
-            return;
-        }
-
-        float offsetX = coords.x * size, offsetZ = coords.y * size;
-
-        /* 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + size), new Vector3(offsetX + size, 0, offsetZ + size)); // Top 
-        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + -1 * size), new Vector3(offsetX + -1 * size, 0, offsetZ + size)); // Left
-        Gizmos.DrawLine(new Vector3(offsetX + size, 0, offsetZ + -1 * size), new Vector3(offsetX + size, 0, offsetZ + size)); // Right
-        Gizmos.DrawLine(new Vector3(offsetX + -1 * size, 0, offsetZ + -1 * size), new Vector3(offsetX + size, 0, offsetZ + -1 * size)); // Down
-        */
-
-        Gizmos.color = gizmoColor;
-        Visualization.DrawTriangulations(mesh, offsetX, offsetZ);
-
-        float x, z;
-        foreach (Vertex v in vertices)
-        {
-            x = offsetX + (float)v.x;
-            z = offsetZ + (float)v.y;
-            Gizmos.DrawCube(new Vector3(offsetX + (float)v.x, 0, offsetZ + (float)v.y), new Vector3(1f, 1f, 1f));
-        }
-
-        // Visualization.DrawChunkBoundaryTriangles(mesh);
-        // Visualization.DrawChunkBoundaryEdges(this);
-    }
 }

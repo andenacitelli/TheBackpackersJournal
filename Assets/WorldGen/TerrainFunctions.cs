@@ -28,17 +28,23 @@ namespace Assets.WorldGen
             }
         }
 
-        // Performs a Raycast to get terrain height and normal vector at a given (x, z) point. 
-        // Returns a TerrainPointData object. The `isHit` property stores whether the raycast actually
-        // collided with the terrain layer; `height` and `normal` are gibberish if `isHit` is false.
+        // *Would* be much more performant to just query the heightmap, but we also want the normal vector in 90% of circumstances
+        // TODO: Not every plant type probably needs the normal vector; maybe just trees? Can shift everything else over to a purely heightmap based variant
         public static TerrainPointData GetTerrainPointData(Vector2 point)
         {
             // Cast a ray from really high up to straight down, hitting the ground
             Ray ray = new Ray(new Vector3(point.x, 1000, point.y), Vector3.down);
 
+            // For performance reasons, we want to use the chunk of interest's Collider.Raycast() function
+            // instead of the general Physics.Raycast
+            Vector2Int coords = new Vector2Int(Mathf.RoundToInt(point.x / ChunkGen.size), Mathf.RoundToInt(point.y / ChunkGen.size));
+            GameObject chunk = TerrainManager.GetChunkAtCoords(coords);
+            if (chunk == null) return new TerrainPointData();
+            MeshCollider collider = chunk.GetComponent<MeshCollider>();
+
             // Terrain is its own layer so that we don't raycast into animals, trees, etc. 
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
+            if (collider.Raycast(ray, out hit, Mathf.Infinity))
             {
                 return new TerrainPointData(hit.point.y, hit.normal, true);
             }

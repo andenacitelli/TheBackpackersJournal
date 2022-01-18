@@ -54,7 +54,7 @@ namespace Assets.WorldGen
         public static List<Vector3> GetSpawnPoints(Bounds bounds, float frequency)
         {
             List<Vector3> spawnPoints = new List<Vector3>();
-            HashSet<Vertex> vertices = PointGeneration.generatePointsPoissonDiscSampling(Mathf.RoundToInt(Random.Range(.6f, 1.2f) * 100 * frequency), bounds, 6);
+            HashSet<Vertex> vertices = PointGeneration.GeneratePointsRandom(Mathf.RoundToInt(Random.Range(.6f, 1.2f) * 50 * frequency), bounds);
             foreach (Vertex vertex in vertices)
             {
                 Vector2 pos = new Vector2((float)vertex.x, (float)vertex.y);

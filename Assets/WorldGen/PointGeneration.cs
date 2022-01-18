@@ -8,7 +8,7 @@ using TriangleNet.Geometry;
 public class PointGeneration : MonoBehaviour
 {
     // Randomly generates a Triangle.NET polygon with NUM_POINTS random points distributed within the provided bounds
-    public static HashSet<Vertex> generatePointsRandom(int NUM_POINTS, Bounds bounds)
+    public static HashSet<Vertex> GeneratePointsRandom(int NUM_POINTS, Bounds bounds)
     {
         HashSet<Vertex> output = new HashSet<Vertex>();
         for (int i = 0; i < NUM_POINTS; i++)
@@ -22,7 +22,7 @@ public class PointGeneration : MonoBehaviour
     }
 
     // Create a grid from the provided bounds and dimensions, then returns a Polygon with one random point generated per
-    public static HashSet<Vertex> generatePointsGrid(Bounds bounds, int numRows, int numColumns, float horizPadding, float vertPadding)
+    public static HashSet<Vertex> GeneratePointsGrid(Bounds bounds, int numRows, int numColumns, float horizPadding, float vertPadding)
     {
         /* Parameter Meanings:
             Bounds: Represents the overall area that the grid should be inside
@@ -56,9 +56,7 @@ public class PointGeneration : MonoBehaviour
         return output;
     }
 
-    // Generates a Triangle.NET polygon with NUM_POINTS *mostly* random points; with Poisson disk sampling,
-    // some care is taken such that they don't end up too close or too far from each other, resulting in roughly
-    // similarly spaced polygons
+    // Not very performant past a few hundred points
     public static HashSet<Vertex> generatePointsPoissonDiscSampling(int NUM_POINTS, Bounds bounds, float radius)
     {
         HashSet<Vertex> output = new HashSet<Vertex>();
